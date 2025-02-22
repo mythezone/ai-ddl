@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -206,11 +205,11 @@ END:VCALENDAR`;
                   Add to Calendar
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => createCalendarEvent('google')}>
+              <DropdownMenuContent className="bg-white" align="end">
+                <DropdownMenuItem className="text-neutral-800 hover:bg-neutral-100">
                   Add to Google Calendar
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => createCalendarEvent('apple')}>
+                <DropdownMenuItem className="text-neutral-800 hover:bg-neutral-100">
                   Add to Apple Calendar
                 </DropdownMenuItem>
               </DropdownMenuContent>
