@@ -1,7 +1,10 @@
-
 import { Search } from "lucide-react";
 
-const Header = () => {
+interface HeaderProps {
+  onSearch: (query: string) => void;
+}
+
+const Header = ({ onSearch }: HeaderProps) => {
   return (
     <header className="w-full py-6 px-4 sm:px-6 lg:px-8 bg-white shadow-sm animate-fade-in">
       <div className="max-w-7xl mx-auto">
@@ -19,6 +22,7 @@ const Header = () => {
             <input
               type="text"
               placeholder="Search conferences..."
+              onChange={(e) => onSearch(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-neutral-200 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary bg-neutral-50"
             />
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-neutral" />

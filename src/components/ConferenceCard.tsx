@@ -1,28 +1,39 @@
-
-import { CalendarDays, Globe, Tag } from "lucide-react";
-
-interface ConferenceCardProps {
-  name: string;
-  date: string;
-  location: string;
-  deadline: string;
-  daysLeft: number;
-  tags: string[];
-}
+import { CalendarDays, Globe, Tag, Clock } from "lucide-react";
+import { Conference } from "@/types/conference";
+import { formatDistanceToNow, parseISO } from "date-fns";
 
 const ConferenceCard = ({
-  name,
+  title,
+  full_name,
   date,
-  location,
+  place,
   deadline,
-  daysLeft,
-  tags,
-}: ConferenceCardProps) => {
+  timezone,
+  tags = [],
+  link,
+  note,
+  abstract_deadline,
+}: Conference) => {
+  const deadlineDate = deadline && deadline !== 'TBD' ? parseISO(deadline) : null;
+  const daysLeft = deadlineDate ? formatDistanceToNow(deadlineDate, { addSuffix: true }) : 'TBD';
+  
   return (
-    <div className="conference-card animate-fade-in">
+    <div className="conference-card">
       <div className="flex justify-between items-start mb-4">
-        <h3 className="text-xl font-semibold">{name}</h3>
-        <div className="countdown">{daysLeft}d</div>
+        <div>
+          <h3 className="text-xl font-semibold">{title}</h3>
+          {full_name && <p className="text-sm text-neutral-600">{full_name}</p>}
+        </div>
+        {link && (
+          <a 
+            href={link}
+            target="_blank"
+            rel="noopener noreferrer" 
+            className="text-primary hover:underline text-sm"
+          >
+            Website →
+          </a>
+        )}
       </div>
       
       <div className="space-y-2 mb-4">
@@ -32,22 +43,38 @@ const ConferenceCard = ({
         </div>
         <div className="flex items-center text-neutral">
           <Globe className="h-4 w-4 mr-2" />
-          <span className="text-sm">{location}</span>
+          <span className="text-sm">{place}</span>
+        </div>
+        <div className="flex items-center text-neutral">
+          <Clock className="h-4 w-4 mr-2" />
+          <span className="text-sm">
+            Deadline: {deadline === 'TBD' ? 'TBD' : `${deadline} (${timezone})`}
+          </span>
+          {abstract_deadline && (
+            <span className="text-sm text-red-500 ml-2">
+              Abstract: {abstract_deadline}
+            </span>
+          )}
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 mb-4">
-        {tags.map((tag) => (
-          <span key={tag} className="tag">
-            <Tag className="h-3 w-3 mr-1" />
-            {tag}
-          </span>
-        ))}
-      </div>
+      {Array.isArray(tags) && tags.length > 0 && (
+        <div className="flex flex-wrap gap-2 mb-4">
+          {tags.map((tag) => (
+            <span key={tag} className="tag">
+              <Tag className="h-3 w-3 mr-1" />
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
 
-      <div className="text-sm text-neutral-dark">
-        Deadline: {deadline}
-      </div>
+      {note && (
+        <div 
+          className="text-sm text-neutral-600 mt-2"
+          dangerouslySetInnerHTML={{ __html: note }}
+        />
+      )}
     </div>
   );
 };

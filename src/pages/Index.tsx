@@ -1,44 +1,55 @@
-
 import Header from "@/components/Header";
 import FilterBar from "@/components/FilterBar";
 import ConferenceCard from "@/components/ConferenceCard";
-
-const conferences = [
-  {
-    name: "ICLR 2024",
-    date: "May 7-11, 2024",
-    location: "Vienna, Austria",
-    deadline: "Sep 28, 2023, 8:00 PM UTC",
-    daysLeft: 45,
-    tags: ["ML", "DL", "AI"],
-  },
-  {
-    name: "CVPR 2024",
-    date: "June 17-21, 2024",
-    location: "Seattle, USA",
-    deadline: "Nov 10, 2023, 11:59 PM UTC",
-    daysLeft: 60,
-    tags: ["CV", "ML", "AI"],
-  },
-  {
-    name: "NeurIPS 2024",
-    date: "December 8-14, 2024",
-    location: "Vancouver, Canada",
-    deadline: "May 17, 2024, 11:59 PM UTC",
-    daysLeft: 120,
-    tags: ["ML", "AI", "DL"],
-  },
-];
+import conferencesData from "@/data/conferences.yml";
+import { Conference } from "@/types/conference";
+import { useState, useMemo, useEffect } from "react";
 
 const Index = () => {
+  const [selectedTag, setSelectedTag] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Add debug logging
+  useEffect(() => {
+    console.log("Conferences data:", conferencesData);
+  }, []);
+
+  const filteredConferences = useMemo(() => {
+    if (!Array.isArray(conferencesData)) {
+      console.error("Conferences data is not an array:", conferencesData);
+      return [];
+    }
+
+    return conferencesData
+      .filter((conf: Conference) => {
+        const matchesTag = selectedTag === "All" || conf.tags.includes(selectedTag);
+        const matchesSearch = searchQuery === "" || 
+          conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
+        return matchesTag && matchesSearch;
+      })
+      .sort((a: Conference, b: Conference) => 
+        new Date(a.deadline).getTime() - new Date(b.deadline).getTime()
+      );
+  }, [selectedTag, searchQuery]);
+
+  // Add debug logging for filtered conferences
+  useEffect(() => {
+    console.log("Filtered conferences:", filteredConferences);
+  }, [filteredConferences]);
+
+  if (!Array.isArray(conferencesData)) {
+    return <div>Loading conferences...</div>;
+  }
+
   return (
     <div className="min-h-screen bg-neutral-light">
-      <Header />
-      <FilterBar />
+      <Header onSearch={setSearchQuery} />
+      <FilterBar selectedTag={selectedTag} onTagSelect={setSelectedTag} />
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {conferences.map((conference) => (
-            <ConferenceCard key={conference.name} {...conference} />
+          {filteredConferences.map((conference: Conference) => (
+            <ConferenceCard key={conference.id} {...conference} />
           ))}
         </div>
       </main>

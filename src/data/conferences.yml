@@ -1,0 +1,493 @@
+- title: WACV
+  year: 2025
+  id: wacv25
+  full_name: IEEE/CVF Winter Conference on Applications of Computer Vision
+  link: https://wacv2025.thecvf.com/
+  deadline: '2024-07-14 23:59:59'
+  timezone: America/Los_Angeles
+  place: Tucson, Arizona
+  date: Feb 28 – Mar 4, 2025
+  start: 2025-2-28
+  end: 2025-3-4
+  tags:
+  - machine-learning
+  - computer-vision
+
+- title: WSDM
+  year: 2025
+  id: wsdm25
+  full_name: ACM International Conference on Web Search and Data Mining
+  note: Abstract deadline on August 7, 2024
+  link: https://www.wsdm-conference.org/2025/
+  deadline: '2024-08-14 23:59:00'
+  timezone: UTC-12
+  place: Hannover, Germany
+  date: March 10-14, 2025
+  start: 2025-03-10
+  end: 2025-03-14
+  tags:
+  - web-search
+  - data-mining
+
+- title: AAAI
+  year: 2025
+  id: aaai25
+  full_name: AAAI Conference on Artificial Intelligence
+  link: https://aaai.org/conference/aaai/aaai-25/
+  deadline: '2024-08-15 23:59:59'
+  abstract_deadline: '2024-08-07 23:59:59'
+  timezone: UTC-12
+  place: Philadelphia, USA
+  date: February 25 - March 04, 2025
+  start: 2025-02-25
+  end: 2025-03-04
+  hindex: 212
+  tags:
+  - data-mining
+  - machine-learning
+  - natural-language-processing
+  - computer-vision
+  note: Mandatory abstract deadline on Aug 07, 2024, and supplementary material deadline
+    on Aug 19, 2024. More info <a href='https://aaai.org/conference/aaai/aaai-25/'>here</a>.
+
+- title: WACV
+  year: 2025
+  id: wacv25_2
+  full_name: IEEE/CVF Winter Conference on Applications of Computer Vision
+  link: https://wacv2025.thecvf.com/
+  deadline: '2024-09-09 23:59:59'
+  timezone: UTC-7
+  place: Tucson, Arizona
+  date: Feb 28 – Mar 4, 2025
+  start: 2025-2-28
+  end: 2025-3-4
+  hindex: 109
+  tags:
+  - machine-learning
+  - computer-vision
+  note: This is the second round of submissions. Summplementary material deadline
+    on Sep 11, 2024. More info <a href='https://wacv2025.thecvf.com/'>here</a>.
+
+- title: ICASSP
+  year: 2025
+  id: icassp25
+  link: https://2025.ieeeicassp.org/
+  deadline: '2024-09-09 23:59:59'
+  timezone: UTC-12
+  place: Hyderabad, India
+  date: April 6-11, 2025
+  start: 2025-04-6
+  end: 2025-04-11
+  tags:
+  - signal-processing
+
+- title: CHI
+  year: 2025
+  id: chi25
+  full_name: The ACM Conference on Human Factors in Computing Systems
+  link: https://chi2025.acm.org/
+  deadline: '2024-09-12 23:59:59'
+  abstract_deadline: '2024-09-05 23:59:59'
+  timezone: UTC-12
+  place: Yokohama, Japan
+  date: April 26 - May 01, 2025
+  start: 2025-04-26
+  end: 2025-05-01
+  hindex: 122
+  tags:
+  - human-computer-interaction
+  note: Mandatory abstract deadline on Sep 05, 2024. More info <a href='https://chi2025.acm.org/for-authors/papers/'>here</a>.
+
+- title: ICRA
+  year: 2025
+  id: icra25
+  link: https://2025.ieee-icra.org
+  deadline: '2024-09-15 23:59:59'
+  timezone: America/Los_Angeles
+  place: Atlanta, USA
+  date: May 19 - May 23, 2025
+  start: 2025-05-19
+  end: 2025-05-23
+  hindex: 119
+  tags:
+  - robotics
+
+- title: COLING
+  year: 2025
+  id: coling25
+  full_name: The 31st International Conference on Computational Linguistics
+  link: https://coling2025.org/
+  deadline: '2024-09-16 23:59:59'
+  timezone: UTC-12
+  place: Abu Dhabi, UAE
+  date: January 19-24, 2025
+  start: 2025-01-19
+  end: 2025-01-24
+  hindex: 73
+  tags:
+  - natural-language-processing
+  note: More info can be found <a href="https://coling2025.org/calls/main_conference_papers/#important-dates">here</a>.
+
+- title: ALT
+  year: 2025
+  id: alt2025
+  full_name: International Conference on Algorithmic Learning Theory
+  link: https://algorithmiclearningtheory.org/alt2025/
+  deadline: '2024-10-01 09:59:59'
+  timezone: UTC+0
+  place: Milan, Italy
+  date: February 24-27, 2025
+  tags:
+  - machine-learning
+  note: 'Rankings: CCF: C, CORE: B, THCPL: B'
+
+- title: ICLR
+  year: 2025
+  id: iclr25
+  link: https://iclr.cc/Conferences/2025/CallForPapers
+  deadline: '2024-10-01 23:59:59'
+  abstract_deadline: '2024-09-27 23:59:59'
+  timezone: UTC-12
+  place: Singapore
+  date: Apr 24-28, 2025
+  start: 2025-04-24
+  end: 2025-04-28
+  hindex: 304
+  tags:
+  - machine-learning
+  - computer-vision
+  - natural-language-processing
+  - signal-processing
+  note: Mandatory abstract deadline on September 27, 2024. More info <a href='https://iclr.cc/Conferences/2025/CallForPapers'>here</a>.
+
+- title: ECIR
+  year: 2025
+  id: ecir25
+  full_name: European Conference on Information Retrieval
+  link: https://ecir2025.eu/
+  deadline: '2024-10-09 23:59:59'
+  abstract_deadline: '2024-10-02 23:59:59'
+  timezone: UTC-12
+  place: Lucca, Tuscany, Italy
+  date: April 6 - April 10, 2025
+  start: 2025-04-06
+  end: 2025-04-10
+  tags:
+  - data-mining
+  note: Abstract deadline on Oct 2, 2024. More info <a href='https://ecir2025.eu/'>here</a>.
+
+- title: AISTATS
+  year: 2025
+  id: aistats25
+  link: https://aistats.org/aistats2025/index.html
+  deadline: '2024-10-10 23:59:59'
+  abstract_deadline: '2024-10-03 23:59:59'
+  timezone: UTC-12
+  place: Phuket, Thailand
+  date: May 03-05, 2025
+  start: 2025-05-03
+  end: 2025-05-05
+  hindex: 100
+  tags:
+  - machine-learning
+  note: Abstract deadline on October 3, 2024. More info <a href='https://aistats.org/aistats2025/call-for-papers.html'>here</a>
+
+- title: NAACL
+  year: 2025
+  id: naacl25
+  link: https://2025.naacl.org
+  deadline: '2024-10-15 23:59:59'
+  timezone: UTC-12
+  place: Albuquerque, New Mexico, USA
+  date: April 29 - May 4, 2024
+  start: 2025-04-29
+  end: 2025-05-04
+  hindex: 132
+  tags:
+  - natural-language-processing
+  note: All submissions must be done through ARR. More info <a href='https://2025.naacl.org/calls/papers/'>here</a>.
+
+- title: AAMAS
+  year: 2025
+  id: aamas25
+  link: https://aamas2025.org/
+  deadline: '2024-10-16 23:59:59'
+  abstract_deadline: '2024-10-09 23:59:59'
+  timezone: UTC-12
+  place: Detroit, Michigan, USA
+  date: May 19 - May 23, 2025
+  start: 2025-05-19
+  end: 2025-05-23
+  tags:
+  - machine-learning
+  - robotics
+  note: Mandatory abstract deadline on Oct 09, 2024. More info <a href='https://aamas2025.org/'>here</a>.
+
+- title: CVPR
+  year: 2025
+  id: cvpr25
+  link: https://cvpr.thecvf.com/Conferences/2025
+  deadline: '2024-11-15 06:59:59'
+  abstract_deadline: '2024-11-08 06:59:59'
+  timezone: GMT
+  place: Nashville, Tennessee, USA
+  date: June 10-17, 2025
+  start: 2025-06-10
+  end: 2025-06-17
+  hindex: 389
+  tags:
+  - computer-vision
+  note: Mandatory paper registration deadline on November 07, 2023. More info <a href='https://cvpr.thecvf.com/Conferences/2025'>here</a>.
+
+- title: ESANN
+  year: 2025
+  id: esann25
+  full_name: European Symposium on Artificial Neural Networks, Computational Intelligence
+    and Machine Learning
+  link: https://www.esann.org/
+  deadline: '2024-11-20 00:00:00'
+  timezone: UTC-8
+  place: Bruges, Belgium
+  date: April 23 - April 25, 2025
+  tags:
+  - machine-learning
+  abstract_deadline: '2024-11-20 00:00:00'
+  note: 'Rankings: CCF: N, CORE: B, THCPL: N'
+
+- title: CPAL
+  year: 2025
+  id: cpal25
+  full_name: The Conference on Parsimony and Learning
+  link: https://cpal.cc/
+  deadline: '2024-11-25 23:59:59'
+  timezone: AoE
+  place: California, USA
+  date: March 24-27, 2025
+  tags:
+  - machine-learning
+  note: 'Rankings: CCF: N, CORE: N, THCPL: N'
+
+- title: CEC
+  year: 2025
+  id: cec2025
+  full_name: IEEE Congress on Evolutionary Computation
+  link: https://www.cec2025.org/
+  deadline: '2025-01-15 23:59:59'
+  timezone: UTC-12
+  place: Hangzhou, China
+  date: June 8-12, 2025
+  tags:
+  - machine-learning
+  note: 'Rankings: CCF: N, CORE: B, THCPL: N'
+
+- title: IJCAI
+  year: 2025
+  id: ijcai25
+  full_name: International Joint Conference on Artificial Intelligence
+  link: https://2025.ijcai.org/
+  deadline: '2025-01-23 23:59:59'
+  timezone: UTC-12
+  place: Montreal, Canada.
+  date: August 16-22, 2025
+  tags:
+  - machine-learning
+  abstract_deadline: '2025-01-16 23:59:59'
+  note: 'Rankings: CCF: A, CORE: A*, THCPL: B'
+
+- title: RSS
+  year: 2025
+  id: rss25
+  full_name: Robotics Science and Systems
+  link: https://roboticsconference.org
+  deadline: '2025-01-24 23:59:00'
+  timezone: AoE
+  place: Los Angeles, California, USA
+  date: June 21-25, 2025
+  tags:
+  - machine-learning
+  abstract_deadline: '2025-01-17 23:59:00'
+  note: 'Rankings: CCF: N, CORE: A*, THCPL: A'
+
+- title: ICML
+  year: 2025
+  id: icml25
+  full_name: International Conference on Machine Learning
+  link: https://icml.cc/Conferences/2025
+  deadline: '2025-01-30 23:59:59'
+  timezone: UTC-12
+  place: Vancouver Convention Center, Vancouver, Canada
+  date: July 11-19, 2025
+  tags:
+  - machine-learning
+  abstract_deadline: '2025-01-23 23:59:59'
+  note: 'Rankings: CCF: A, CORE: A*, THCPL: A'
+
+- title: IJCNN
+  year: 2025
+  id: ijcnn2025
+  full_name: International Joint Conference on Neural Networks
+  link: https://2025.ijcnn.org/
+  deadline: '2025-02-05 23:59:59'
+  timezone: UTC-12
+  place: Rome, Italy
+  date: June 30 - July 5, 2025
+  tags:
+  - machine-learning
+  note: 'Rankings: CCF: C, CORE: B, THCPL: B'
+
+- title: COLT
+  year: 2025
+  id: colt25
+  full_name: Annual Conference on Learning Theory
+  link: https://learningtheory.org/colt2025/
+  deadline: '2025-02-06 16:59:59'
+  timezone: UTC-5
+  place: Lyon, France
+  date: June 30 - July 4, 2025
+  tags:
+  - machine-learning
+  note: 'Rankings: CCF: B, CORE: A*, THCPL: A'
+
+- title: UAI
+  year: 2025
+  id: uai25
+  full_name: Conference on Uncertainty in Artificial Intelligence
+  link: https://www.auai.org/uai2025/
+  deadline: '2025-02-10 23:59:59'
+  timezone: AoE
+  place: Rio de Janeiro, Brazil
+  date: July 21-25, 2025
+  tags:
+  - machine-learning
+  note: 'Rankings: CCF: B, CORE: A, THCPL: B'
+
+- title: ACL
+  year: 2025
+  id: acl25
+  full_name: Annual Meeting of the Association for Computational Linguistics
+  link: https://2025.aclweb.org/
+  deadline: '2025-02-15 23:59:59'
+  timezone: UTC-12
+  place: Vienna, Austria
+  date: July 27 - August 1, 2025
+  tags: AI
+  note: 'Rankings: CCF: A, CORE: A*, THCPL: A'
+
+- title: IROS
+  year: 2025
+  id: iros25
+  full_name: IEEE\RSJ International Conference on Intelligent Robots and Systems
+  link: http://www.iros25.org/
+  deadline: '2025-03-01 23:59:59'
+  timezone: UTC-8
+  place: Hangzhou, China
+  date: October 19-25, 2025
+  tags: AI
+  note: 'Rankings: CCF: C, CORE: A, THCPL: B'
+
+- title: KSEM
+  year: 2025
+  id: ksem25
+  full_name: International Conference on Knowledge Science, Engineering and Management
+  link: https://ksem2025.scimeeting.cn/
+  deadline: '2025-03-04 23:59:59'
+  timezone: UTC+0
+  place: Macao SAR, China
+  date: August 4-6, 2025
+  tags: AI
+  note: 'Rankings: CCF: C, CORE: C, THCPL: N'
+
+- title: ICDAR
+  year: 2025
+  id: icdar2025
+  full_name: International Conference on Document Analysis and Recognition
+  link: https://www.icdar2025.com/home
+  deadline: '2025-03-07 23:59:59'
+  timezone: UTC+0
+  place: Wuhan, China
+  date: September 17-21, 2025
+  tags: AI
+  abstract_deadline: '2025-02-28 23:59:59'
+  note: 'Rankings: CCF: C, CORE: A, THCPL: B'
+
+- title: ICCV
+  year: 2025
+  id: iccv25
+  full_name: IEEE International Conference on Computer Vision
+  link: https://iccv.thecvf.com/Conferences/2025
+  deadline: '2025-03-08 09:59:59'
+  timezone: UTC+0
+  place: Honolulu, Hawaii
+  date: October 19-25, 2025
+  tags:
+  - machine-learning
+  - computer-vision
+  note: 'Rankings: CCF: A, CORE: A*, THCPL: A'
+
+- title: ICANN
+  year: 2025
+  id: icann2025
+  full_name: International Conference on Artificial Neural Networks
+  link: https://e-nns.org/icann2025/
+  deadline: '2025-03-15 23:59:59'
+  timezone: AoE
+  place: Kaunas, Lithuania
+  date: Sept 9-12, 2025
+  tags:
+  - machine-learning
+  note: 'Rankings: CCF: C, CORE: C, THCPL: N'
+
+- title: COLM
+  year: 2025
+  id: colm25
+  full_name: Conference on Language Modeling
+  link: https://colmweb.org/cfp.html
+  deadline: '2025-03-27 23:59:59'
+  timezone: AoE
+  place: Palais des Congrès Montreal, Canada
+  date: October 7-9, 2025
+  tags:
+  - natural-language-processing
+  abstract_deadline: '2025-03-20 23:59:59'
+  note: 'Rankings: CCF: N, CORE: N, THCPL: N'
+
+- title: ECAI
+  year: 2025
+  id: ecai25
+  full_name: European Conference on Artificial Intelligence
+  link: https://ecai2025.org/deadlines/
+  deadline: '2025-05-06 23:59:59'
+  timezone: UTC-12
+  place: Bologna, ITALY
+  date: October 25-30, 2025
+  tags:
+  - machine-learning
+  abstract_deadline: '2025-04-29 23:59:59'
+  note: 'Rankings: CCF: B, CORE: A, THCPL: N'
+
+- title: EMNLP
+  year: 2025
+  id: emnlp25
+  full_name: The annual Conference on Empirical Methods in Natural Language Processing
+  link: https://2025.emnlp.org/
+  deadline: '2025-05-19 23:59:59'
+  timezone: UTC-12
+  place: Suzhou, China
+  date: November 5 - 9, 2025
+  tags:
+  - natural-language-processing
+  note: 'Rankings: CCF: B, CORE: A*, THCPL: A'
+
+- title: ICRA
+  year: 2026
+  id: icra26
+  full_name: IEEE International Conference on Robotics and Automation
+  link: https://www.ieee-ras.org/conferences-workshops/fully-sponsored/icra
+  deadline: TBD
+  timezone: UTC+1
+  place: Vienna, Austria
+  date: Jun 1-5, 2026
+  tags:
+  - machine-learning
+  - robotics
+  note: 'Rankings: CCF: B, CORE: A*, THCPL: A'
