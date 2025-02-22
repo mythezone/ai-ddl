@@ -123,18 +123,7 @@ END:VCALENDAR`;
       <DialogContent className="dialog-content max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
-            {conference.link ? (
-              <a 
-                href={conference.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:underline"
-              >
-                {conference.title}
-              </a>
-            ) : (
-              conference.title
-            )}
+            {conference.title}
           </DialogTitle>
           {conference.full_name && (
             <p className="text-sm text-neutral-600">{conference.full_name}</p>
@@ -192,7 +181,24 @@ END:VCALENDAR`;
             />
           )}
 
-          <div className="flex justify-end pt-2">
+          <div className="flex items-center justify-between pt-2">
+            {conference.link && (
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="text-sm text-primary hover:underline"
+                asChild
+              >
+                <a
+                  href={conference.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Visit website
+                </a>
+              </Button>
+            )}
+            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="sm" className="text-sm">
