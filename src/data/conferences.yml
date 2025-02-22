@@ -139,7 +139,6 @@
   date: February 24-27, 2025
   tags:
   - machine-learning
-  note: 'Rankings: CCF: C, CORE: B, THCPL: B'
 
 - title: ICLR
   year: 2025
@@ -278,7 +277,6 @@
   date: June 8-12, 2025
   tags:
   - machine-learning
-  note: 'Rankings: CCF: N, CORE: B, THCPL: N'
 
 - title: IJCAI
   year: 2025
@@ -292,7 +290,6 @@
   tags:
   - machine-learning
   abstract_deadline: '2025-01-16 23:59:59'
-  note: 'Rankings: CCF: A, CORE: A*, THCPL: B'
 
 - title: RSS
   year: 2025
@@ -306,7 +303,6 @@
   tags:
   - machine-learning
   abstract_deadline: '2025-01-17 23:59:00'
-  note: 'Rankings: CCF: N, CORE: A*, THCPL: A'
 
 - title: ICML
   year: 2025
@@ -320,7 +316,6 @@
   tags:
   - machine-learning
   abstract_deadline: '2025-01-23 23:59:59'
-  note: 'Rankings: CCF: A, CORE: A*, THCPL: A'
 
 - title: IJCNN
   year: 2025
@@ -333,7 +328,6 @@
   date: June 30 - July 5, 2025
   tags:
   - machine-learning
-  note: 'Rankings: CCF: C, CORE: B, THCPL: B'
 
 - title: COLT
   year: 2025
@@ -346,7 +340,6 @@
   date: June 30 - July 4, 2025
   tags:
   - machine-learning
-  note: 'Rankings: CCF: B, CORE: A*, THCPL: A'
 
 - title: UAI
   year: 2025
@@ -359,7 +352,6 @@
   date: July 21-25, 2025
   tags:
   - machine-learning
-  note: 'Rankings: CCF: B, CORE: A, THCPL: B'
 
 - title: ACL
   year: 2025
@@ -371,7 +363,6 @@
   place: Vienna, Austria
   date: July 27 - August 1, 2025
   tags: AI
-  note: 'Rankings: CCF: A, CORE: A*, THCPL: A'
 
 - title: IROS
   year: 2025
@@ -383,7 +374,6 @@
   place: Hangzhou, China
   date: October 19-25, 2025
   tags: AI
-  note: 'Rankings: CCF: C, CORE: A, THCPL: B'
 
 - title: KSEM
   year: 2025
@@ -395,7 +385,6 @@
   place: Macao SAR, China
   date: August 4-6, 2025
   tags: AI
-  note: 'Rankings: CCF: C, CORE: C, THCPL: N'
 
 - title: ICDAR
   year: 2025
@@ -408,7 +397,6 @@
   date: September 17-21, 2025
   tags: AI
   abstract_deadline: '2025-02-28 23:59:59'
-  note: 'Rankings: CCF: C, CORE: A, THCPL: B'
 
 - title: ICCV
   year: 2025
@@ -422,7 +410,6 @@
   tags:
   - machine-learning
   - computer-vision
-  note: 'Rankings: CCF: A, CORE: A*, THCPL: A'
 
 - title: ICANN
   year: 2025
@@ -435,7 +422,6 @@
   date: Sept 9-12, 2025
   tags:
   - machine-learning
-  note: 'Rankings: CCF: C, CORE: C, THCPL: N'
 
 - title: COLM
   year: 2025
@@ -449,7 +435,6 @@
   tags:
   - natural-language-processing
   abstract_deadline: '2025-03-20 23:59:59'
-  note: 'Rankings: CCF: N, CORE: N, THCPL: N'
 
 - title: ECAI
   year: 2025
@@ -463,7 +448,6 @@
   tags:
   - machine-learning
   abstract_deadline: '2025-04-29 23:59:59'
-  note: 'Rankings: CCF: B, CORE: A, THCPL: N'
 
 - title: EMNLP
   year: 2025
@@ -476,7 +460,6 @@
   date: November 5 - 9, 2025
   tags:
   - natural-language-processing
-  note: 'Rankings: CCF: B, CORE: A*, THCPL: A'
 
 - title: ICRA
   year: 2026
@@ -490,4 +473,3 @@
   tags:
   - machine-learning
   - robotics
-  note: 'Rankings: CCF: B, CORE: A*, THCPL: A'
