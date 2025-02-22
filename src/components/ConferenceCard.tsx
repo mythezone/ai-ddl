@@ -1,6 +1,7 @@
-import { CalendarDays, Globe, Tag, Clock } from "lucide-react";
+
+import { CalendarDays, Globe, Tag, Clock, AlarmClock } from "lucide-react";
 import { Conference } from "@/types/conference";
-import { formatDistanceToNow, parseISO } from "date-fns";
+import { formatDistanceToNow, parseISO, isValid } from "date-fns";
 
 const ConferenceCard = ({
   title,
@@ -15,8 +16,17 @@ const ConferenceCard = ({
   abstract_deadline,
 }: Conference) => {
   const deadlineDate = deadline && deadline !== 'TBD' ? parseISO(deadline) : null;
-  const daysLeft = deadlineDate ? formatDistanceToNow(deadlineDate, { addSuffix: true }) : 'TBD';
+  const daysLeft = deadlineDate && isValid(deadlineDate) ? formatDistanceToNow(deadlineDate, { addSuffix: true }) : 'TBD';
   
+  // Determine countdown color based on days remaining
+  const getCountdownColor = () => {
+    if (!deadlineDate || !isValid(deadlineDate)) return "text-neutral-600";
+    const daysRemaining = Math.ceil((deadlineDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24));
+    if (daysRemaining <= 7) return "text-red-600";
+    if (daysRemaining <= 30) return "text-orange-600";
+    return "text-green-600";
+  };
+
   return (
     <div className="conference-card">
       <div className="flex justify-between items-start mb-4">
@@ -55,6 +65,12 @@ const ConferenceCard = ({
               Abstract: {abstract_deadline}
             </span>
           )}
+        </div>
+        <div className="flex items-center">
+          <AlarmClock className={`h-4 w-4 mr-2 ${getCountdownColor()}`} />
+          <span className={`text-sm font-medium ${getCountdownColor()}`}>
+            {daysLeft}
+          </span>
         </div>
       </div>
 
