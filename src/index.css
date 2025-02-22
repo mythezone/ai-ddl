@@ -46,12 +46,14 @@
 
 @keyframes scale-up {
   from {
-    transform: scale(0.95);
+    transform: scale(0.8);
     opacity: 0;
+    filter: blur(8px);
   }
   to {
     transform: scale(1);
     opacity: 1;
+    filter: blur(0);
   }
 }
 
@@ -59,43 +61,50 @@
   from {
     transform: scale(1);
     opacity: 1;
+    filter: blur(0);
   }
   to {
-    transform: scale(0.95);
+    transform: scale(0.8);
     opacity: 0;
+    filter: blur(8px);
   }
 }
 
 .dialog-content {
-  animation: scale-up 0.3s ease-out;
+  animation: scale-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity, filter;
 }
 
 .dialog-overlay {
-  animation: fade-in 0.3s ease-out;
+  animation: fade-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-state="closed"] .dialog-content {
-  animation: scale-down 0.2s ease-out;
+  animation: scale-down 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-state="closed"] .dialog-overlay {
-  animation: fade-out 0.2s ease-out;
+  animation: fade-out 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes fade-in {
   from {
     opacity: 0;
+    backdrop-filter: blur(0px);
   }
   to {
     opacity: 1;
+    backdrop-filter: blur(4px);
   }
 }
 
 @keyframes fade-out {
   from {
     opacity: 1;
+    backdrop-filter: blur(4px);
   }
   to {
     opacity: 0;
+    backdrop-filter: blur(0px);
   }
 }
