@@ -186,7 +186,7 @@ END:VCALENDAR`;
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="text-sm text-primary hover:underline"
+                className="text-base text-primary hover:underline p-0"
                 asChild
               >
                 <a
