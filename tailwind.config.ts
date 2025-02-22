@@ -26,9 +26,9 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#0EA5E9", // Ocean Blue
-          light: "#BAE6FD", // Light Blue
-          dark: "#0369A1", // Dark Blue
+          DEFAULT: "#0284C7", // Darker Ocean Blue
+          light: "#7DD3FC", // Adjusted Light Blue
+          dark: "#075985", // Deeper Dark Blue
         },
         neutral: {
           DEFAULT: "#6B7280",
