@@ -6,6 +6,7 @@ import { Conference } from "@/types/conference";
 import { useState, useMemo, useEffect } from "react";
 import { Switch } from "@/components/ui/switch"
 import { parseISO, isValid, isPast } from "date-fns";
+import ConferenceCalendar from "@/components/ConferenceCalendar";
 
 const Index = () => {
   const [selectedTag, setSelectedTag] = useState("All");
@@ -78,6 +79,7 @@ const Index = () => {
             <ConferenceCard key={conference.id} {...conference} />
           ))}
         </div>
+        <ConferenceCalendar conferences={filteredConferences} />
       </main>
     </div>
   );
