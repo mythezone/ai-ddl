@@ -5,9 +5,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { CalendarDays, Globe, Tag, Clock, AlarmClock } from "lucide-react";
+import { CalendarDays, Globe, Tag, Clock, AlarmClock, CalendarPlus } from "lucide-react";
 import { Conference } from "@/types/conference";
-import { formatDistanceToNow, parseISO, isValid } from "date-fns";
+import { formatDistanceToNow, parseISO, isValid, format } from "date-fns";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ConferenceDialogProps {
   conference: Conference;
@@ -27,16 +34,87 @@ const ConferenceDialog = ({ conference, open, onOpenChange }: ConferenceDialogPr
     return "text-green-600";
   };
 
+  const createCalendarEvent = (type: 'google' | 'apple') => {
+    const startDate = conference.start 
+      ? parseISO(conference.start) 
+      : parseISO(conference.date.split('-')[0].trim());
+    const endDate = conference.end 
+      ? parseISO(conference.end) 
+      : parseISO(conference.date.split('-')[1]?.trim() || conference.date);
+
+    const formatDateForGoogle = (date: Date) => format(date, "yyyyMMdd'T'HHmmss'Z'");
+    const formatDateForApple = (date: Date) => format(date, "yyyyMMdd'T'HHmmss");
+
+    const title = encodeURIComponent(conference.title);
+    const location = encodeURIComponent(conference.place);
+    const description = encodeURIComponent(
+      `Conference: ${conference.full_name || conference.title}\n` +
+      `Location: ${conference.place}\n` +
+      `Deadline: ${conference.deadline}\n` +
+      (conference.abstract_deadline ? `Abstract Deadline: ${conference.abstract_deadline}\n` : '') +
+      (conference.link ? `Website: ${conference.link}` : '')
+    );
+
+    if (type === 'google') {
+      const url = `https://calendar.google.com/calendar/render?action=TEMPLATE` +
+        `&text=${title}` +
+        `&dates=${formatDateForGoogle(startDate)}/${formatDateForGoogle(endDate)}` +
+        `&details=${description}` +
+        `&location=${location}` +
+        `&sprop=website:${encodeURIComponent(conference.link || '')}`;
+      window.open(url, '_blank');
+    } else {
+      const url = `data:text/calendar;charset=utf8,BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+URL:${conference.link || ''}
+DTSTART:${formatDateForApple(startDate)}
+DTEND:${formatDateForApple(endDate)}
+SUMMARY:${title}
+DESCRIPTION:${description}
+LOCATION:${location}
+END:VEVENT
+END:VCALENDAR`;
+      
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${conference.title.toLowerCase().replace(/\s+/g, '-')}.ics`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="dialog-content max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">
-            {conference.title}
-          </DialogTitle>
-          {conference.full_name && (
-            <p className="text-sm text-neutral-600">{conference.full_name}</p>
-          )}
+          <div className="flex justify-between items-start">
+            <div>
+              <DialogTitle className="text-xl font-bold">
+                {conference.title}
+              </DialogTitle>
+              {conference.full_name && (
+                <p className="text-sm text-neutral-600">{conference.full_name}</p>
+              )}
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <CalendarPlus className="h-4 w-4 mr-2" />
+                  Add to Calendar
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => createCalendarEvent('google')}>
+                  Add to Google Calendar
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => createCalendarEvent('apple')}>
+                  Add to Apple Calendar
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </DialogHeader>
         
         <div className="space-y-4 py-4">
