@@ -2,7 +2,7 @@
 import { useState } from "react";
 import conferencesData from "@/data/conferences.yml";
 import { Conference } from "@/types/conference";
-import { Calendar as CalendarIcon, Tag } from "lucide-react";
+import { Calendar as CalendarIcon, Tag, CircleDot } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { parseISO, format, isValid } from "date-fns";
 
@@ -31,19 +31,27 @@ const CalendarPage = () => {
 
   // Get all unique dates (deadlines and conference dates)
   const getDatesWithEvents = () => {
-    const dates = new Set<string>();
+    const dates = {
+      conferences: new Set<string>(),
+      deadlines: new Set<string>()
+    };
+    
     conferencesData.forEach((conf: Conference) => {
       const deadlineDate = safeParseISO(conf.deadline);
       const startDate = safeParseISO(conf.start);
 
       if (deadlineDate) {
-        dates.add(format(deadlineDate, 'yyyy-MM-dd'));
+        dates.deadlines.add(format(deadlineDate, 'yyyy-MM-dd'));
       }
       if (startDate) {
-        dates.add(format(startDate, 'yyyy-MM-dd'));
+        dates.conferences.add(format(startDate, 'yyyy-MM-dd'));
       }
     });
-    return Array.from(dates).map(date => parseISO(date));
+
+    return {
+      conferences: Array.from(dates.conferences).map(date => parseISO(date)),
+      deadlines: Array.from(dates.deadlines).map(date => parseISO(date))
+    };
   };
 
   // Get conferences for selected date
@@ -61,67 +69,88 @@ const CalendarPage = () => {
   };
 
   const selectedDateConferences = selectedDate ? getConferencesForDate(selectedDate) : [];
+  const datesWithEvents = getDatesWithEvents();
 
   return (
     <div className="min-h-screen bg-neutral-light p-6">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8">Calendar Overview</h1>
-        <div className="grid md:grid-cols-2 gap-8">
-          <div>
+        <h1 className="text-3xl font-bold mb-8 text-center">Calendar Overview</h1>
+        
+        {/* Color Legend */}
+        <div className="flex justify-center gap-6 mb-6">
+          <div className="flex items-center gap-2">
+            <CircleDot className="h-4 w-4 text-purple-600" />
+            <span>Conference Dates</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <CircleDot className="h-4 w-4 text-red-500" />
+            <span>Submission Deadlines</span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-8">
+          <div className="mx-auto w-full max-w-3xl">
             <Calendar
               mode="single"
               selected={selectedDate}
               onSelect={setSelectedDate}
-              className="bg-white rounded-lg p-4 shadow-sm"
+              className="bg-white rounded-lg p-6 shadow-sm mx-auto w-full"
+              classNames={{
+                month: "w-full",
+                table: "w-full",
+                cell: "h-14 w-14 text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
+                day: "h-14 w-14 p-0 font-normal aria-selected:opacity-100 hover:bg-neutral-100 rounded-lg transition-colors",
+                day_today: "bg-neutral-100 text-primary font-semibold"
+              }}
               modifiers={{
-                event: getDatesWithEvents()
+                conference: datesWithEvents.conferences,
+                deadline: datesWithEvents.deadlines
               }}
               modifiersStyles={{
-                event: {
-                  fontWeight: 'bold',
-                  color: '#0284C7',
-                  textDecoration: 'underline'
+                conference: {
+                  color: '#7C3AED', // purple-600
+                  fontWeight: 'bold'
+                },
+                deadline: {
+                  color: '#EF4444', // red-500
+                  fontWeight: 'bold'
                 }
               }}
             />
           </div>
-          <div className="space-y-4">
-            {selectedDate && (
-              <>
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <CalendarIcon className="h-5 w-5" />
-                  Events on {format(selectedDate, 'MMMM d, yyyy')}
-                </h2>
-                {selectedDateConferences.length === 0 ? (
-                  <p className="text-neutral-600">No events on this date.</p>
-                ) : (
-                  <div className="space-y-4">
-                    {selectedDateConferences.map((conf: Conference) => (
-                      <div key={conf.id} className="bg-white p-4 rounded-lg shadow-sm">
-                        <h3 className="font-semibold text-lg">{conf.title}</h3>
-                        {conf.deadline && safeParseISO(conf.deadline) && 
-                          format(safeParseISO(conf.deadline)!, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && (
-                          <p className="text-red-600">Submission Deadline</p>
-                        )}
-                        {conf.start && safeParseISO(conf.start) && 
-                          format(safeParseISO(conf.start)!, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && (
-                          <p className="text-green-600">Conference Start Date</p>
-                        )}
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {conf.tags.map((tag) => (
-                            <span key={tag} className="tag text-sm">
-                              <Tag className="h-3 w-3 mr-1" />
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
+
+          {/* Selected Date Events */}
+          {selectedDate && selectedDateConferences.length > 0 && (
+            <div className="mx-auto w-full max-w-3xl space-y-4">
+              <h2 className="text-xl font-semibold flex items-center gap-2">
+                <CalendarIcon className="h-5 w-5" />
+                Events on {format(selectedDate, 'MMMM d, yyyy')}
+              </h2>
+              <div className="space-y-4">
+                {selectedDateConferences.map((conf: Conference) => (
+                  <div key={conf.id} className="bg-white p-4 rounded-lg shadow-sm">
+                    <h3 className="font-semibold text-lg">{conf.title}</h3>
+                    {conf.deadline && safeParseISO(conf.deadline) && 
+                      format(safeParseISO(conf.deadline)!, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && (
+                      <p className="text-red-500">Submission Deadline</p>
+                    )}
+                    {conf.start && safeParseISO(conf.start) && 
+                      format(safeParseISO(conf.start)!, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && (
+                      <p className="text-purple-600">Conference Start Date</p>
+                    )}
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {conf.tags.map((tag) => (
+                        <span key={tag} className="tag text-sm">
+                          <Tag className="h-3 w-3 mr-1" />
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                )}
-              </>
-            )}
-          </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
