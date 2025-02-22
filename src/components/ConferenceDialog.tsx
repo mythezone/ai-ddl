@@ -206,10 +206,16 @@ END:VCALENDAR`;
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="bg-white" align="end">
-                <DropdownMenuItem className="text-neutral-800 hover:bg-neutral-100">
+                <DropdownMenuItem 
+                  className="text-neutral-800 hover:bg-neutral-100"
+                  onClick={() => createCalendarEvent('google')}
+                >
                   Add to Google Calendar
                 </DropdownMenuItem>
-                <DropdownMenuItem className="text-neutral-800 hover:bg-neutral-100">
+                <DropdownMenuItem 
+                  className="text-neutral-800 hover:bg-neutral-100"
+                  onClick={() => createCalendarEvent('apple')}
+                >
                   Add to Apple Calendar
                 </DropdownMenuItem>
               </DropdownMenuContent>
