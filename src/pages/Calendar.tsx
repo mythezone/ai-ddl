@@ -9,15 +9,30 @@ import { parseISO, format, isValid } from "date-fns";
 const CalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   
+  // Helper function to safely parse dates
+  const safeParseISO = (dateString: string | undefined): Date | null => {
+    if (!dateString || dateString === 'TBD') return null;
+    
+    // Try to parse the date, handling different formats
+    const normalizedDate = dateString.replace(/(\d{4})-(\d{1})-(\d{1,2})/, '$1-0$2-$3')
+                                   .replace(/(\d{4})-(\d{2})-(\d{1})/, '$1-$2-0$3');
+    
+    const parsedDate = parseISO(normalizedDate);
+    return isValid(parsedDate) ? parsedDate : null;
+  };
+
   // Get all unique dates (deadlines and conference dates)
   const getDatesWithEvents = () => {
     const dates = new Set<string>();
     conferencesData.forEach((conf: Conference) => {
-      if (conf.deadline && conf.deadline !== 'TBD' && isValid(parseISO(conf.deadline))) {
-        dates.add(format(parseISO(conf.deadline), 'yyyy-MM-dd'));
+      const deadlineDate = safeParseISO(conf.deadline);
+      const startDate = safeParseISO(conf.start);
+
+      if (deadlineDate) {
+        dates.add(format(deadlineDate, 'yyyy-MM-dd'));
       }
-      if (conf.start && isValid(parseISO(conf.start))) {
-        dates.add(format(parseISO(conf.start), 'yyyy-MM-dd'));
+      if (startDate) {
+        dates.add(format(startDate, 'yyyy-MM-dd'));
       }
     });
     return Array.from(dates).map(date => parseISO(date));
@@ -27,9 +42,13 @@ const CalendarPage = () => {
   const getConferencesForDate = (date: Date) => {
     const formattedDate = format(date, 'yyyy-MM-dd');
     return conferencesData.filter((conf: Conference) => {
-      const deadlineDate = conf.deadline && conf.deadline !== 'TBD' ? format(parseISO(conf.deadline), 'yyyy-MM-dd') : null;
-      const startDate = conf.start ? format(parseISO(conf.start), 'yyyy-MM-dd') : null;
-      return deadlineDate === formattedDate || startDate === formattedDate;
+      const deadlineDate = safeParseISO(conf.deadline);
+      const startDate = safeParseISO(conf.start);
+
+      const deadlineDateStr = deadlineDate ? format(deadlineDate, 'yyyy-MM-dd') : null;
+      const startDateStr = startDate ? format(startDate, 'yyyy-MM-dd') : null;
+
+      return deadlineDateStr === formattedDate || startDateStr === formattedDate;
     });
   };
 
@@ -72,10 +91,12 @@ const CalendarPage = () => {
                     {selectedDateConferences.map((conf: Conference) => (
                       <div key={conf.id} className="bg-white p-4 rounded-lg shadow-sm">
                         <h3 className="font-semibold text-lg">{conf.title}</h3>
-                        {conf.deadline && format(parseISO(conf.deadline), 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && (
+                        {conf.deadline && safeParseISO(conf.deadline) && 
+                          format(safeParseISO(conf.deadline)!, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && (
                           <p className="text-red-600">Submission Deadline</p>
                         )}
-                        {conf.start && format(parseISO(conf.start), 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && (
+                        {conf.start && safeParseISO(conf.start) && 
+                          format(safeParseISO(conf.start)!, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && (
                           <p className="text-green-600">Conference Start Date</p>
                         )}
                         <div className="mt-2 flex flex-wrap gap-2">
