@@ -10,15 +10,23 @@ const CalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   
   // Helper function to safely parse dates
-  const safeParseISO = (dateString: string | undefined): Date | null => {
+  const safeParseISO = (dateString: string | undefined | number): Date | null => {
     if (!dateString || dateString === 'TBD') return null;
     
-    // Try to parse the date, handling different formats
-    const normalizedDate = dateString.replace(/(\d{4})-(\d{1})-(\d{1,2})/, '$1-0$2-$3')
-                                   .replace(/(\d{4})-(\d{2})-(\d{1})/, '$1-$2-0$3');
+    // Convert to string if it's a number
+    const dateStr = typeof dateString === 'number' ? dateString.toString() : dateString;
     
-    const parsedDate = parseISO(normalizedDate);
-    return isValid(parsedDate) ? parsedDate : null;
+    try {
+      // Try to parse the date, handling different formats
+      const normalizedDate = dateStr.replace(/(\d{4})-(\d{1})-(\d{1,2})/, '$1-0$2-$3')
+                                  .replace(/(\d{4})-(\d{2})-(\d{1})/, '$1-$2-0$3');
+      
+      const parsedDate = parseISO(normalizedDate);
+      return isValid(parsedDate) ? parsedDate : null;
+    } catch (error) {
+      console.error("Error parsing date:", dateString);
+      return null;
+    }
   };
 
   // Get all unique dates (deadlines and conference dates)
