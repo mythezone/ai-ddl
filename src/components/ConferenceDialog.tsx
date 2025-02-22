@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/dialog";
 import { CalendarDays, Globe, Tag, Clock, AlarmClock, CalendarPlus } from "lucide-react";
 import { Conference } from "@/types/conference";
-import { formatDistanceToNow, parseISO, isValid, format } from "date-fns";
+import { formatDistanceToNow, parseISO, isValid, format, parse } from "date-fns";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -34,37 +34,67 @@ const ConferenceDialog = ({ conference, open, onOpenChange }: ConferenceDialogPr
     return "text-green-600";
   };
 
+  const parseDateFromString = (dateStr: string) => {
+    try {
+      // Handle formats like "October 19-25, 2025" or "Sept 9-12, 2025"
+      const [monthDay, year] = dateStr.split(", ");
+      const [month, dayRange] = monthDay.split(" ");
+      const [startDay] = dayRange.split("-");
+      
+      // Construct a date string in a format that can be parsed
+      const dateString = `${month} ${startDay} ${year}`;
+      const date = parse(dateString, 'MMMM d yyyy', new Date());
+      
+      if (!isValid(date)) {
+        // Try alternative format for abbreviated months
+        return parse(dateString, 'MMM d yyyy', new Date());
+      }
+      
+      return date;
+    } catch (error) {
+      console.error("Error parsing date:", error);
+      return new Date();
+    }
+  };
+
   const createCalendarEvent = (type: 'google' | 'apple') => {
-    const startDate = conference.start 
-      ? parseISO(conference.start) 
-      : parseISO(conference.date.split('-')[0].trim());
-    const endDate = conference.end 
-      ? parseISO(conference.end) 
-      : parseISO(conference.date.split('-')[1]?.trim() || conference.date);
+    try {
+      let startDate = new Date();
+      let endDate = new Date();
 
-    const formatDateForGoogle = (date: Date) => format(date, "yyyyMMdd'T'HHmmss'Z'");
-    const formatDateForApple = (date: Date) => format(date, "yyyyMMdd'T'HHmmss");
+      if (conference.start && conference.end) {
+        startDate = parseISO(conference.start);
+        endDate = parseISO(conference.end);
+      } else {
+        startDate = parseDateFromString(conference.date);
+        // Set end date to the same day for single-day conferences or when end date is not clear
+        endDate = new Date(startDate);
+        endDate.setDate(endDate.getDate() + 1); // Add one day for end date
+      }
 
-    const title = encodeURIComponent(conference.title);
-    const location = encodeURIComponent(conference.place);
-    const description = encodeURIComponent(
-      `Conference: ${conference.full_name || conference.title}\n` +
-      `Location: ${conference.place}\n` +
-      `Deadline: ${conference.deadline}\n` +
-      (conference.abstract_deadline ? `Abstract Deadline: ${conference.abstract_deadline}\n` : '') +
-      (conference.link ? `Website: ${conference.link}` : '')
-    );
+      const formatDateForGoogle = (date: Date) => format(date, "yyyyMMdd");
+      const formatDateForApple = (date: Date) => format(date, "yyyyMMdd'T'HHmmss");
 
-    if (type === 'google') {
-      const url = `https://calendar.google.com/calendar/render?action=TEMPLATE` +
-        `&text=${title}` +
-        `&dates=${formatDateForGoogle(startDate)}/${formatDateForGoogle(endDate)}` +
-        `&details=${description}` +
-        `&location=${location}` +
-        `&sprop=website:${encodeURIComponent(conference.link || '')}`;
-      window.open(url, '_blank');
-    } else {
-      const url = `data:text/calendar;charset=utf8,BEGIN:VCALENDAR
+      const title = encodeURIComponent(conference.title);
+      const location = encodeURIComponent(conference.place);
+      const description = encodeURIComponent(
+        `Conference: ${conference.full_name || conference.title}\n` +
+        `Location: ${conference.place}\n` +
+        `Deadline: ${conference.deadline}\n` +
+        (conference.abstract_deadline ? `Abstract Deadline: ${conference.abstract_deadline}\n` : '') +
+        (conference.link ? `Website: ${conference.link}` : '')
+      );
+
+      if (type === 'google') {
+        const url = `https://calendar.google.com/calendar/render?action=TEMPLATE` +
+          `&text=${title}` +
+          `&dates=${formatDateForGoogle(startDate)}/${formatDateForGoogle(endDate)}` +
+          `&details=${description}` +
+          `&location=${location}` +
+          `&sprop=website:${encodeURIComponent(conference.link || '')}`;
+        window.open(url, '_blank');
+      } else {
+        const url = `data:text/calendar;charset=utf8,BEGIN:VCALENDAR
 VERSION:2.0
 BEGIN:VEVENT
 URL:${conference.link || ''}
@@ -75,13 +105,16 @@ DESCRIPTION:${description}
 LOCATION:${location}
 END:VEVENT
 END:VCALENDAR`;
-      
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${conference.title.toLowerCase().replace(/\s+/g, '-')}.ics`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${conference.title.toLowerCase().replace(/\s+/g, '-')}.ics`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    } catch (error) {
+      console.error("Error creating calendar event:", error);
     }
   };
 
