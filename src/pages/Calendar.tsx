@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import conferencesData from "@/data/conferences.yml";
 import { Conference } from "@/types/conference";
@@ -8,6 +9,7 @@ import { parseISO, format, isValid, isSameMonth } from "date-fns";
 const CalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   
+  // Helper function to safely parse dates
   const safeParseISO = (dateString: string | undefined | number): Date | null => {
     if (!dateString || dateString === 'TBD') return null;
     
@@ -25,19 +27,37 @@ const CalendarPage = () => {
     }
   };
 
+  // Get all events (conferences and deadlines) for a given month
   const getMonthEvents = (date: Date) => {
     return conferencesData.filter((conf: Conference) => {
       const deadlineDate = safeParseISO(conf.deadline);
       const startDate = safeParseISO(conf.start);
       const endDate = safeParseISO(conf.end);
 
-      return (deadlineDate && isSameMonth(deadlineDate, date)) ||
-             (startDate && (endDate ? 
-               (isSameMonth(startDate, date) || isSameMonth(endDate, date)) : 
-               isSameMonth(startDate, date)));
+      // Check if deadline is in the selected month
+      const deadlineInMonth = deadlineDate && isSameMonth(deadlineDate, date);
+      
+      // Check if any part of the conference falls in the selected month
+      let conferenceInMonth = false;
+      if (startDate && endDate) {
+        // For multi-day conferences, check if any day falls in the selected month
+        let currentDate = new Date(startDate);
+        while (currentDate <= endDate) {
+          if (isSameMonth(currentDate, date)) {
+            conferenceInMonth = true;
+            break;
+          }
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+      } else if (startDate) {
+        conferenceInMonth = isSameMonth(startDate, date);
+      }
+
+      return deadlineInMonth || conferenceInMonth;
     });
   };
 
+  // Get all unique dates (deadlines and conference dates)
   const getDatesWithEvents = () => {
     const dates = {
       conferences: new Set<string>(),
@@ -54,10 +74,10 @@ const CalendarPage = () => {
       }
       
       if (startDate && endDate) {
-        let currentDate = startDate;
+        let currentDate = new Date(startDate);
         while (currentDate <= endDate) {
           dates.conferences.add(format(currentDate, 'yyyy-MM-dd'));
-          currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
+          currentDate.setDate(currentDate.getDate() + 1);
         }
       } else if (startDate) {
         dates.conferences.add(format(startDate, 'yyyy-MM-dd'));
@@ -68,27 +88,6 @@ const CalendarPage = () => {
       conferences: Array.from(dates.conferences).map(date => parseISO(date)),
       deadlines: Array.from(dates.deadlines).map(date => parseISO(date))
     };
-  };
-
-  const getConferencesForDate = (date: Date) => {
-    const formattedDate = format(date, 'yyyy-MM-dd');
-    return conferencesData.filter((conf: Conference) => {
-      const deadlineDate = safeParseISO(conf.deadline);
-      const startDate = safeParseISO(conf.start);
-      const endDate = safeParseISO(conf.end);
-
-      const deadlineDateStr = deadlineDate ? format(deadlineDate, 'yyyy-MM-dd') : null;
-      const isDeadlineMatch = deadlineDateStr === formattedDate;
-      
-      let isConferenceDate = false;
-      if (startDate && endDate) {
-        isConferenceDate = date >= startDate && date <= endDate;
-      } else if (startDate) {
-        isConferenceDate = format(startDate, 'yyyy-MM-dd') === formattedDate;
-      }
-
-      return isDeadlineMatch || isConferenceDate;
-    });
   };
 
   const monthEvents = selectedDate ? getMonthEvents(selectedDate) : [];
@@ -122,7 +121,10 @@ const CalendarPage = () => {
                 month: "space-y-4 w-full",
                 caption: "flex justify-center pt-1 relative items-center mb-4",
                 caption_label: "text-lg font-semibold",
-                table: "w-full border-collapse",
+                table: "w-full border-collapse space-y-1",
+                head_row: "flex",
+                head_cell: "text-muted-foreground rounded-md w-14 font-normal text-[0.8rem]",
+                row: "flex w-full mt-2",
                 cell: "h-14 w-14 text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
                 day: "h-14 w-14 p-0 font-normal aria-selected:opacity-100 hover:bg-neutral-100 rounded-lg transition-colors",
                 day_today: "bg-neutral-100 text-primary font-semibold",
