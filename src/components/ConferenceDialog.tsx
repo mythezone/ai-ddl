@@ -29,7 +29,7 @@ const ConferenceDialog = ({ conference, open, onOpenChange }: ConferenceDialogPr
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="dialog-content max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
             {conference.title}
