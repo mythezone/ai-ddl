@@ -31,19 +31,20 @@ const ConferenceCard = ({
     <div className="conference-card">
       <div className="flex justify-between items-start mb-4">
         <div>
-          <h3 className="text-xl font-semibold">{title}</h3>
+          {link ? (
+            <a 
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer" 
+              className="hover:underline"
+            >
+              <h3 className="text-xl font-semibold text-primary">{title}</h3>
+            </a>
+          ) : (
+            <h3 className="text-xl font-semibold">{title}</h3>
+          )}
           {full_name && <p className="text-sm text-neutral-600">{full_name}</p>}
         </div>
-        {link && (
-          <a 
-            href={link}
-            target="_blank"
-            rel="noopener noreferrer" 
-            className="text-primary hover:underline text-sm"
-          >
-            Website →
-          </a>
-        )}
       </div>
       
       <div className="space-y-2 mb-4">
