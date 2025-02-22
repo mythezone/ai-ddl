@@ -1,3 +1,4 @@
+
 import {
   Dialog,
   DialogContent,
@@ -122,7 +123,18 @@ END:VCALENDAR`;
       <DialogContent className="dialog-content max-w-md">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold">
-            {conference.title}
+            {conference.link ? (
+              <a 
+                href={conference.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline"
+              >
+                {conference.title}
+              </a>
+            ) : (
+              conference.title
+            )}
           </DialogTitle>
           {conference.full_name && (
             <p className="text-sm text-neutral-600">{conference.full_name}</p>
@@ -180,23 +192,12 @@ END:VCALENDAR`;
             />
           )}
 
-          <div className="flex items-center justify-between pt-2">
-            {conference.link && (
-              <a
-                href={conference.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
-              >
-                Visit Conference Website →
-              </a>
-            )}
-            
+          <div className="flex justify-end pt-2">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon">
-                  <CalendarPlus className="h-4 w-4" />
-                  <span className="sr-only">Add to Calendar</span>
+                <Button variant="ghost" size="sm" className="text-sm">
+                  <CalendarPlus className="h-4 w-4 mr-2" />
+                  Add to Calendar
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
