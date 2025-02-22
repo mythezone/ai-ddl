@@ -26,14 +26,14 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#9b87f5",
-          light: "#d6bcfa",
-          dark: "#7e69ab",
+          DEFAULT: "#FF8C00", // Hugging Face orange
+          light: "#FFB266",
+          dark: "#CC7000",
         },
         neutral: {
-          DEFAULT: "#8E9196",
-          light: "#F1F0FB",
-          dark: "#403E43",
+          DEFAULT: "#6B7280",
+          light: "#F9FAFB",
+          dark: "#111827",
         },
       },
       keyframes: {

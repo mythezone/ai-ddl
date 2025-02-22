@@ -1,15 +1,15 @@
 
 const filters = [
-  "All",
-  "ML",
-  "CV",
-  "NLP",
-  "RO",
-  "SP",
-  "DM",
-  "AP",
-  "KR",
-  "HCI",
+  { id: "All", label: "All", description: "All Conferences" },
+  { id: "ML", label: "Machine Learning", description: "Machine Learning" },
+  { id: "CV", label: "Computer Vision", description: "Computer Vision" },
+  { id: "NLP", label: "Natural Language", description: "Natural Language Processing" },
+  { id: "RO", label: "Robotics", description: "Robotics & Automation" },
+  { id: "SP", label: "Signal Processing", description: "Signal Processing" },
+  { id: "DM", label: "Data Mining", description: "Data Mining & Analytics" },
+  { id: "AP", label: "Applied AI", description: "Applied AI & Applications" },
+  { id: "KR", label: "Knowledge Repr.", description: "Knowledge Representation" },
+  { id: "HCI", label: "Human-AI", description: "Human-Computer Interaction" },
 ];
 
 const FilterBar = () => {
@@ -19,10 +19,11 @@ const FilterBar = () => {
         <div className="flex space-x-4">
           {filters.map((filter) => (
             <button
-              key={filter}
+              key={filter.id}
+              title={filter.description}
               className="px-4 py-2 text-sm font-medium rounded-lg hover:bg-primary/10 hover:text-primary transition-colors"
             >
-              {filter}
+              {filter.label}
             </button>
           ))}
         </div>
