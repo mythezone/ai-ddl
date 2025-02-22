@@ -4,7 +4,7 @@ import conferencesData from "@/data/conferences.yml";
 import { Conference } from "@/types/conference";
 import { Calendar as CalendarIcon, Tag, CircleDot } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { parseISO, format, isValid } from "date-fns";
+import { parseISO, format, isValid, startOfMonth, endOfMonth, isSameMonth } from "date-fns";
 
 const CalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
@@ -29,6 +29,17 @@ const CalendarPage = () => {
     }
   };
 
+  // Get all events (conferences and deadlines) for a given month
+  const getMonthEvents = (date: Date) => {
+    return conferencesData.filter((conf: Conference) => {
+      const deadlineDate = safeParseISO(conf.deadline);
+      const startDate = safeParseISO(conf.start);
+
+      return (deadlineDate && isSameMonth(deadlineDate, date)) ||
+             (startDate && isSameMonth(startDate, date));
+    });
+  };
+
   // Get all unique dates (deadlines and conference dates)
   const getDatesWithEvents = () => {
     const dates = {
@@ -39,11 +50,21 @@ const CalendarPage = () => {
     conferencesData.forEach((conf: Conference) => {
       const deadlineDate = safeParseISO(conf.deadline);
       const startDate = safeParseISO(conf.start);
+      const endDate = safeParseISO(conf.end);
 
       if (deadlineDate) {
         dates.deadlines.add(format(deadlineDate, 'yyyy-MM-dd'));
       }
-      if (startDate) {
+      
+      // If conference has both start and end dates, add all dates in between
+      if (startDate && endDate) {
+        let currentDate = startDate;
+        while (currentDate <= endDate) {
+          dates.conferences.add(format(currentDate, 'yyyy-MM-dd'));
+          currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
+        }
+      } else if (startDate) {
+        // If only start date is available, add just that date
         dates.conferences.add(format(startDate, 'yyyy-MM-dd'));
       }
     });
@@ -60,15 +81,24 @@ const CalendarPage = () => {
     return conferencesData.filter((conf: Conference) => {
       const deadlineDate = safeParseISO(conf.deadline);
       const startDate = safeParseISO(conf.start);
+      const endDate = safeParseISO(conf.end);
 
       const deadlineDateStr = deadlineDate ? format(deadlineDate, 'yyyy-MM-dd') : null;
-      const startDateStr = startDate ? format(startDate, 'yyyy-MM-dd') : null;
+      const isDeadlineMatch = deadlineDateStr === formattedDate;
+      
+      // Check if the date falls within the conference duration
+      let isConferenceDate = false;
+      if (startDate && endDate) {
+        isConferenceDate = date >= startDate && date <= endDate;
+      } else if (startDate) {
+        isConferenceDate = format(startDate, 'yyyy-MM-dd') === formattedDate;
+      }
 
-      return deadlineDateStr === formattedDate || startDateStr === formattedDate;
+      return isDeadlineMatch || isConferenceDate;
     });
   };
 
-  const selectedDateConferences = selectedDate ? getConferencesForDate(selectedDate) : [];
+  const monthEvents = selectedDate ? getMonthEvents(selectedDate) : [];
   const datesWithEvents = getDatesWithEvents();
 
   return (
@@ -108,10 +138,12 @@ const CalendarPage = () => {
               }}
               modifiersStyles={{
                 conference: {
+                  backgroundColor: '#DDD6FE', // purple-200
                   color: '#7C3AED', // purple-600
                   fontWeight: 'bold'
                 },
                 deadline: {
+                  backgroundColor: '#FEE2E2', // red-100
                   color: '#EF4444', // red-500
                   fontWeight: 'bold'
                 }
@@ -119,36 +151,45 @@ const CalendarPage = () => {
             />
           </div>
 
-          {/* Selected Date Events */}
-          {selectedDate && selectedDateConferences.length > 0 && (
+          {/* Month Events */}
+          {selectedDate && (
             <div className="mx-auto w-full max-w-3xl space-y-4">
               <h2 className="text-xl font-semibold flex items-center gap-2">
                 <CalendarIcon className="h-5 w-5" />
-                Events on {format(selectedDate, 'MMMM d, yyyy')}
+                Events in {format(selectedDate, 'MMMM yyyy')}
               </h2>
-              <div className="space-y-4">
-                {selectedDateConferences.map((conf: Conference) => (
-                  <div key={conf.id} className="bg-white p-4 rounded-lg shadow-sm">
-                    <h3 className="font-semibold text-lg">{conf.title}</h3>
-                    {conf.deadline && safeParseISO(conf.deadline) && 
-                      format(safeParseISO(conf.deadline)!, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && (
-                      <p className="text-red-500">Submission Deadline</p>
-                    )}
-                    {conf.start && safeParseISO(conf.start) && 
-                      format(safeParseISO(conf.start)!, 'yyyy-MM-dd') === format(selectedDate, 'yyyy-MM-dd') && (
-                      <p className="text-purple-600">Conference Start Date</p>
-                    )}
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {conf.tags.map((tag) => (
-                        <span key={tag} className="tag text-sm">
-                          <Tag className="h-3 w-3 mr-1" />
-                          {tag}
-                        </span>
-                      ))}
+              {monthEvents.length === 0 ? (
+                <p className="text-neutral-600">No events this month.</p>
+              ) : (
+                <div className="space-y-4">
+                  {monthEvents.map((conf: Conference) => (
+                    <div key={conf.id} className="bg-white p-4 rounded-lg shadow-sm">
+                      <h3 className="font-semibold text-lg">{conf.title}</h3>
+                      <div className="space-y-1">
+                        {conf.deadline && safeParseISO(conf.deadline) && isSameMonth(safeParseISO(conf.deadline)!, selectedDate) && (
+                          <p className="text-red-500">
+                            Submission Deadline: {format(safeParseISO(conf.deadline)!, 'MMMM d, yyyy')}
+                          </p>
+                        )}
+                        {conf.start && (
+                          <p className="text-purple-600">
+                            Conference Date: {format(safeParseISO(conf.start)!, 'MMMM d')}
+                            {conf.end ? ` - ${format(safeParseISO(conf.end)!, 'MMMM d, yyyy')}` : `, ${format(safeParseISO(conf.start)!, 'yyyy')}`}
+                          </p>
+                        )}
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {conf.tags.map((tag) => (
+                          <span key={tag} className="tag text-sm">
+                            <Tag className="h-3 w-3 mr-1" />
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
         </div>
