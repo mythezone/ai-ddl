@@ -1,4 +1,3 @@
-
 import {
   Dialog,
   DialogContent,
@@ -122,32 +121,12 @@ END:VCALENDAR`;
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="dialog-content max-w-md">
         <DialogHeader>
-          <div className="flex justify-between items-start">
-            <div>
-              <DialogTitle className="text-xl font-bold">
-                {conference.title}
-              </DialogTitle>
-              {conference.full_name && (
-                <p className="text-sm text-neutral-600">{conference.full_name}</p>
-              )}
-            </div>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" size="sm">
-                  <CalendarPlus className="h-4 w-4 mr-2" />
-                  Add to Calendar
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => createCalendarEvent('google')}>
-                  Add to Google Calendar
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => createCalendarEvent('apple')}>
-                  Add to Apple Calendar
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          <DialogTitle className="text-xl font-bold">
+            {conference.title}
+          </DialogTitle>
+          {conference.full_name && (
+            <p className="text-sm text-neutral-600">{conference.full_name}</p>
+          )}
         </DialogHeader>
         
         <div className="space-y-4 py-4">
@@ -201,8 +180,8 @@ END:VCALENDAR`;
             />
           )}
 
-          {conference.link && (
-            <div className="pt-2">
+          <div className="flex items-center justify-between pt-2">
+            {conference.link && (
               <a
                 href={conference.link}
                 target="_blank"
@@ -211,8 +190,25 @@ END:VCALENDAR`;
               >
                 Visit Conference Website →
               </a>
-            </div>
-          )}
+            )}
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon">
+                  <CalendarPlus className="h-4 w-4" />
+                  <span className="sr-only">Add to Calendar</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => createCalendarEvent('google')}>
+                  Add to Google Calendar
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => createCalendarEvent('apple')}>
+                  Add to Apple Calendar
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
