@@ -1,23 +1,19 @@
-
 import { useState } from "react";
 import conferencesData from "@/data/conferences.yml";
 import { Conference } from "@/types/conference";
 import { Calendar as CalendarIcon, Tag, CircleDot } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { parseISO, format, isValid, startOfMonth, endOfMonth, isSameMonth } from "date-fns";
+import { parseISO, format, isValid, isSameMonth } from "date-fns";
 
 const CalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   
-  // Helper function to safely parse dates
   const safeParseISO = (dateString: string | undefined | number): Date | null => {
     if (!dateString || dateString === 'TBD') return null;
     
-    // Convert to string if it's a number
     const dateStr = typeof dateString === 'number' ? dateString.toString() : dateString;
     
     try {
-      // Try to parse the date, handling different formats
       const normalizedDate = dateStr.replace(/(\d{4})-(\d{1})-(\d{1,2})/, '$1-0$2-$3')
                                   .replace(/(\d{4})-(\d{2})-(\d{1})/, '$1-$2-0$3');
       
@@ -29,18 +25,19 @@ const CalendarPage = () => {
     }
   };
 
-  // Get all events (conferences and deadlines) for a given month
   const getMonthEvents = (date: Date) => {
     return conferencesData.filter((conf: Conference) => {
       const deadlineDate = safeParseISO(conf.deadline);
       const startDate = safeParseISO(conf.start);
+      const endDate = safeParseISO(conf.end);
 
       return (deadlineDate && isSameMonth(deadlineDate, date)) ||
-             (startDate && isSameMonth(startDate, date));
+             (startDate && (endDate ? 
+               (isSameMonth(startDate, date) || isSameMonth(endDate, date)) : 
+               isSameMonth(startDate, date)));
     });
   };
 
-  // Get all unique dates (deadlines and conference dates)
   const getDatesWithEvents = () => {
     const dates = {
       conferences: new Set<string>(),
@@ -56,7 +53,6 @@ const CalendarPage = () => {
         dates.deadlines.add(format(deadlineDate, 'yyyy-MM-dd'));
       }
       
-      // If conference has both start and end dates, add all dates in between
       if (startDate && endDate) {
         let currentDate = startDate;
         while (currentDate <= endDate) {
@@ -64,7 +60,6 @@ const CalendarPage = () => {
           currentDate = new Date(currentDate.setDate(currentDate.getDate() + 1));
         }
       } else if (startDate) {
-        // If only start date is available, add just that date
         dates.conferences.add(format(startDate, 'yyyy-MM-dd'));
       }
     });
@@ -75,7 +70,6 @@ const CalendarPage = () => {
     };
   };
 
-  // Get conferences for selected date
   const getConferencesForDate = (date: Date) => {
     const formattedDate = format(date, 'yyyy-MM-dd');
     return conferencesData.filter((conf: Conference) => {
@@ -86,7 +80,6 @@ const CalendarPage = () => {
       const deadlineDateStr = deadlineDate ? format(deadlineDate, 'yyyy-MM-dd') : null;
       const isDeadlineMatch = deadlineDateStr === formattedDate;
       
-      // Check if the date falls within the conference duration
       let isConferenceDate = false;
       if (startDate && endDate) {
         isConferenceDate = date >= startDate && date <= endDate;
@@ -106,7 +99,6 @@ const CalendarPage = () => {
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold mb-8 text-center">Calendar Overview</h1>
         
-        {/* Color Legend */}
         <div className="flex justify-center gap-6 mb-6">
           <div className="flex items-center gap-2">
             <CircleDot className="h-4 w-4 text-purple-600" />
@@ -126,11 +118,18 @@ const CalendarPage = () => {
               onSelect={setSelectedDate}
               className="bg-white rounded-lg p-6 shadow-sm mx-auto w-full"
               classNames={{
-                month: "w-full",
-                table: "w-full",
+                months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+                month: "space-y-4 w-full",
+                caption: "flex justify-center pt-1 relative items-center mb-4",
+                caption_label: "text-lg font-semibold",
+                table: "w-full border-collapse",
                 cell: "h-14 w-14 text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
                 day: "h-14 w-14 p-0 font-normal aria-selected:opacity-100 hover:bg-neutral-100 rounded-lg transition-colors",
-                day_today: "bg-neutral-100 text-primary font-semibold"
+                day_today: "bg-neutral-100 text-primary font-semibold",
+                nav: "space-x-1 flex items-center",
+                nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+                nav_button_previous: "absolute left-1",
+                nav_button_next: "absolute right-1",
               }}
               modifiers={{
                 conference: datesWithEvents.conferences,
@@ -138,20 +137,19 @@ const CalendarPage = () => {
               }}
               modifiersStyles={{
                 conference: {
-                  backgroundColor: '#DDD6FE', // purple-200
-                  color: '#7C3AED', // purple-600
+                  backgroundColor: '#DDD6FE',
+                  color: '#7C3AED',
                   fontWeight: 'bold'
                 },
                 deadline: {
-                  backgroundColor: '#FEE2E2', // red-100
-                  color: '#EF4444', // red-500
+                  backgroundColor: '#FEE2E2',
+                  color: '#EF4444',
                   fontWeight: 'bold'
                 }
               }}
             />
           </div>
 
-          {/* Month Events */}
           {selectedDate && (
             <div className="mx-auto w-full max-w-3xl space-y-4">
               <h2 className="text-xl font-semibold flex items-center gap-2">
