@@ -1,4 +1,3 @@
-
 import Header from "@/components/Header";
 import FilterBar from "@/components/FilterBar";
 import ConferenceCard from "@/components/ConferenceCard";
@@ -57,7 +56,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-neutral-light">
-      <Header />
+      <Header onSearch={setSearchQuery} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="space-y-4 py-4">
           <FilterBar selectedTag={selectedTag} onTagSelect={setSelectedTag} />

@@ -367,7 +367,7 @@
 - title: IROS
   year: 2025
   id: iros25
-  full_name: IEEE\RSJ International Conference on Intelligent Robots and Systems
+  full_name: International Conference on Intelligent Robots and Systems
   link: http://www.iros25.org/
   deadline: '2025-03-01 23:59:59'
   timezone: UTC-8
@@ -473,3 +473,15 @@
   tags:
   - machine-learning
   - robotics
+
+- title: NeurIPS
+  year: 2025
+  id: neurips25
+  full_name: Conference on Neural Information Processing Systems
+  link: https://neurips.cc/
+  deadline: "2025-05-16 23:59:59"
+  timezone: UTC-8
+  place: San Diego, US
+  date: Dec 9-15, 2025
+  tags:
+  - machine-learning
