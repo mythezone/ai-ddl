@@ -53,6 +53,7 @@ const CalendarPage = () => {
     new Set(Object.keys(categoryColors))
   );
   const [showDeadlines, setShowDeadlines] = useState(true);
+  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
   
   const safeParseISO = (dateString: string | undefined | number): Date | null => {
     if (!dateString) return null;
@@ -95,55 +96,43 @@ const CalendarPage = () => {
       const startDate = safeParseISO(conf.start);
       const endDate = safeParseISO(conf.end);
 
-      const dateMatches = isYearView ? isSameYear : isSameMonth;
+      // Check if a date is in the current year
+      const isInCurrentYear = (date: Date | null) => {
+        return date && date.getFullYear() === currentYear;
+      };
 
       // If showing deadlines and no categories selected, only show deadlines
       if (showDeadlines && selectedCategories.size === 0) {
-        return deadlineDate && dateMatches(deadlineDate, date) && matchesSearch;
+        return deadlineDate && isInCurrentYear(deadlineDate) && matchesSearch;
       }
 
-      // Otherwise, check for category matches and show both deadlines and conference dates
+      // Check for category matches
       const matchesCategory = Array.isArray(conf.tags) && 
         conf.tags.some(tag => selectedCategories.has(tag));
 
-      if (!matchesSearch || !matchesCategory) return false;
+      if (!matchesSearch || (!matchesCategory && selectedCategories.size > 0)) return false;
 
-      const deadlineInPeriod = showDeadlines && deadlineDate && dateMatches(deadlineDate, date);
-      
-      let conferenceInPeriod = false;
-      if (startDate && endDate) {
-        let currentDate = new Date(startDate);
-        while (currentDate <= endDate) {
-          if (dateMatches(currentDate, date)) {
-            conferenceInPeriod = true;
-            break;
-          }
-          currentDate.setDate(currentDate.getDate() + 1);
-        }
-      } else if (startDate) {
-        conferenceInPeriod = dateMatches(startDate, date);
-      }
+      // Check if either deadline or conference dates are in the current year
+      const deadlineInYear = showDeadlines && deadlineDate && isInCurrentYear(deadlineDate);
+      const conferenceInYear = (startDate && isInCurrentYear(startDate)) || 
+                             (endDate && isInCurrentYear(endDate)) ||
+                             (startDate && endDate && 
+                              startDate.getFullYear() <= currentYear && 
+                              endDate.getFullYear() >= currentYear);
 
-      return deadlineInPeriod || conferenceInPeriod;
+      return deadlineInYear || (selectedCategories.size > 0 && conferenceInYear);
     });
   };
 
   const getDayEvents = (date: Date) => {
     const deadlines = showDeadlines ? conferencesData.filter(conf => {
       const deadlineDate = safeParseISO(conf.deadline);
-      const matchesSearch = searchQuery === "" || 
-        conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
-
-      // If no categories selected, show all deadlines
-      if (selectedCategories.size === 0) {
-        return deadlineDate && isSameDay(deadlineDate, date) && matchesSearch;
-      }
-
-      // Otherwise, filter by selected categories
-      const matchesCategory = Array.isArray(conf.tags) && 
-        conf.tags.some(tag => selectedCategories.has(tag));
-      return deadlineDate && isSameDay(deadlineDate, date) && matchesCategory && matchesSearch;
+      const matchesCategory = selectedCategories.size === 0 ? true :
+        (Array.isArray(conf.tags) && conf.tags.some(tag => selectedCategories.has(tag)));
+      return deadlineDate && 
+             isSameDay(deadlineDate, date) && 
+             deadlineDate.getFullYear() === currentYear && 
+             matchesCategory;
     }) : [];
 
     const conferences = selectedCategories.size > 0 ? conferencesData.filter(conf => {
@@ -151,29 +140,30 @@ const CalendarPage = () => {
       const endDate = safeParseISO(conf.end);
       const matchesCategory = Array.isArray(conf.tags) && 
         conf.tags.some(tag => selectedCategories.has(tag));
-      const matchesSearch = searchQuery === "" || 
-        conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      if (!matchesCategory || !matchesSearch) return false;
+      if (!matchesCategory) return false;
 
       if (startDate && endDate) {
-        let currentDate = new Date(startDate);
-        while (currentDate <= endDate) {
-          if (isSameDay(currentDate, date)) {
-            return true;
-          }
-          currentDate.setDate(currentDate.getDate() + 1);
-        }
+        return startDate.getFullYear() <= currentYear && 
+               endDate.getFullYear() >= currentYear &&
+               date >= startDate && date <= endDate;
       } else if (startDate) {
-        return isSameDay(startDate, date);
+        return startDate.getFullYear() === currentYear && isSameDay(startDate, date);
       }
       return false;
     }) : [];
 
     return {
-      deadlines: deadlines,
-      conferences: conferences
+      deadlines: deadlines.filter(conf => 
+        searchQuery === "" || 
+        conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()))
+      ),
+      conferences: conferences.filter(conf => 
+        searchQuery === "" || 
+        conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()))
+      )
     };
   };
 
@@ -472,7 +462,7 @@ const CalendarPage = () => {
 
   const renderViewToggle = () => {
     return (
-      <div className="flex justify-center mb-6">
+      <div className="flex flex-col items-center gap-4 mb-6">
         <div className="bg-neutral-100 rounded-lg p-1 inline-flex">
           <button
             onClick={() => setIsYearView(false)}
@@ -495,6 +485,38 @@ const CalendarPage = () => {
             Year View
           </button>
         </div>
+        
+        {isYearView && (
+          <div className="flex items-center gap-4">
+            <button
+              onClick={() => {
+                const newYear = currentYear - 1;
+                setCurrentYear(newYear);
+                setSelectedDate(new Date(newYear, 0, 1)); // Set to January 1st of the new year
+              }}
+              className="p-2 hover:bg-neutral-100 rounded-full transition-colors"
+              aria-label="Previous year"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M15 18l-6-6 6-6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+            <span className="text-lg font-semibold">{currentYear}</span>
+            <button
+              onClick={() => {
+                const newYear = currentYear + 1;
+                setCurrentYear(newYear);
+                setSelectedDate(new Date(newYear, 0, 1)); // Set to January 1st of the new year
+              }}
+              className="p-2 hover:bg-neutral-100 rounded-full transition-colors"
+              aria-label="Next year"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M9 18l6-6-6-6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+          </div>
+        )}
       </div>
     );
   };
@@ -582,6 +604,10 @@ const CalendarPage = () => {
                 onSelect={setSelectedDate}
                 numberOfMonths={isYearView ? 12 : 1}
                 showOutsideDays={false}
+                defaultMonth={new Date(currentYear, 0)}
+                month={new Date(currentYear, 0)}
+                fromMonth={isYearView ? new Date(currentYear, 0) : undefined}
+                toMonth={isYearView ? new Date(currentYear, 11) : undefined}
                 className="bg-white rounded-lg p-6 shadow-sm mx-auto w-full"
                 components={{
                   Day: ({ date, displayMonth, ...props }) => {
