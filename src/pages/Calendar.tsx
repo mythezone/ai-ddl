@@ -189,26 +189,28 @@ const CalendarPage = () => {
             const startDate = safeParseISO(conf.start);
             const endDate = safeParseISO(conf.end);
             
-            if (!startDate || !isSameDay(startDate, day)) {
-              return null;
-            }
+            if (!startDate || !endDate) return null;
             
             const categoryColor = conf.tags?.[0] ? categoryColors[conf.tags[0]] || "bg-purple-600" : "bg-purple-600";
             
-            let width = '100%';
-            if (endDate) {
-              const lastDayOfMonth = new Date(day.getFullYear(), day.getMonth() + 1, 0);
-              const effectiveEndDate = endDate < lastDayOfMonth ? endDate : lastDayOfMonth;
-              
-              const daysBetween = Math.ceil((effectiveEndDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
-              width = `calc(100% * ${daysBetween})`;
-            }
+            if (day < startDate || day > endDate) return null;
+
+            const isFirstDayOfMonth = day.getDate() === 1;
+            const isStartDate = isSameDay(startDate, day);
             
+            const lastDayOfMonth = new Date(day.getFullYear(), day.getMonth() + 1, 0);
+            const daysUntilMonthEnd = Math.min(
+              Math.ceil((endDate.getTime() - day.getTime()) / (1000 * 60 * 60 * 24)) + 1,
+              Math.ceil((lastDayOfMonth.getTime() - day.getTime()) / (1000 * 60 * 60 * 24)) + 1
+            );
+
+            if (!isStartDate && !isFirstDayOfMonth) return null;
+
             return (
               <div 
-                key={conf.id}
+                key={`${conf.id}-${format(day, 'yyyy-MM')}`}
                 className={`h-0.5 ${categoryColor} absolute`}
-                style={{ width }}
+                style={{ width: `calc(100% * ${daysUntilMonthEnd})` }}
                 title={conf.title}
               />
             );
