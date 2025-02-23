@@ -31,17 +31,40 @@ const ConferenceCard = ({
   };
 
   const handleCardClick = (e: React.MouseEvent) => {
-    // Only open dialog if the click wasn't on a link or interactive element
-    if (!(e.target as HTMLElement).closest('a')) {
+    if (!(e.target as HTMLElement).closest('a') && 
+        !(e.target as HTMLElement).closest('.tag-button')) {
       setDialogOpen(true);
     }
+  };
+
+  const handleTagClick = (e: React.MouseEvent, tag: string) => {
+    e.stopPropagation();
+    const searchParams = new URLSearchParams(window.location.search);
+    const currentTags = searchParams.get('tags')?.split(',') || [];
+    
+    let newTags;
+    if (currentTags.includes(tag)) {
+      newTags = currentTags.filter(t => t !== tag);
+    } else {
+      newTags = [...currentTags, tag];
+    }
+    
+    if (newTags.length > 0) {
+      searchParams.set('tags', newTags.join(','));
+    } else {
+      searchParams.delete('tags');
+    }
+    
+    const newUrl = `${window.location.pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+    window.history.pushState({}, '', newUrl);
+    window.dispatchEvent(new CustomEvent('urlchange', { detail: { tag } }));
   };
 
   return (
     <>
       <div 
-        onClick={handleCardClick}
         className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col cursor-pointer"
+        onClick={handleCardClick}
       >
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-lg font-semibold text-primary">{title}</h3>
@@ -82,12 +105,16 @@ const ConferenceCard = ({
         </div>
 
         {Array.isArray(tags) && tags.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-auto">
+          <div className="flex flex-wrap gap-2">
             {tags.map((tag) => (
-              <span key={tag} className="tag text-xs py-0.5">
+              <button
+                key={tag}
+                className="tag tag-button"
+                onClick={(e) => handleTagClick(e, tag)}
+              >
                 <Tag className="h-3 w-3 mr-1" />
                 {tag}
-              </span>
+              </button>
             ))}
           </div>
         )}

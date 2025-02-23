@@ -41,6 +41,46 @@ const Index = () => {
       });
   }, [selectedTags, searchQuery, showPastConferences]);
 
+  // Update handleTagsChange to handle multiple tags
+  const handleTagsChange = (newTags: Set<string>) => {
+    setSelectedTags(newTags);
+    const searchParams = new URLSearchParams(window.location.search);
+    if (newTags.size > 0) {
+      searchParams.set('tags', Array.from(newTags).join(','));
+    } else {
+      searchParams.delete('tags');
+    }
+    const newUrl = `${window.location.pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
+    window.history.pushState({}, '', newUrl);
+  };
+
+  useEffect(() => {
+    const handleUrlChange = (event: CustomEvent) => {
+      const { tag } = event.detail;
+      // Create new Set with existing tags plus the new one
+      const newTags = new Set(selectedTags);
+      if (newTags.has(tag)) {
+        newTags.delete(tag);
+      } else {
+        newTags.add(tag);
+      }
+      handleTagsChange(newTags);
+    };
+
+    window.addEventListener('urlchange', handleUrlChange as EventListener);
+    
+    // Check URL params on mount
+    const params = new URLSearchParams(window.location.search);
+    const tagsParam = params.get('tags');
+    if (tagsParam) {
+      setSelectedTags(new Set(tagsParam.split(',')));
+    }
+
+    return () => {
+      window.removeEventListener('urlchange', handleUrlChange as EventListener);
+    };
+  }, [selectedTags]); // Add selectedTags as dependency
+
   if (!Array.isArray(conferencesData)) {
     return <div>Loading conferences...</div>;
   }
@@ -52,7 +92,7 @@ const Index = () => {
         <div className="space-y-4 py-4">
           <FilterBar 
             selectedTags={selectedTags}
-            onTagSelect={setSelectedTags}
+            onTagSelect={handleTagsChange}
           />
           <div className="flex items-center gap-2">
             <label htmlFor="show-past" className="text-sm text-neutral-600">
