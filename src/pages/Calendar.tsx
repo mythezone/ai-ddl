@@ -463,7 +463,7 @@ const CalendarPage = () => {
               transition-colors flex items-center gap-2"
           >
             <X className="h-4 w-4" />
-            Deselect All Colors
+            Deselect All
           </button>
         )}
       </div>
