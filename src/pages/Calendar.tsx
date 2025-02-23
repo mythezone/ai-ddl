@@ -210,23 +210,23 @@ const CalendarPage = () => {
 
     return (
       <div className="relative w-full h-full flex flex-col">
-        {/* Day number at the top with more space */}
-        <div className="h-12 flex items-center justify-center">
+        {/* Day number at the top with moderate space */}
+        <div className="h-10 flex items-center justify-center">
           <span>{format(date, 'd')}</span>
         </div>
 
-        {/* Event indicator lines at the bottom */}
-        <div className="absolute bottom-2 left-0 right-0 flex flex-col-reverse gap-[2px]">
+        {/* Event indicator lines closer to the day number */}
+        <div className="absolute bottom-2 left-0 right-0 flex flex-col-reverse gap-[1px]">
           {/* Conference lines at the bottom (rendered first) */}
           {conferenceStyles.map((style, index) => (
             <div 
               key={`conf-${index}`} 
-              className={`h-[3px] ${style.style} ${style.color}`} 
+              className={`h-[2px] ${style.style} ${style.color}`} 
             />
           ))}
           {/* Deadline lines on top */}
           {hasDeadline && (
-            <div className="h-[3px] w-[calc(100%+1rem)] -left-2 relative bg-red-500" />
+            <div className="h-[2px] w-[calc(100%+1rem)] -left-2 relative bg-red-500" />
           )}
         </div>
 
