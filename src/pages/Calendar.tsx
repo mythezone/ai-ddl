@@ -1,7 +1,8 @@
+
 import { useState } from "react";
 import conferencesData from "@/data/conferences.yml";
 import { Conference } from "@/types/conference";
-import { Calendar as CalendarIcon, Tag } from "lucide-react";
+import { Calendar as CalendarIcon, Tag, X } from "lucide-react"; // Added X import
 import { Calendar } from "@/components/ui/calendar";
 import { parseISO, format, isValid, isSameMonth, isSameYear, isSameDay, isSameWeek } from "date-fns";
 import { Toggle } from "@/components/ui/toggle";
