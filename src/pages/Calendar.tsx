@@ -3,7 +3,7 @@ import conferencesData from "@/data/conferences.yml";
 import { Conference } from "@/types/conference";
 import { Calendar as CalendarIcon, Tag } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { parseISO, format, isValid, isSameMonth, isSameYear, isSameDay } from "date-fns";
+import { parseISO, format, isValid, isSameMonth, isSameYear, isSameDay, isSameWeek } from "date-fns";
 import { Toggle } from "@/components/ui/toggle";
 import Header from "@/components/Header";
 import FilterBar from "@/components/FilterBar";
@@ -173,13 +173,6 @@ const CalendarPage = () => {
   // Add these helper functions at the top of the file
   const isEndOfWeek = (date: Date) => date.getDay() === 6; // Saturday
   const isStartOfWeek = (date: Date) => date.getDay() === 0; // Sunday
-  const isSameWeek = (date1: Date, date2: Date) => {
-    const diff = Math.abs(date1.getTime() - date2.getTime());
-    const diffDays = Math.floor(diff / (1000 * 60 * 60 * 24));
-    return diffDays <= 6 && 
-           Math.floor(date1.getTime() / (1000 * 60 * 60 * 24 * 7)) === 
-           Math.floor(date2.getTime() / (1000 * 60 * 60 * 24 * 7));
-  };
 
   // Update the getConferenceLineStyle function
   const getConferenceLineStyle = (date: Date) => {
@@ -190,26 +183,23 @@ const CalendarPage = () => {
       const endDate = safeParseISO(conf.end);
       
       if (startDate && endDate && date >= startDate && date <= endDate) {
-        const isFirst = isSameDay(date, startDate);
-        const isLast = isSameDay(date, endDate);
-        
-        // Check if previous and next days are part of the same conference and week
+        // Check if previous and next days are part of the same conference
         const prevDate = new Date(date);
         prevDate.setDate(date.getDate() - 1);
         const nextDate = new Date(date);
         nextDate.setDate(date.getDate() + 1);
         
-        const hasPrevDay = prevDate >= startDate && isSameWeek(date, prevDate);
-        const hasNextDay = nextDate <= endDate && isSameWeek(date, nextDate);
+        const hasPrevDay = prevDate >= startDate;
+        const hasNextDay = nextDate <= endDate;
         
-        let lineStyle = "h-1 absolute bottom-0";
+        let lineStyle = "h-1";
         
         if (hasPrevDay && hasNextDay) {
           // Middle of a sequence
           lineStyle += " w-[calc(100%+1rem)] -left-2";
         } else if (hasPrevDay) {
           // End of a sequence
-          lineStyle += " w-[calc(100%+0.5rem)] left-0";
+          lineStyle += " w-[calc(100%+0.5rem)] -left-2";
         } else if (hasNextDay) {
           // Start of a sequence
           lineStyle += " w-[calc(100%+0.5rem)] right-0";
@@ -241,7 +231,6 @@ const CalendarPage = () => {
 
     // Get deadline style
     const hasDeadline = dayEvents.deadlines.length > 0;
-    const deadlineStyle = hasDeadline ? "h-1 w-full bg-red-500" : "";
 
     return (
       <div className="relative w-full h-full flex flex-col items-center">
@@ -251,19 +240,21 @@ const CalendarPage = () => {
         </div>
 
         {/* Event indicator lines at the bottom */}
-        <div className="absolute bottom-0 w-full flex flex-col gap-[2px]">
-          {/* Conference lines */}
+        <div className="absolute bottom-0 w-full h-2 flex flex-col justify-end gap-[2px]">
+          {/* Deadline lines always on top */}
+          {hasDeadline && (
+            <div className="h-1 w-full bg-red-500" />
+          )}
+          {/* Conference lines at the bottom */}
           {conferenceStyles.map((style, index) => (
             <div 
               key={`conf-${index}`} 
               className={`${style.style} ${style.color}`} 
             />
           ))}
-          {/* Deadline line */}
-          {deadlineStyle && <div className={deadlineStyle} />}
         </div>
 
-        {/* Tooltip trigger covering the whole cell */}
+        {/* Tooltip trigger */}
         {hasEvents && (
           <TooltipProvider>
             <Tooltip>
