@@ -86,7 +86,8 @@ const CalendarPage = () => {
         conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      const matchesTag = selectedTag === "All" || (Array.isArray(conf.tags) && conf.tags.includes(selectedTag));
+      const confTags = Array.isArray(conf.tags) ? conf.tags : [];
+      const matchesTag = selectedTag === "All" || confTags.includes(selectedTag);
 
       if (!matchesSearch || !matchesTag) return false;
 
@@ -354,8 +355,82 @@ const CalendarPage = () => {
 
   return (
     <div className="min-h-screen bg-neutral-light">
-      <Header onSearch={setSearchQuery} />
+      <Header 
+        onSearch={(query) => {
+          setSearchQuery(query);
+          // Reset selected date when searching
+          setSelectedDate(undefined);
+        }} 
+      />
       <FilterBar selectedTag={selectedTag} onTagSelect={setSelectedTag} />
+
+      {/* Add a search results section when there's a search query */}
+      {searchQuery && (
+        <div className="p-6 bg-white border-b">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-lg font-semibold mb-4">
+              Search Results for "{searchQuery}"
+            </h2>
+            <div className="space-y-4">
+              {getEvents(new Date()).map((conf: Conference) => (
+                <div 
+                  key={conf.id || conf.title} 
+                  className="p-4 border rounded-lg hover:bg-neutral-50 cursor-pointer"
+                  onClick={() => {
+                    const deadlineDate = safeParseISO(conf.deadline);
+                    const startDate = safeParseISO(conf.start);
+                    
+                    if (deadlineDate) {
+                      setSelectedDate(deadlineDate);
+                      setSelectedDayEvents({
+                        date: deadlineDate,
+                        events: getDayEvents(deadlineDate)
+                      });
+                    } else if (startDate) {
+                      setSelectedDate(startDate);
+                      setSelectedDayEvents({
+                        date: startDate,
+                        events: getDayEvents(startDate)
+                      });
+                    }
+                  }}
+                >
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-semibold">{conf.title}</h3>
+                      {conf.full_name && (
+                        <p className="text-sm text-neutral-600">{conf.full_name}</p>
+                      )}
+                    </div>
+                    {conf.deadline && conf.deadline !== 'TBD' && (
+                      <span className="text-sm text-red-500">
+                        Deadline: {format(safeParseISO(conf.deadline)!, 'MMM d, yyyy')}
+                      </span>
+                    )}
+                  </div>
+                  {Array.isArray(conf.tags) && conf.tags.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-2">
+                      {conf.tags.map(tag => (
+                        <span 
+                          key={tag}
+                          className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-neutral-100"
+                        >
+                          <Tag className="h-3 w-3 mr-1" />
+                          {categoryNames[tag] || tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+              {getEvents(new Date()).length === 0 && (
+                <p className="text-neutral-600">No conferences found matching your search.</p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col items-center mb-8">
@@ -445,13 +520,20 @@ const CalendarPage = () => {
             <DialogTitle>
               Events for {selectedDayEvents.date ? format(selectedDayEvents.date, 'MMMM d, yyyy') : ''}
             </DialogTitle>
+            <div className="text-sm text-neutral-600">
+              View conference details and deadlines for this date.
+            </div>
           </DialogHeader>
           <div className="space-y-4">
             {selectedDayEvents.events.deadlines.length > 0 && (
               <div>
                 <h3 className="text-lg font-semibold text-red-500 mb-3">Submission Deadlines</h3>
                 <div className="space-y-4">
-                  {selectedDayEvents.events.deadlines.map(conf => renderEventDetails(conf))}
+                  {selectedDayEvents.events.deadlines.map(conf => (
+                    <div key={conf.id || conf.title}>
+                      {renderEventDetails(conf)}
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -459,7 +541,11 @@ const CalendarPage = () => {
               <div>
                 <h3 className="text-lg font-semibold text-purple-600 mb-3">Conferences</h3>
                 <div className="space-y-4">
-                  {selectedDayEvents.events.conferences.map(conf => renderEventDetails(conf))}
+                  {selectedDayEvents.events.conferences.map(conf => (
+                    <div key={conf.id || conf.title}>
+                      {renderEventDetails(conf)}
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
