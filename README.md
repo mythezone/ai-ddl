@@ -41,6 +41,8 @@ npm i
 npm run dev
 ```
 
+This runs the app at http://localhost:8080/.
+
 ## Deploy with Docker
 
 First build the Docker image as follows:
@@ -55,6 +57,8 @@ Next it can be run as follows:
 docker run -it -p 7860:7860 ai-deadlines
 ```
 
+You can see it in your web browser at http://localhost:7860/.
+
 ## Technologies used
 
 This project is built with:
@@ -64,3 +68,7 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+
+## Maintainers
+
+Feel free to just open an issue. Otherwise contact @nielsrogge
