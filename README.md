@@ -13,11 +13,17 @@ A web app to quickly see submission deadlines to top AI conferences, such as Neu
 
 ## Project info
 
-This project is entirely based on the awesome https://github.com/paperswithcode/ai-deadlines. As that repository was no longer maintained, we decided to make an up-to-date version along with a new UI.
+This project is entirely based on the awesome https://github.com/paperswithcode/ai-deadlines. As that repository is no longer maintained, we decided to make an up-to-date version along with a new UI.
+
+New data is fetched from https://github.com/ccfddl/ccf-deadlines/tree/main/conference/AI thanks to [this comment](https://github.com/paperswithcode/ai-deadlines/issues/723#issuecomment-2603420945). A CRON job (set up as a Github action) automatically updates the data present at src/data/conferences.yml.
 
 It was bootstrapped using [Lovable](https://lovable.dev/) and [Cursor](https://www.cursor.com/).
 
 **URL**: https://huggingface.co/spaces/huggingface/ai-deadlines
+
+## Add conference data
+
+Simply open a pull request to update src/data/conferences.yml.
 
 ## How to run locally
 
