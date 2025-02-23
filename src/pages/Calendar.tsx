@@ -195,7 +195,7 @@ const CalendarPage = () => {
             return (
               <div 
                 key={conf.id}
-                className={`h-0.5 w-full ${categoryColor} ${!isFirstDay && !isLastDay ? '-ml-1 -mr-1' : ''} ${!isFirstDay ? '-ml-1' : ''} ${!isLastDay ? '-mr-1' : ''}`}
+                className={`h-0.5 w-full ${categoryColor} ${!isFirstDay ? '-ml-[1px]' : ''} ${!isLastDay ? '-mr-[1px]' : ''}`}
                 title={conf.title}
               />
             );
