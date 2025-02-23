@@ -189,25 +189,26 @@ const CalendarPage = () => {
             const startDate = safeParseISO(conf.start);
             const endDate = safeParseISO(conf.end);
             
-            if (startDate && !isSameDay(startDate, day)) {
+            if (!startDate || !isSameDay(startDate, day)) {
               return null;
             }
             
             const categoryColor = conf.tags?.[0] ? categoryColors[conf.tags[0]] || "bg-purple-600" : "bg-purple-600";
             
-            let width = "w-full";
-            if (startDate && endDate) {
-              const daysBetween = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-              width = `w-[calc(100%_*_${daysBetween})]`;
+            let width = '100%';
+            if (endDate) {
+              const lastDayOfMonth = new Date(day.getFullYear(), day.getMonth() + 1, 0);
+              const effectiveEndDate = endDate < lastDayOfMonth ? endDate : lastDayOfMonth;
+              
+              const daysBetween = Math.ceil((effectiveEndDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+              width = `calc(100% * ${daysBetween})`;
             }
             
             return (
               <div 
                 key={conf.id}
-                className={`h-0.5 ${categoryColor} absolute ${width} -mr-[1px]`}
-                style={{ 
-                  width: startDate && endDate ? `calc(100% * ${Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))})` : '100%'
-                }}
+                className={`h-0.5 ${categoryColor} absolute`}
+                style={{ width }}
                 title={conf.title}
               />
             );
