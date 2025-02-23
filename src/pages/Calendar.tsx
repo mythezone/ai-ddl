@@ -328,6 +328,7 @@ const CalendarPage = () => {
                 selected={selectedDate}
                 onSelect={setSelectedDate}
                 numberOfMonths={isYearView ? 12 : 1}
+                showOutsideDays={false}
                 className="bg-white rounded-lg p-6 shadow-sm mx-auto w-full"
                 components={{
                   Day: ({ date, ...props }) => (
@@ -345,7 +346,7 @@ const CalendarPage = () => {
                   head_row: "flex",
                   head_cell: "text-muted-foreground rounded-md w-10 font-normal text-[0.8rem]",
                   row: "flex w-full mt-2",
-                  cell: "h-10 w-10 text-center text-sm p-0 relative focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md hover:bg-neutral-50",
+                  cell: "h-10 w-10 text-center text-sm p-0 relative focus-within:relative focus-within:z-20 hover:bg-neutral-50",
                   day: "h-10 w-10 p-0 font-normal hover:bg-neutral-100 rounded-lg transition-colors",
                   day_today: "bg-neutral-100 text-primary font-semibold",
                   nav: "space-x-1 flex items-center",
