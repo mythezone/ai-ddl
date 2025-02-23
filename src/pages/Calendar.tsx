@@ -91,16 +91,22 @@ const CalendarPage = () => {
         conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      const matchesCategory = selectedCategories.size === 0 || 
-        (Array.isArray(conf.tags) && conf.tags.some(tag => selectedCategories.has(tag)));
-
-      if (!matchesSearch || !matchesCategory) return false;
-
       const deadlineDate = safeParseISO(conf.deadline);
       const startDate = safeParseISO(conf.start);
       const endDate = safeParseISO(conf.end);
 
       const dateMatches = isYearView ? isSameYear : isSameMonth;
+
+      // If showing deadlines and no categories selected, only show deadlines
+      if (showDeadlines && selectedCategories.size === 0) {
+        return deadlineDate && dateMatches(deadlineDate, date) && matchesSearch;
+      }
+
+      // Otherwise, check for category matches and show both deadlines and conference dates
+      const matchesCategory = Array.isArray(conf.tags) && 
+        conf.tags.some(tag => selectedCategories.has(tag));
+
+      if (!matchesSearch || !matchesCategory) return false;
 
       const deadlineInPeriod = showDeadlines && deadlineDate && dateMatches(deadlineDate, date);
       
@@ -125,25 +131,49 @@ const CalendarPage = () => {
   const getDayEvents = (date: Date) => {
     const deadlines = showDeadlines ? conferencesData.filter(conf => {
       const deadlineDate = safeParseISO(conf.deadline);
-      const matchesCategory = selectedCategories.size === 0 || 
-        (Array.isArray(conf.tags) && conf.tags.some(tag => selectedCategories.has(tag)));
-      return deadlineDate && isSameDay(deadlineDate, date) && matchesCategory;
+      const matchesSearch = searchQuery === "" || 
+        conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+      // If no categories selected, show all deadlines
+      if (selectedCategories.size === 0) {
+        return deadlineDate && isSameDay(deadlineDate, date) && matchesSearch;
+      }
+
+      // Otherwise, filter by selected categories
+      const matchesCategory = Array.isArray(conf.tags) && 
+        conf.tags.some(tag => selectedCategories.has(tag));
+      return deadlineDate && isSameDay(deadlineDate, date) && matchesCategory && matchesSearch;
     }) : [];
 
-    const conferences = conferencesData.filter(conf => {
+    const conferences = selectedCategories.size > 0 ? conferencesData.filter(conf => {
       const startDate = safeParseISO(conf.start);
       const endDate = safeParseISO(conf.end);
-      const matchesCategory = selectedCategories.size === 0 || 
-        (Array.isArray(conf.tags) && conf.tags.some(tag => selectedCategories.has(tag)));
-      return startDate && endDate && 
-             date >= startDate && 
-             date <= endDate && 
-             matchesCategory;
-    });
+      const matchesCategory = Array.isArray(conf.tags) && 
+        conf.tags.some(tag => selectedCategories.has(tag));
+      const matchesSearch = searchQuery === "" || 
+        conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+      if (!matchesCategory || !matchesSearch) return false;
+
+      if (startDate && endDate) {
+        let currentDate = new Date(startDate);
+        while (currentDate <= endDate) {
+          if (isSameDay(currentDate, date)) {
+            return true;
+          }
+          currentDate.setDate(currentDate.getDate() + 1);
+        }
+      } else if (startDate) {
+        return isSameDay(startDate, date);
+      }
+      return false;
+    }) : [];
 
     return {
-      deadlines,
-      conferences
+      deadlines: deadlines,
+      conferences: conferences
     };
   };
 
@@ -176,11 +206,17 @@ const CalendarPage = () => {
   const isStartOfWeek = (date: Date) => date.getDay() === 0; // Sunday
 
   const getConferenceLineStyle = (date: Date) => {
+    // If only showing deadlines and no categories are selected, don't show any conference lines
+    if (selectedCategories.size === 0 && showDeadlines) {
+      return [];
+    }
+
     return conferencesData
       .filter(conf => {
         const startDate = safeParseISO(conf.start);
         const endDate = safeParseISO(conf.end);
-        const matchesCategory = selectedCategories.size === 0 || 
+        // Only show conference dates if categories are selected
+        const matchesCategory = selectedCategories.size > 0 && 
           (Array.isArray(conf.tags) && conf.tags.some(tag => selectedCategories.has(tag)));
         return startDate && endDate && date >= startDate && date <= endDate && matchesCategory;
       })
@@ -202,8 +238,7 @@ const CalendarPage = () => {
         const color = conf.tags && conf.tags[0] ? categoryColors[conf.tags[0]] : "bg-gray-500";
 
         return { style, color };
-      })
-      .filter(Boolean);
+      });
   };
 
   const renderDayContent = (date: Date) => {
