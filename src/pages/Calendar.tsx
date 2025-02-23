@@ -230,7 +230,7 @@ const CalendarPage = () => {
                           )}
                         </div>
                         <div className="mt-2 flex flex-wrap gap-2">
-                          {conf.tags.map((tag) => (
+                          {Array.isArray(conf.tags) && conf.tags.map((tag) => (
                             <span key={tag} className="inline-flex items-center px-2 py-1 rounded-full 
                               text-xs bg-neutral-100">
                               <Tag className="h-3 w-3 mr-1" />
