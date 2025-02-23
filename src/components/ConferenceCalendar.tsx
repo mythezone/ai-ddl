@@ -20,46 +20,53 @@ const ConferenceCalendar = ({ conferences }: ConferenceCalendarProps) => {
   // Convert conference dates to calendar events
   const conferenceEvents = conferences.map(conf => {
     let startDate: Date | null = null;
+    let endDate: Date | null = null;
     
     try {
-      // First try to use the start field if it exists
-      if (conf.start) {
+      // Parse both start and end dates
+      if (conf.start && conf.end) {
         startDate = parseISO(conf.start);
+        endDate = parseISO(conf.end);
       } 
-      // If no start field or it failed, try to parse the date field
+      // If no start/end fields, try to parse from date field
       else if (conf.date) {
-        // Handle various date formats
-        const dateStr = conf.date.split('–')[0].split('-')[0].trim(); // Get first date in range
+        const [startStr, endStr] = conf.date.split(/[-–]/).map(d => d.trim());
         
-        // Try different date formats
         try {
-          // Try "MMM d, yyyy" format (e.g., "Feb 28, 2025")
-          startDate = parse(dateStr, 'MMM d, yyyy', new Date());
-        } catch {
-          try {
-            // Try "MMMM d, yyyy" format (e.g., "February 28, 2025")
-            startDate = parse(dateStr, 'MMMM d, yyyy', new Date());
-          } catch {
-            // If all else fails, try ISO format
-            startDate = parseISO(dateStr);
+          // Try parsing start date
+          startDate = parse(startStr, 'MMM d, yyyy', new Date()) ||
+                     parse(startStr, 'MMMM d, yyyy', new Date()) ||
+                     parseISO(startStr);
+          
+          // Try parsing end date if it exists
+          if (endStr) {
+            endDate = parse(endStr, 'MMM d, yyyy', new Date()) ||
+                     parse(endStr, 'MMMM d, yyyy', new Date()) ||
+                     parseISO(endStr);
+          } else {
+            // If no end date, use start date
+            endDate = startDate;
           }
+        } catch (error) {
+          console.warn(`Failed to parse date range for conference ${conf.title}:`, error);
         }
       }
 
-      // Only return event if we successfully parsed a date
-      if (startDate && isValidDate(startDate)) {
+      // Only return event if we successfully parsed both dates
+      if (startDate && endDate && isValidDate(startDate) && isValidDate(endDate)) {
         return {
-          date: startDate,
+          startDate,
+          endDate,
           title: conf.title,
           conference: conf
         };
       }
       return null;
     } catch (error) {
-      console.warn(`Failed to parse date for conference ${conf.title}:`, error);
+      console.warn(`Failed to parse dates for conference ${conf.title}:`, error);
       return null;
     }
-  }).filter(event => event !== null); // Remove any null events
+  }).filter(event => event !== null);
 
   // Helper function to check if date is valid
   function isValidDate(date: Date) {
@@ -70,16 +77,21 @@ const ConferenceCalendar = ({ conferences }: ConferenceCalendarProps) => {
   const getEventsForDate = (date: Date) => {
     if (!date || !isValidDate(date)) return [];
     return conferenceEvents.filter(event => 
-      event && event.date && 
-      format(event.date, 'yyyy-MM-dd') === format(date, 'yyyy-MM-dd')
+      event && event.startDate && event.endDate && 
+      date >= event.startDate && date <= event.endDate
     );
   };
 
   // Get events for the current month
   const getEventsForMonth = (date: Date) => {
+    const monthStart = startOfMonth(date);
+    const nextMonthStart = new Date(date.getFullYear(), date.getMonth() + 1, 1);
+    
     return conferenceEvents.filter(event => 
-      event && event.date && 
-      format(event.date, 'yyyy-MM') === format(date, 'yyyy-MM')
+      event && event.startDate && event.endDate &&
+      ((event.startDate >= monthStart && event.startDate < nextMonthStart) ||
+       (event.endDate >= monthStart && event.endDate < nextMonthStart) ||
+       (event.startDate <= monthStart && event.endDate >= nextMonthStart))
     );
   };
 
@@ -93,7 +105,7 @@ const ConferenceCalendar = ({ conferences }: ConferenceCalendarProps) => {
         <ul className="mt-2 space-y-1">
           {getEventsForMonth(currentMonth).map((event, index) => (
             <li key={index} className="text-sm">
-              {event.title} ({format(event.date, 'MMM d')}) - {event.conference.place}
+              {event.title} ({format(event.startDate, 'MMM d')}-{format(event.endDate, 'MMM d')}) - {event.conference.place}
             </li>
           ))}
         </ul>

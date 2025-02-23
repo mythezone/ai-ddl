@@ -55,6 +55,9 @@ const CalendarPage = () => {
   const safeParseISO = (dateString: string | undefined | number): Date | null => {
     if (!dateString) return null;
     if (dateString === 'TBD') return null;
+
+    // If it's already a Date object, return it
+    if (dateString instanceof Date) return dateString;
     
     try {
       if (typeof dateString === 'object') {
@@ -114,35 +117,23 @@ const CalendarPage = () => {
   };
 
   const getDayEvents = (date: Date) => {
-    return conferencesData.reduce((acc, conf) => {
-      const matchesSearch = searchQuery === "" || 
-        conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
-
-      const matchesTag = selectedTag === "All" || (Array.isArray(conf.tags) && conf.tags.includes(selectedTag));
-
-      if (!matchesSearch || !matchesTag) {
-        return acc;
-      }
-
+    const deadlines = conferencesData.filter(conf => {
       const deadlineDate = safeParseISO(conf.deadline);
+      return deadlineDate && isSameDay(deadlineDate, date);
+    });
+
+    const conferences = conferencesData.filter(conf => {
       const startDate = safeParseISO(conf.start);
       const endDate = safeParseISO(conf.end);
+      return startDate && endDate && 
+             date >= startDate && 
+             date <= endDate;
+    });
 
-      if (deadlineDate && isSameDay(deadlineDate, date)) {
-        acc.deadlines.push(conf);
-      }
-
-      if (startDate && endDate) {
-        if (date >= startDate && date <= endDate) {
-          acc.conferences.push(conf);
-        }
-      } else if (startDate && isSameDay(startDate, date)) {
-        acc.conferences.push(conf);
-      }
-
-      return acc;
-    }, { deadlines: [], conferences: [] } as { deadlines: Conference[], conferences: Conference[] });
+    return {
+      deadlines,
+      conferences
+    };
   };
 
   const renderEventPreview = (events: { deadlines: Conference[], conferences: Conference[] }) => {
@@ -176,49 +167,34 @@ const CalendarPage = () => {
 
   // Update the getConferenceLineStyle function
   const getConferenceLineStyle = (date: Date) => {
-    const styles = [];
-    
-    for (const conf of conferencesData) {
-      const startDate = safeParseISO(conf.start);
-      const endDate = safeParseISO(conf.end);
-      
-      if (startDate && endDate && date >= startDate && date <= endDate) {
-        // Check if previous and next days are part of the same conference
-        const prevDate = new Date(date);
-        prevDate.setDate(date.getDate() - 1);
-        const nextDate = new Date(date);
-        nextDate.setDate(date.getDate() + 1);
+    return conferencesData
+      .filter(conf => {
+        const startDate = safeParseISO(conf.start);
+        const endDate = safeParseISO(conf.end);
+        return startDate && endDate && date >= startDate && date <= endDate;
+      })
+      .map(conf => {
+        const startDate = safeParseISO(conf.start);
+        const endDate = safeParseISO(conf.end);
         
-        const hasPrevDay = prevDate >= startDate;
-        const hasNextDay = nextDate <= endDate;
-        
-        let lineStyle = "h-1";
-        
-        if (hasPrevDay && hasNextDay) {
-          // Middle of a sequence
-          lineStyle += " w-[calc(100%+1rem)] -left-2";
-        } else if (hasPrevDay) {
-          // End of a sequence
-          lineStyle += " w-[calc(100%+0.5rem)] -left-2";
-        } else if (hasNextDay) {
-          // Start of a sequence
-          lineStyle += " w-[calc(100%+0.5rem)] right-0";
-        } else {
-          // Single day
-          lineStyle += " w-full";
-        }
+        if (!startDate || !endDate) return null;
 
-        // Get the color based on the first tag or default to purple
-        const color = conf.tags?.[0] ? categoryColors[conf.tags[0]] : "bg-purple-500";
+        let style = "w-[calc(100%+1rem)] -left-2 relative";
         
-        styles.push({
-          style: lineStyle,
-          color: color
-        });
-      }
-    }
-    
-    return styles;
+        // Add specific styles for start, middle, and end days
+        if (isSameDay(date, startDate)) {
+          style += " rounded-l-sm";
+        }
+        if (isSameDay(date, endDate)) {
+          style += " rounded-r-sm";
+        }
+        
+        // Get the color based on the first tag
+        const color = conf.tags && conf.tags[0] ? categoryColors[conf.tags[0]] : "bg-gray-500";
+
+        return { style, color };
+      })
+      .filter(Boolean);
   };
 
   // Update the renderDayContent function
@@ -233,25 +209,25 @@ const CalendarPage = () => {
     const hasDeadline = dayEvents.deadlines.length > 0;
 
     return (
-      <div className="relative w-full h-full flex flex-col items-center">
-        {/* Day number at the top */}
-        <div className="flex-grow flex items-center justify-center mb-2">
+      <div className="relative w-full h-full flex flex-col">
+        {/* Day number at the top with more space */}
+        <div className="h-12 flex items-center justify-center">
           <span>{format(date, 'd')}</span>
         </div>
 
         {/* Event indicator lines at the bottom */}
-        <div className="absolute bottom-0 w-full h-2 flex flex-col justify-end gap-[2px]">
-          {/* Deadline lines always on top */}
-          {hasDeadline && (
-            <div className="h-1 w-full bg-red-500" />
-          )}
-          {/* Conference lines at the bottom */}
+        <div className="absolute bottom-2 left-0 right-0 flex flex-col-reverse gap-[2px]">
+          {/* Conference lines at the bottom (rendered first) */}
           {conferenceStyles.map((style, index) => (
             <div 
               key={`conf-${index}`} 
-              className={`${style.style} ${style.color}`} 
+              className={`h-[3px] ${style.style} ${style.color}`} 
             />
           ))}
+          {/* Deadline lines on top */}
+          {hasDeadline && (
+            <div className="h-[3px] w-[calc(100%+1rem)] -left-2 relative bg-red-500" />
+          )}
         </div>
 
         {/* Tooltip trigger */}
@@ -380,8 +356,8 @@ const CalendarPage = () => {
                   head_row: "flex",
                   head_cell: "text-muted-foreground rounded-md w-10 font-normal text-[0.8rem]",
                   row: "flex w-full mt-2",
-                  cell: "h-10 w-10 text-center text-sm p-0 relative focus-within:relative focus-within:z-20 hover:bg-neutral-50",
-                  day: "h-10 w-10 p-0 font-normal hover:bg-neutral-100 rounded-lg transition-colors",
+                  cell: "h-16 w-10 text-center text-sm p-0 relative focus-within:relative focus-within:z-20 hover:bg-neutral-50",
+                  day: "h-16 w-10 p-0 font-normal hover:bg-neutral-100 rounded-lg transition-colors",
                   day_today: "bg-neutral-100 text-primary font-semibold",
                   day_outside: "hidden",
                   nav: "space-x-1 flex items-center",

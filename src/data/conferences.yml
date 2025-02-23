@@ -58,7 +58,7 @@
   timezone: UTC-12
   place: Hyderabad, India
   date: April 6-11, 2025
-  start: 2025-04-6
+  start: 2025-04-06
   end: 2025-04-11
   tags:
   - signal-processing
@@ -119,6 +119,8 @@
   timezone: UTC+0
   place: Milan, Italy
   date: February 24-27, 2025
+  start: 2025-02-24
+  end: 2025-02-27
   tags:
   - machine-learning
 
@@ -207,6 +209,7 @@
 - title: CVPR
   year: 2025
   id: cvpr25
+  full_name: IEEE/CVF Conference on Computer Vision and Pattern Recognition
   link: https://cvpr.thecvf.com/Conferences/2025
   deadline: '2024-11-15 06:59:59'
   abstract_deadline: '2024-11-08 06:59:59'
@@ -223,15 +226,14 @@
 - title: ESANN
   year: 2025
   id: esann25
-  full_name: European Symposium on Artificial Neural Networks, Computational Intelligence
-    and Machine Learning
+  full_name: European Symposium on Artificial Neural Networks, Computational Intelligence and Machine Learning
   link: https://www.esann.org/
   deadline: '2024-11-20 00:00:00'
   timezone: UTC-8
   place: Bruges, Belgium
-  date: April 23 - April 25, 2025
-  tags:
-  - machine-learning
+  date: April 23-25, 2025
+  start: 2025-04-23
+  end: 2025-04-25
   abstract_deadline: '2024-11-20 00:00:00'
   note: 'Rankings: CCF: N, CORE: B, THCPL: N'
 
@@ -244,6 +246,8 @@
   timezone: AoE
   place: California, USA
   date: March 24-27, 2025
+  start: 2025-03-24
+  end: 2025-03-27
   tags:
   - machine-learning
   note: 'Rankings: CCF: N, CORE: N, THCPL: N'
@@ -257,6 +261,8 @@
   timezone: UTC-12
   place: Hangzhou, China
   date: June 8-12, 2025
+  start: 2025-06-08
+  end: 2025-06-12
   tags:
   - machine-learning
 
@@ -267,8 +273,10 @@
   link: https://2025.ijcai.org/
   deadline: '2025-01-23 23:59:59'
   timezone: UTC-12
-  place: Montreal, Canada.
+  place: Montreal, Canada
   date: August 16-22, 2025
+  start: 2025-08-16
+  end: 2025-08-22
   tags:
   - machine-learning
   abstract_deadline: '2025-01-16 23:59:59'
@@ -282,6 +290,8 @@
   timezone: AoE
   place: Los Angeles, California, USA
   date: June 21-25, 2025
+  start: 2025-06-21
+  end: 2025-06-25
   tags:
   - machine-learning
   abstract_deadline: '2025-01-17 23:59:00'
@@ -295,6 +305,8 @@
   timezone: UTC-12
   place: Vancouver Convention Center, Vancouver, Canada
   date: July 11-19, 2025
+  start: 2025-07-11
+  end: 2025-07-19
   tags:
   - machine-learning
   abstract_deadline: '2025-01-23 23:59:59'
@@ -308,6 +320,8 @@
   timezone: UTC-12
   place: Rome, Italy
   date: June 30 - July 5, 2025
+  start: 2025-06-30
+  end: 2025-07-05
   tags:
   - machine-learning
 
@@ -320,6 +334,8 @@
   timezone: UTC-5
   place: Lyon, France
   date: June 30 - July 4, 2025
+  start: 2025-06-30
+  end: 2025-07-04
   tags:
   - machine-learning
 
@@ -414,6 +430,8 @@
   timezone: AoE
   place: Palais des Congrès Montreal, Canada
   date: October 7-9, 2025
+  start: 2025-10-07
+  end: 2025-10-09
   tags:
   - natural-language-processing
   abstract_deadline: '2025-03-20 23:59:59'
@@ -427,6 +445,8 @@
   timezone: UTC-12
   place: Bologna, Italy
   date: October 25-30, 2025
+  start: 2025-10-25
+  end: 2025-10-30
   tags:
   - machine-learning
   abstract_deadline: '2025-04-29 23:59:59'
@@ -439,7 +459,9 @@
   deadline: '2025-05-19 23:59:59'
   timezone: UTC-12
   place: Suzhou, China
-  date: November 5 - 9, 2025
+  date: November 5-9, 2025
+  start: 2025-11-05
+  end: 2025-11-09
   tags:
   - natural-language-processing
 
@@ -452,6 +474,8 @@
   timezone: UTC+1
   place: Vienna, Austria
   date: Jun 1-5, 2026
+  start: 2026-06-01
+  end: 2026-06-05
   tags:
   - machine-learning
   - robotics
@@ -461,9 +485,11 @@
   id: neurips25
   full_name: Conference on Neural Information Processing Systems
   link: https://neurips.cc/
-  deadline: "2025-05-16 23:59:59"
+  deadline: '2025-05-16 23:59:59'
   timezone: UTC-8
   place: San Diego, US
-  date: Dec 9-15, 2025
+  date: December 9-15, 2025
+  start: 2025-12-09
+  end: 2025-12-15
   tags:
   - machine-learning
