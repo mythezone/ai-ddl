@@ -26,7 +26,7 @@ const Index = () => {
         if (!showPastConferences && !isUpcoming) return false;
 
         // Filter by tag and search query
-        const matchesTag = selectedTag === "All" || conf.tags.includes(selectedTag);
+        const matchesTag = selectedTag === "All" || (Array.isArray(conf.tags) && conf.tags.includes(selectedTag));
         const matchesSearch = searchQuery === "" || 
           conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
