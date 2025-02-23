@@ -1,4 +1,3 @@
-
 import { CalendarDays, Globe, Tag, Clock, AlarmClock } from "lucide-react";
 import { Conference } from "@/types/conference";
 import { formatDistanceToNow, parseISO, isValid } from "date-fns";
@@ -40,9 +39,13 @@ const ConferenceCard = ({
 
   return (
     <>
-      <div className="conference-card cursor-pointer" onClick={handleCardClick}>
-        <div className="mb-3">
-          {link ? (
+      <div 
+        onClick={handleCardClick}
+        className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col cursor-pointer"
+      >
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="text-lg font-semibold text-primary">{title}</h3>
+          {link && (
             <a 
               href={link}
               target="_blank"
@@ -50,12 +53,9 @@ const ConferenceCard = ({
               className="hover:underline"
               onClick={(e) => e.stopPropagation()}
             >
-              <h3 className="text-lg font-semibold text-primary">{title}</h3>
+              <Globe className="h-4 w-4 mr-2 flex-shrink-0" />
             </a>
-          ) : (
-            <h3 className="text-lg font-semibold">{title}</h3>
           )}
-          {full_name && <p className="text-xs text-neutral-600 truncate">{full_name}</p>}
         </div>
         
         <div className="flex flex-col gap-2 mb-3">
@@ -90,13 +90,6 @@ const ConferenceCard = ({
               </span>
             ))}
           </div>
-        )}
-
-        {note && (
-          <div 
-            className="text-xs text-neutral-600 mt-2"
-            dangerouslySetInnerHTML={{ __html: note }}
-          />
         )}
       </div>
 
