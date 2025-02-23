@@ -57,9 +57,12 @@ const CalendarPage = () => {
   const safeParseISO = (dateString: string | undefined | number): Date | null => {
     if (!dateString) return null;
     if (dateString === 'TBD') return null;
+    
+    const isDate = (value: any): value is Date => {
+      return value && Object.prototype.toString.call(value) === '[object Date]';
+    };
 
-    // If it's already a Date object, return it
-    if (dateString instanceof Date) return dateString;
+    if (isDate(dateString)) return dateString;
     
     try {
       if (typeof dateString === 'object') {
@@ -169,11 +172,9 @@ const CalendarPage = () => {
     );
   };
 
-  // Add these helper functions at the top of the file
   const isEndOfWeek = (date: Date) => date.getDay() === 6; // Saturday
   const isStartOfWeek = (date: Date) => date.getDay() === 0; // Sunday
 
-  // Update the getConferenceLineStyle function
   const getConferenceLineStyle = (date: Date) => {
     return conferencesData
       .filter(conf => {
@@ -191,7 +192,6 @@ const CalendarPage = () => {
 
         let style = "w-[calc(100%+1rem)] -left-2 relative";
         
-        // Add specific styles for start, middle, and end days
         if (isSameDay(date, startDate)) {
           style += " rounded-l-sm";
         }
@@ -199,7 +199,6 @@ const CalendarPage = () => {
           style += " rounded-r-sm";
         }
         
-        // Get the color based on the first tag
         const color = conf.tags && conf.tags[0] ? categoryColors[conf.tags[0]] : "bg-gray-500";
 
         return { style, color };
@@ -207,15 +206,12 @@ const CalendarPage = () => {
       .filter(Boolean);
   };
 
-  // Update the renderDayContent function
   const renderDayContent = (date: Date) => {
     const dayEvents = getDayEvents(date);
     const hasEvents = dayEvents.deadlines.length > 0 || dayEvents.conferences.length > 0;
 
-    // Get conference line styles first
     const conferenceStyles = getConferenceLineStyle(date);
 
-    // Get deadline style
     const hasDeadline = showDeadlines && dayEvents.deadlines.length > 0;
 
     const handleDayClick = (e: React.MouseEvent) => {
@@ -232,27 +228,22 @@ const CalendarPage = () => {
         className="relative w-full h-full flex flex-col"
         onClick={handleDayClick}
       >
-        {/* Day number at the top with moderate space */}
         <div className="h-10 flex items-center justify-center">
           <span>{format(date, 'd')}</span>
         </div>
 
-        {/* Event indicator lines closer to the day number */}
         <div className="absolute bottom-2 left-0 right-0 flex flex-col-reverse gap-[1px]">
-          {/* Conference lines at the bottom (rendered first) */}
           {conferenceStyles.map((style, index) => (
             <div 
               key={`conf-${index}`} 
               className={`h-[2px] ${style.style} ${style.color}`} 
             />
           ))}
-          {/* Deadline lines on top */}
           {hasDeadline && (
             <div className="h-[2px] w-[calc(100%+1rem)] -left-2 relative bg-red-500" />
           )}
         </div>
 
-        {/* Tooltip trigger */}
         {hasEvents && (
           <TooltipProvider>
             <Tooltip>
@@ -423,7 +414,6 @@ const CalendarPage = () => {
           </TooltipProvider>
         ))}
         
-        {/* Only show Reset when some filters are deselected */}
         {(selectedCategories.size < Object.keys(categoryColors).length || !showDeadlines) && (
           <button
             onClick={() => {
@@ -445,7 +435,6 @@ const CalendarPage = () => {
     <div className="min-h-screen bg-neutral-light">
       <Header onSearch={setSearchQuery} />
 
-      {/* Add a search results section when there's a search query */}
       {searchQuery && (
         <div className="p-6 bg-white border-b">
           <div className="max-w-4xl mx-auto">

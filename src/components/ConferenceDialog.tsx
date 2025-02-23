@@ -63,8 +63,12 @@ const ConferenceDialog = ({ conference, open, onOpenChange }: ConferenceDialogPr
 
       // Primary: Use start and end fields
       if (conference.start && conference.end) {
-        // If the dates are already Date objects, use them directly
-        if (conference.start instanceof Date && conference.end instanceof Date) {
+        // Check if the dates are Date objects using a type guard
+        const isDate = (value: any): value is Date => {
+          return value && Object.prototype.toString.call(value) === '[object Date]';
+        };
+
+        if (isDate(conference.start) && isDate(conference.end)) {
           startDate = conference.start;
           endDate = conference.end;
         } else {
