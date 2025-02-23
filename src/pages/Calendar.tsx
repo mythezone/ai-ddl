@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import conferencesData from "@/data/conferences.yml";
 import { Conference } from "@/types/conference";
@@ -357,49 +356,34 @@ const CalendarPage = () => {
   const renderLegend = () => {
     return (
       <div className="flex flex-wrap gap-3 justify-center items-center mb-4">
-        <div className="flex items-center gap-2 bg-white p-1 rounded-lg shadow-sm">
-          <Toggle 
-            pressed={!isYearView} 
-            onPressedChange={() => setIsYearView(false)}
-            variant="outline"
-            className="border-2 data-[state=on]:border-primary"
-          >
-            Month View
-          </Toggle>
-          <Toggle 
-            pressed={isYearView} 
-            onPressedChange={() => setIsYearView(true)}
-            variant="outline"
-            className="border-2 data-[state=on]:bg-primary data-[state=on]:text-white data-[state=on]:border-primary"
-          >
-            Year View
-          </Toggle>
+        <div className="flex gap-3 items-center">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => setShowDeadlines(!showDeadlines)}
+                  className={`
+                    flex items-center gap-2 px-3 py-1.5 
+                    rounded-lg border border-red-200 
+                    bg-white hover:bg-red-50 
+                    transition-all duration-200
+                    cursor-pointer
+                    ${showDeadlines ? 'ring-2 ring-primary ring-offset-2' : ''}
+                  `}
+                >
+                  <div className="w-3 h-3 bg-red-500 rounded-full" />
+                  <span className="text-sm">Submission Deadlines</span>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Click to toggle submission deadlines</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         </div>
 
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={() => setShowDeadlines(!showDeadlines)}
-                className={`
-                  flex items-center gap-2 px-3 py-1.5 
-                  rounded-lg border border-red-200 
-                  bg-white hover:bg-red-50 
-                  transition-all duration-200
-                  cursor-pointer
-                  ${showDeadlines ? 'ring-2 ring-primary ring-offset-2' : ''}
-                `}
-              >
-                <div className="w-3 h-3 bg-red-500 rounded-full" />
-                <span className="text-sm">Submission Deadlines</span>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>Click to toggle submission deadlines</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-        
+        <div className="h-6 w-px bg-neutral-200" /> {/* Divider */}
+
         {categories.map(([tag, color]) => (
           <TooltipProvider key={tag}>
             <Tooltip>
@@ -447,6 +431,35 @@ const CalendarPage = () => {
             Deselect All Colors
           </button>
         )}
+      </div>
+    );
+  };
+
+  const renderViewToggle = () => {
+    return (
+      <div className="flex justify-center mb-6">
+        <div className="bg-neutral-100 rounded-lg p-1 inline-flex">
+          <button
+            onClick={() => setIsYearView(false)}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              !isYearView 
+                ? 'bg-white shadow-sm text-primary' 
+                : 'text-neutral-600 hover:text-neutral-900'
+            }`}
+          >
+            Month View
+          </button>
+          <button
+            onClick={() => setIsYearView(true)}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              isYearView 
+                ? 'bg-white shadow-sm text-primary' 
+                : 'text-neutral-600 hover:text-neutral-900'
+            }`}
+          >
+            Year View
+          </button>
+        </div>
       </div>
     );
   };
@@ -523,26 +536,8 @@ const CalendarPage = () => {
 
       <div className="p-6">
         <div className="max-w-7xl mx-auto">
-          <div className="flex flex-col items-center mb-8">
-            <h1 className="text-3xl font-bold mb-4">Calendar Overview</h1>
-            <div className="flex items-center gap-4 mb-6">
-              <Toggle 
-                pressed={!isYearView} 
-                onPressedChange={() => setIsYearView(false)}
-                variant="outline"
-              >
-                Month View
-              </Toggle>
-              <Toggle 
-                pressed={isYearView} 
-                onPressedChange={() => setIsYearView(true)}
-                variant="outline"
-              >
-                Year View
-              </Toggle>
-            </div>
-            {renderLegend()}
-          </div>
+          {renderViewToggle()}
+          {renderLegend()}
 
           <div className="grid grid-cols-1 gap-8">
             <div className="mx-auto w-full max-w-4xl">
