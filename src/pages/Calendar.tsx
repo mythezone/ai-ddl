@@ -20,6 +20,28 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+const categoryColors: Record<string, string> = {
+  "computer-vision": "bg-orange-500",
+  "machine-learning": "bg-purple-500",
+  "natural-language-processing": "bg-blue-500",
+  "robotics": "bg-green-500",
+  "data-mining": "bg-pink-500",
+  "signal-processing": "bg-cyan-500",
+  "human-computer-interaction": "bg-indigo-500",
+  "web-search": "bg-yellow-500",
+};
+
+const categoryNames: Record<string, string> = {
+  "computer-vision": "Computer Vision",
+  "machine-learning": "Machine Learning",
+  "natural-language-processing": "NLP",
+  "robotics": "Robotics",
+  "data-mining": "Data Mining",
+  "signal-processing": "Signal Processing",
+  "human-computer-interaction": "HCI",
+  "web-search": "Web Search",
+};
+
 const CalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [isYearView, setIsYearView] = useState(true);
@@ -160,9 +182,16 @@ const CalendarPage = () => {
           {hasDeadlines && (
             <div className="h-0.5 flex-1 bg-red-500" title="Deadline" />
           )}
-          {hasConferences && (
-            <div className="h-0.5 flex-1 bg-purple-600" title="Conference" />
-          )}
+          {hasConferences && dayEvents.conferences.map((conf) => {
+            const categoryColor = conf.tags?.[0] ? categoryColors[conf.tags[0]] || "bg-purple-600" : "bg-purple-600";
+            return (
+              <div 
+                key={conf.id}
+                className={`h-0.5 flex-1 ${categoryColor}`} 
+                title={conf.title}
+              />
+            );
+          })}
         </div>
       </div>
     );
@@ -226,6 +255,10 @@ const CalendarPage = () => {
     );
   };
 
+  const categories = Object.entries(categoryColors).filter(([category]) => 
+    conferencesData.some(conf => conf.tags?.includes(category))
+  );
+
   return (
     <div className="min-h-screen bg-neutral-light">
       <Header onSearch={setSearchQuery} />
@@ -252,15 +285,17 @@ const CalendarPage = () => {
             </div>
           </div>
 
-          <div className="flex justify-center gap-6 mb-6">
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-1 bg-purple-600" />
-              <span>Conference Dates</span>
-            </div>
+          <div className="flex justify-center flex-wrap gap-4 mb-6">
             <div className="flex items-center gap-2">
               <div className="w-4 h-1 bg-red-500" />
               <span>Submission Deadlines</span>
             </div>
+            {categories.map(([category, color]) => (
+              <div key={category} className="flex items-center gap-2">
+                <div className={`w-4 h-1 ${color}`} />
+                <span>{categoryNames[category]}</span>
+              </div>
+            ))}
           </div>
 
           <div className="grid grid-cols-1 gap-8">
