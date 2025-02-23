@@ -1,4 +1,3 @@
-
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
@@ -47,6 +46,19 @@ const Header = ({ onSearch }: HeaderProps) => {
               />
             </div>
           </div>
+        </div>
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="text-sm text-neutral-600 py-4">
+            Countdowns to top CV/NLP/ML/Robotics/AI conference deadlines. To add/edit a conference, send in a{' '}
+            <a 
+              href="https://github.com/NielsRogge/ai-deadlines-hub"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              pull request
+            </a>.
+          </p>
         </div>
       </div>
     </header>

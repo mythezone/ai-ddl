@@ -1,7 +1,7 @@
 import { useState } from "react";
 import conferencesData from "@/data/conferences.yml";
 import { Conference } from "@/types/conference";
-import { Calendar as CalendarIcon, Tag, X } from "lucide-react"; // Added X import
+import { Calendar as CalendarIcon, Tag, X, Plus } from "lucide-react"; // Added X and Plus imports
 import { Calendar } from "@/components/ui/calendar";
 import { parseISO, format, isValid, isSameMonth, isSameYear, isSameDay, isSameWeek } from "date-fns";
 import { Toggle } from "@/components/ui/toggle";
@@ -443,6 +443,21 @@ const CalendarPage = () => {
             </Tooltip>
           </TooltipProvider>
         ))}
+
+        {selectedCategories.size < Object.keys(categoryColors).length && (
+          <button
+            onClick={() => {
+              setSelectedCategories(new Set(Object.keys(categoryColors)));
+              setShowDeadlines(true);
+            }}
+            className="text-sm text-green-600 bg-green-50 hover:bg-green-100 hover:text-green-700
+              px-3 py-1.5 rounded-lg border border-green-200
+              transition-colors flex items-center gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Select All
+          </button>
+        )}
 
         {selectedCategories.size > 0 && (
           <button

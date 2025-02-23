@@ -1,3 +1,12 @@
+---
+title: AI Deadlines
+emoji: ⚡
+colorFrom: gray
+colorTo: blue
+sdk: docker
+pinned: false
+---
+
 # Welcome to your Lovable project
 
 ## Project info
@@ -67,3 +76,17 @@ Simply open [Lovable](https://lovable.dev/projects/5c0b5f16-c917-4e43-9d0c-03c32
 ## I want to use a custom domain - is that possible?
 
 We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+
+## Deploy with Docker
+
+First build the Docker image as follows:
+
+```bash
+docker build -t ai-deadlines .
+```
+
+Next it can be run as follows:
+
+```bash
+docker run -it -p 7860:7860 ai-deadlines
+```
