@@ -331,24 +331,30 @@ const CalendarPage = () => {
                 showOutsideDays={false}
                 className="bg-white rounded-lg p-6 shadow-sm mx-auto w-full"
                 components={{
-                  Day: ({ date, ...props }) => (
-                    <button {...props} className="w-full h-full p-2">
-                      {renderDayContent(date)}
-                    </button>
-                  ),
+                  Day: ({ date, ...props }) => {
+                    const isOutsideDay = date.getMonth() !== props.displayMonth.getMonth();
+                    if (isOutsideDay) {
+                      return null;
+                    }
+                    return (
+                      <button {...props} className="w-full h-full p-2">
+                        {renderDayContent(date)}
+                      </button>
+                    );
+                  },
                 }}
                 classNames={{
                   months: `grid ${isYearView ? 'grid-cols-3 gap-4' : ''} justify-center`,
                   month: "space-y-4",
                   caption: "flex justify-center pt-1 relative items-center mb-4",
                   caption_label: "text-lg font-semibold",
-                  table: "w-full border-collapse space-y-1",
                   head_row: "flex",
                   head_cell: "text-muted-foreground rounded-md w-10 font-normal text-[0.8rem]",
                   row: "flex w-full mt-2",
                   cell: "h-10 w-10 text-center text-sm p-0 relative focus-within:relative focus-within:z-20 hover:bg-neutral-50",
                   day: "h-10 w-10 p-0 font-normal hover:bg-neutral-100 rounded-lg transition-colors",
                   day_today: "bg-neutral-100 text-primary font-semibold",
+                  day_outside: "hidden",
                   nav: "space-x-1 flex items-center",
                   nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
                   nav_button_previous: "absolute left-1",
