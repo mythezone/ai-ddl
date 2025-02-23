@@ -7,7 +7,7 @@ interface FilterBarProps {
   onTagSelect: (tags: Set<string>) => void;
 }
 
-const FilterBar = ({ selectedTags, onTagSelect }: FilterBarProps) => {
+const FilterBar = ({ selectedTags = new Set(), onTagSelect }: FilterBarProps) => {
   const uniqueTags = useMemo(() => {
     const tags = new Set<string>();
     if (Array.isArray(conferencesData)) {
@@ -26,6 +26,10 @@ const FilterBar = ({ selectedTags, onTagSelect }: FilterBarProps) => {
     }));
   }, []);
 
+  const isTagSelected = (tagId: string) => {
+    return selectedTags?.has(tagId) ?? false;
+  };
+
   return (
     <div className="w-full py-6 bg-white border-b border-neutral-200 animate-fade-in shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -36,7 +40,7 @@ const FilterBar = ({ selectedTags, onTagSelect }: FilterBarProps) => {
               title={filter.description}
               onClick={() => {
                 const newTags = new Set(selectedTags);
-                if (newTags.has(filter.id)) {
+                if (isTagSelected(filter.id)) {
                   newTags.delete(filter.id);
                 } else {
                   newTags.add(filter.id);
@@ -46,7 +50,7 @@ const FilterBar = ({ selectedTags, onTagSelect }: FilterBarProps) => {
               className={`
                 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200
                 filter-tag
-                ${selectedTags.has(filter.id)
+                ${isTagSelected(filter.id)
                   ? "bg-primary text-white shadow-sm filter-tag-active" 
                   : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
                 }
@@ -56,7 +60,7 @@ const FilterBar = ({ selectedTags, onTagSelect }: FilterBarProps) => {
             </button>
           ))}
           
-          {selectedTags.size > 0 && (
+          {selectedTags?.size > 0 && (
             <button
               onClick={() => onTagSelect(new Set())}
               className="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200

@@ -44,6 +44,7 @@ const categoryNames: Record<string, string> = {
 const CalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [isYearView, setIsYearView] = useState(true);
+  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedDayEvents, setSelectedDayEvents] = useState<{ date: Date | null, events: { deadlines: Conference[], conferences: Conference[] } }>({
     date: null,
@@ -522,6 +523,11 @@ const CalendarPage = () => {
     );
   };
 
+  const handleMonthChange = (month: Date) => {
+    setCurrentMonth(month);
+    setSelectedDate(month);
+  };
+
   return (
     <div className="min-h-screen bg-neutral-light">
       <Header onSearch={setSearchQuery} />
@@ -606,7 +612,8 @@ const CalendarPage = () => {
                 numberOfMonths={isYearView ? 12 : 1}
                 showOutsideDays={false}
                 defaultMonth={new Date(currentYear, 0)}
-                month={new Date(currentYear, 0)}
+                month={isYearView ? new Date(currentYear, 0) : currentMonth}
+                onMonthChange={handleMonthChange}
                 fromMonth={isYearView ? new Date(currentYear, 0) : undefined}
                 toMonth={isYearView ? new Date(currentYear, 11) : undefined}
                 className="bg-white rounded-lg p-6 shadow-sm mx-auto w-full"
@@ -641,7 +648,7 @@ const CalendarPage = () => {
                   day_today: "bg-neutral-100 text-primary font-semibold",
                   day_outside: "hidden",
                   nav: "space-x-1 flex items-center",
-                  nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+                  nav_button: isYearView ? "hidden" : "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
                   nav_button_previous: "absolute left-1",
                   nav_button_next: "absolute right-1"
                 }}

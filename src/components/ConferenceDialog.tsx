@@ -164,6 +164,10 @@ END:VCALENDAR`;
     }
   };
 
+  const generateGoogleMapsUrl = (venue: string | undefined, place: string): string => {
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(venue || place)}`;
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="dialog-content max-w-md">
@@ -184,7 +188,15 @@ END:VCALENDAR`;
             </div>
             <div className="flex items-center text-neutral">
               <Globe className="h-5 w-5 mr-3 flex-shrink-0" />
-              <span>{conference.place}</span>
+              <a
+                href={generateGoogleMapsUrl(conference.venue, conference.place)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-primary hover:underline"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {conference.place}
+              </a>
             </div>
             <div className="flex items-center text-neutral">
               <Clock className="h-5 w-5 mr-3 flex-shrink-0" />

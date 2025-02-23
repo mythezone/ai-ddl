@@ -50,7 +50,10 @@ const Index = () => {
       <Header onSearch={setSearchQuery} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="space-y-4 py-4">
-          <FilterBar selectedTags={selectedTags} onTagSelect={setSelectedTags} />
+          <FilterBar 
+            selectedTags={selectedTags}
+            onTagSelect={setSelectedTags}
+          />
           <div className="flex items-center gap-2">
             <label htmlFor="show-past" className="text-sm text-neutral-600">
               Show past conferences
