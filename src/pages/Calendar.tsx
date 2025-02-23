@@ -208,8 +208,20 @@ const CalendarPage = () => {
     // Get deadline style
     const hasDeadline = dayEvents.deadlines.length > 0;
 
+    const handleDayClick = (e: React.MouseEvent) => {
+      e.preventDefault(); // Prevent default calendar behavior
+      e.stopPropagation(); // Stop event propagation
+      setSelectedDayEvents({
+        date,
+        events: dayEvents
+      });
+    };
+
     return (
-      <div className="relative w-full h-full flex flex-col">
+      <div 
+        className="relative w-full h-full flex flex-col"
+        onClick={handleDayClick}
+      >
         {/* Day number at the top with moderate space */}
         <div className="h-10 flex items-center justify-center">
           <span>{format(date, 'd')}</span>
@@ -252,30 +264,83 @@ const CalendarPage = () => {
 
     return (
       <div className="border-b last:border-b-0 pb-4 last:pb-0 mb-4 last:mb-0">
-        <h3 className="font-semibold text-lg">{conf.title}</h3>
-        {conf.full_name && (
-          <p className="text-sm text-neutral-600 mb-2">{conf.full_name}</p>
-        )}
-        <div className="space-y-1">
-          {deadlineDate && (
-            <p className="text-red-500 text-sm">
-              Submission Deadline: {format(deadlineDate, 'MMMM d, yyyy')}
-            </p>
-          )}
-          {startDate && (
-            <p className="text-purple-600 text-sm">
-              Conference Date: {format(startDate, 'MMMM d')}
-              {endDate ? ` - ${format(endDate, 'MMMM d, yyyy')}` : 
-                `, ${format(startDate, 'yyyy')}`}
-            </p>
+        <div className="flex justify-between items-start">
+          <div>
+            <h3 className="font-semibold text-lg">{conf.title}</h3>
+            {conf.full_name && (
+              <p className="text-sm text-neutral-600 mb-2">{conf.full_name}</p>
+            )}
+          </div>
+          {conf.link && (
+            <a 
+              href={conf.link} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="text-sm text-blue-500 hover:text-blue-600 flex items-center gap-1"
+            >
+              Website
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" y1="14" x2="21" y2="3" />
+              </svg>
+            </a>
           )}
         </div>
-        <div className="mt-2 flex flex-wrap gap-2">
+        
+        <div className="space-y-2 mt-3">
+          {deadlineDate && (
+            <div className="flex items-start gap-2">
+              <span className="text-red-500 font-medium text-sm">Deadline:</span>
+              <div className="text-sm">
+                <div>{format(deadlineDate, 'MMMM d, yyyy')}</div>
+                {conf.timezone && (
+                  <div className="text-neutral-500 text-xs">
+                    Timezone: {conf.timezone}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+          
+          {startDate && (
+            <div className="flex items-start gap-2">
+              <span className="text-purple-600 font-medium text-sm">Date:</span>
+              <div className="text-sm">
+                <div>
+                  {format(startDate, 'MMMM d')}
+                  {endDate ? ` - ${format(endDate, 'MMMM d, yyyy')}` : 
+                    `, ${format(startDate, 'yyyy')}`}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {conf.place && (
+            <div className="flex items-start gap-2">
+              <span className="text-neutral-600 font-medium text-sm">Location:</span>
+              <span className="text-sm">{conf.place}</span>
+            </div>
+          )}
+
+          {conf.note && (
+            <div className="flex items-start gap-2 mt-2">
+              <span className="text-neutral-600 font-medium text-sm">Note:</span>
+              <div className="text-sm text-neutral-600" 
+                dangerouslySetInnerHTML={{ __html: conf.note }} 
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="mt-3 flex flex-wrap gap-2">
           {Array.isArray(conf.tags) && conf.tags.map((tag) => (
-            <span key={tag} className="inline-flex items-center px-2 py-1 rounded-full 
-              text-xs bg-neutral-100">
+            <span 
+              key={tag} 
+              className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-neutral-100"
+            >
               <Tag className="h-3 w-3 mr-1" />
-              {tag}
+              {categoryNames[tag] || tag}
             </span>
           ))}
         </div>
