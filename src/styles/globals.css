@@ -1,0 +1,19 @@
+/* Add these styles to make the filter tags more interactive */
+.filter-tag {
+  @apply transition-all duration-200;
+}
+
+.filter-tag:hover {
+  @apply transform scale-105;
+}
+
+/* Add a subtle pulse animation for the active filters */
+@keyframes subtle-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.filter-tag-active {
+  animation: subtle-pulse 2s infinite;
+} 

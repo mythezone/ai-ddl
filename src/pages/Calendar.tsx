@@ -49,7 +49,10 @@ const CalendarPage = () => {
     date: null,
     events: { deadlines: [], conferences: [] }
   });
-  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
+    new Set(Object.keys(categoryColors))
+  );
+  const [showDeadlines, setShowDeadlines] = useState(true);
   
   const safeParseISO = (dateString: string | undefined | number): Date | null => {
     if (!dateString) return null;
@@ -85,7 +88,6 @@ const CalendarPage = () => {
         conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      // Add category filter
       const matchesCategory = selectedCategories.size === 0 || 
         (Array.isArray(conf.tags) && conf.tags.some(tag => selectedCategories.has(tag)));
 
@@ -97,7 +99,7 @@ const CalendarPage = () => {
 
       const dateMatches = isYearView ? isSameYear : isSameMonth;
 
-      const deadlineInPeriod = deadlineDate && dateMatches(deadlineDate, date);
+      const deadlineInPeriod = showDeadlines && deadlineDate && dateMatches(deadlineDate, date);
       
       let conferenceInPeriod = false;
       if (startDate && endDate) {
@@ -118,12 +120,12 @@ const CalendarPage = () => {
   };
 
   const getDayEvents = (date: Date) => {
-    const deadlines = conferencesData.filter(conf => {
+    const deadlines = showDeadlines ? conferencesData.filter(conf => {
       const deadlineDate = safeParseISO(conf.deadline);
       const matchesCategory = selectedCategories.size === 0 || 
         (Array.isArray(conf.tags) && conf.tags.some(tag => selectedCategories.has(tag)));
       return deadlineDate && isSameDay(deadlineDate, date) && matchesCategory;
-    });
+    }) : [];
 
     const conferences = conferencesData.filter(conf => {
       const startDate = safeParseISO(conf.start);
@@ -214,7 +216,7 @@ const CalendarPage = () => {
     const conferenceStyles = getConferenceLineStyle(date);
 
     // Get deadline style
-    const hasDeadline = dayEvents.deadlines.length > 0;
+    const hasDeadline = showDeadlines && dayEvents.deadlines.length > 0;
 
     const handleDayClick = (e: React.MouseEvent) => {
       e.preventDefault(); // Prevent default calendar behavior
@@ -361,45 +363,78 @@ const CalendarPage = () => {
   );
 
   const renderLegend = () => {
-    const categories = Object.entries(categoryColors);
-    
     return (
-      <div className="flex flex-wrap gap-4 items-center mb-6">
-        <div className="flex items-center gap-2">
-          <div className="w-4 h-1 bg-red-500" />
-          <span className="text-sm">Submission Deadlines</span>
-        </div>
-        {categories.map(([category, color]) => {
-          const isSelected = selectedCategories.has(category);
-          return (
-            <button
-              key={category}
-              onClick={() => {
-                const newCategories = new Set(selectedCategories);
-                if (isSelected) {
-                  newCategories.delete(category);
-                } else {
-                  newCategories.add(category);
-                }
-                setSelectedCategories(newCategories);
-              }}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors ${
-                isSelected 
-                  ? 'bg-neutral-100 ring-1 ring-neutral-200' 
-                  : 'hover:bg-neutral-50'
-              }`}
-            >
-              <div className={`w-4 h-1 ${color}`} />
-              <span className="text-sm">{categoryNames[category]}</span>
-            </button>
-          )
-        })}
-        {selectedCategories.size > 0 && (
+      <div className="flex flex-wrap gap-3 justify-center items-center mb-4">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => setShowDeadlines(!showDeadlines)}
+                className={`
+                  flex items-center gap-2 px-3 py-1.5 
+                  rounded-lg border border-red-200 
+                  bg-white hover:bg-red-50 
+                  transition-all duration-200
+                  cursor-pointer
+                  ${showDeadlines ? 'ring-2 ring-primary ring-offset-2' : ''}
+                `}
+              >
+                <div className="w-3 h-3 bg-red-500 rounded-full" />
+                <span className="text-sm">Submission Deadlines</span>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Click to toggle submission deadlines</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        
+        {Object.entries(categoryColors).map(([tag, color]) => (
+          <TooltipProvider key={tag}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={() => {
+                    const newCategories = new Set(selectedCategories);
+                    if (newCategories.has(tag)) {
+                      newCategories.delete(tag);
+                    } else {
+                      newCategories.add(tag);
+                    }
+                    setSelectedCategories(newCategories);
+                  }}
+                  className={`
+                    flex items-center gap-2 px-3 py-1.5 
+                    rounded-lg border border-neutral-200 
+                    bg-white hover:bg-neutral-50 
+                    transition-all duration-200
+                    cursor-pointer
+                    ${selectedCategories.has(tag) ? 'ring-2 ring-primary ring-offset-2' : ''}
+                  `}
+                >
+                  <div className={`w-3 h-3 rounded-full ${color}`} />
+                  <span className="text-sm">{categoryNames[tag] || tag}</span>
+                </button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Click to toggle {categoryNames[tag] || tag}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ))}
+        
+        {/* Only show Reset when some filters are deselected */}
+        {(selectedCategories.size < Object.keys(categoryColors).length || !showDeadlines) && (
           <button
-            onClick={() => setSelectedCategories(new Set())}
-            className="text-sm text-neutral-500 hover:text-neutral-700"
+            onClick={() => {
+              setSelectedCategories(new Set(Object.keys(categoryColors)));
+              setShowDeadlines(true);
+            }}
+            className="text-sm text-neutral-500 hover:text-neutral-700 
+              px-3 py-1.5 rounded-lg border border-neutral-200 
+              hover:bg-neutral-50 transition-colors"
           >
-            Clear filters
+            Reset filters
           </button>
         )}
       </div>
