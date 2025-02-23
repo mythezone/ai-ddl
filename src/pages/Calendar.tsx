@@ -447,6 +447,7 @@ const CalendarPage = () => {
           <button
             onClick={() => {
               setSelectedCategories(new Set());
+              setShowDeadlines(false);
             }}
             className="text-sm text-red-600 bg-red-50 hover:bg-red-100 hover:text-red-700
               px-3 py-1.5 rounded-lg border border-red-200
