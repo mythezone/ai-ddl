@@ -1,14 +1,13 @@
-
 import { useMemo } from "react";
 import conferencesData from "@/data/conferences.yml";
 import { X } from "lucide-react";
 
 interface FilterBarProps {
-  selectedTag: string;
-  onTagSelect: (tag: string) => void;
+  selectedTags: Set<string>;
+  onTagSelect: (tags: Set<string>) => void;
 }
 
-const FilterBar = ({ selectedTag, onTagSelect }: FilterBarProps) => {
+const FilterBar = ({ selectedTags, onTagSelect }: FilterBarProps) => {
   const uniqueTags = useMemo(() => {
     const tags = new Set<string>();
     if (Array.isArray(conferencesData)) {
@@ -18,12 +17,12 @@ const FilterBar = ({ selectedTag, onTagSelect }: FilterBarProps) => {
         }
       });
     }
-    return ["All", ...Array.from(tags)].map(tag => ({
+    return Array.from(tags).map(tag => ({
       id: tag,
       label: tag.split("-").map(word => 
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(" "),
-      description: tag === "All" ? "All Conferences" : `${tag} Conferences`
+      description: `${tag} Conferences`
     }));
   }, []);
 
@@ -35,11 +34,19 @@ const FilterBar = ({ selectedTag, onTagSelect }: FilterBarProps) => {
             <button
               key={filter.id}
               title={filter.description}
-              onClick={() => onTagSelect(filter.id)}
+              onClick={() => {
+                const newTags = new Set(selectedTags);
+                if (newTags.has(filter.id)) {
+                  newTags.delete(filter.id);
+                } else {
+                  newTags.add(filter.id);
+                }
+                onTagSelect(newTags);
+              }}
               className={`
                 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200
                 filter-tag
-                ${selectedTag === filter.id 
+                ${selectedTags.has(filter.id)
                   ? "bg-primary text-white shadow-sm filter-tag-active" 
                   : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900"
                 }
@@ -49,9 +56,9 @@ const FilterBar = ({ selectedTag, onTagSelect }: FilterBarProps) => {
             </button>
           ))}
           
-          {selectedTag !== "All" && (
+          {selectedTags.size > 0 && (
             <button
-              onClick={() => onTagSelect("All")}
+              onClick={() => onTagSelect(new Set())}
               className="px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200
                 bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700
                 flex items-center gap-2"

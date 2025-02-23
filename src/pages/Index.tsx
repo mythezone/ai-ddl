@@ -8,7 +8,7 @@ import { Switch } from "@/components/ui/switch"
 import { parseISO, isValid, isPast } from "date-fns";
 
 const Index = () => {
-  const [selectedTag, setSelectedTag] = useState("All");
+  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
   const [searchQuery, setSearchQuery] = useState("");
   const [showPastConferences, setShowPastConferences] = useState(false);
 
@@ -25,20 +25,21 @@ const Index = () => {
         const isUpcoming = !deadlineDate || !isValid(deadlineDate) || !isPast(deadlineDate);
         if (!showPastConferences && !isUpcoming) return false;
 
-        // Filter by tag and search query
-        const matchesTag = selectedTag === "All" || (Array.isArray(conf.tags) && conf.tags.includes(selectedTag));
+        // Filter by tags and search query
+        const matchesTags = selectedTags.size === 0 || 
+          (Array.isArray(conf.tags) && conf.tags.some(tag => selectedTags.has(tag)));
         const matchesSearch = searchQuery === "" || 
           conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
         
-        return matchesTag && matchesSearch;
+        return matchesTags && matchesSearch;
       })
       .sort((a: Conference, b: Conference) => {
         const dateA = a.deadline && a.deadline !== 'TBD' ? parseISO(a.deadline).getTime() : Infinity;
         const dateB = b.deadline && b.deadline !== 'TBD' ? parseISO(b.deadline).getTime() : Infinity;
         return dateA - dateB;
       });
-  }, [selectedTag, searchQuery, showPastConferences]);
+  }, [selectedTags, searchQuery, showPastConferences]);
 
   if (!Array.isArray(conferencesData)) {
     return <div>Loading conferences...</div>;
@@ -49,7 +50,7 @@ const Index = () => {
       <Header onSearch={setSearchQuery} />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="space-y-4 py-4">
-          <FilterBar selectedTag={selectedTag} onTagSelect={setSelectedTag} />
+          <FilterBar selectedTags={selectedTags} onTagSelect={setSelectedTags} />
           <div className="flex items-center gap-2">
             <label htmlFor="show-past" className="text-sm text-neutral-600">
               Show past conferences
