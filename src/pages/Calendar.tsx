@@ -6,6 +6,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { parseISO, format, isValid, isSameMonth, isSameYear, isSameDay } from "date-fns";
 import { Toggle } from "@/components/ui/toggle";
 import Header from "@/components/Header";
+import FilterBar from "@/components/FilterBar";
 import {
   Dialog,
   DialogContent,
@@ -21,8 +22,9 @@ import {
 
 const CalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
-  const [isYearView, setIsYearView] = useState(false);
+  const [isYearView, setIsYearView] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedTag, setSelectedTag] = useState("All");
   const [selectedDayEvents, setSelectedDayEvents] = useState<{ date: Date | null, events: { deadlines: Conference[], conferences: Conference[] } }>({
     date: null,
     events: { deadlines: [], conferences: [] }
@@ -59,7 +61,9 @@ const CalendarPage = () => {
         conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      if (!matchesSearch) return false;
+      const matchesTag = selectedTag === "All" || (Array.isArray(conf.tags) && conf.tags.includes(selectedTag));
+
+      if (!matchesSearch || !matchesTag) return false;
 
       const deadlineDate = safeParseISO(conf.deadline);
       const startDate = safeParseISO(conf.start);
@@ -93,7 +97,9 @@ const CalendarPage = () => {
         conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      if (!matchesSearch) {
+      const matchesTag = selectedTag === "All" || (Array.isArray(conf.tags) && conf.tags.includes(selectedTag));
+
+      if (!matchesSearch || !matchesTag) {
         return acc;
       }
 
@@ -223,6 +229,7 @@ const CalendarPage = () => {
   return (
     <div className="min-h-screen bg-neutral-light">
       <Header onSearch={setSearchQuery} />
+      <FilterBar selectedTag={selectedTag} onTagSelect={setSelectedTag} />
       <div className="p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col items-center mb-8">
@@ -282,7 +289,7 @@ const CalendarPage = () => {
                   row: "flex w-full mt-2",
                   cell: `h-10 w-10 text-center text-sm p-0 relative focus-within:relative focus-within:z-20 
                       [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md 
-                      last:[&:has([aria-selected])]:rounded-r-md hover:bg-neutral-50`,
+                      last:[&:has([aria-selected])]:rounded-r-md hover:bg-neutral-50",
                   day: "h-10 w-10 p-0 font-normal hover:bg-neutral-100 rounded-lg transition-colors",
                   day_today: "bg-neutral-100 text-primary font-semibold",
                   nav: "space-x-1 flex items-center",
