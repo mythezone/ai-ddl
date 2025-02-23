@@ -13,12 +13,23 @@ const CalendarPage = () => {
   
   // Helper function to safely parse dates
   const safeParseISO = (dateString: string | undefined | number): Date | null => {
-    if (!dateString || dateString === 'TBD') return null;
-    const dateStr = typeof dateString === 'number' ? dateString.toString() : dateString;
+    if (!dateString) return null;
+    if (dateString === 'TBD') return null;
     
     try {
-      const normalizedDate = dateStr.replace(/(\d{4})-(\d{1})-(\d{1,2})/, '$1-0$2-$3')
-                                  .replace(/(\d{4})-(\d{2})-(\d{1})/, '$1-$2-0$3');
+      // If it's a Date object wrapped in a stringified object (from console logs)
+      if (typeof dateString === 'object') {
+        return null;
+      }
+      
+      // Convert number to string if needed
+      const dateStr = typeof dateString === 'number' ? dateString.toString() : dateString;
+      
+      // Add leading zeros to single-digit months and days
+      const normalizedDate = dateStr
+        .replace(/(\d{4})-(\d{1})-(\d{1,2})/, '$1-0$2-0$3')
+        .replace(/(\d{4})-(\d{2})-(\d{1})/, '$1-$2-0$1');
+      
       const parsedDate = parseISO(normalizedDate);
       return isValid(parsedDate) ? parsedDate : null;
     } catch (error) {
@@ -182,34 +193,40 @@ const CalendarPage = () => {
                 Events in {format(selectedDate, isYearView ? 'yyyy' : 'MMMM yyyy')}
               </h2>
               <div className="space-y-4">
-                {events.map((conf: Conference) => (
-                  <div key={conf.id} className="bg-white p-4 rounded-lg shadow-sm">
-                    <h3 className="font-semibold text-lg">{conf.title}</h3>
-                    <div className="space-y-1">
-                      {conf.deadline && safeParseISO(conf.deadline) && (
-                        <p className="text-red-500">
-                          Submission Deadline: {format(safeParseISO(conf.deadline)!, 'MMMM d, yyyy')}
-                        </p>
-                      )}
-                      {conf.start && (
-                        <p className="text-purple-600">
-                          Conference Date: {format(safeParseISO(conf.start)!, 'MMMM d')}
-                          {conf.end ? ` - ${format(safeParseISO(conf.end)!, 'MMMM d, yyyy')}` : 
-                            `, ${format(safeParseISO(conf.start)!, 'yyyy')}`}
-                        </p>
-                      )}
+                {events.map((conf: Conference) => {
+                  const deadlineDate = safeParseISO(conf.deadline);
+                  const startDate = safeParseISO(conf.start);
+                  const endDate = safeParseISO(conf.end);
+
+                  return (
+                    <div key={conf.id} className="bg-white p-4 rounded-lg shadow-sm">
+                      <h3 className="font-semibold text-lg">{conf.title}</h3>
+                      <div className="space-y-1">
+                        {deadlineDate && (
+                          <p className="text-red-500">
+                            Submission Deadline: {format(deadlineDate, 'MMMM d, yyyy')}
+                          </p>
+                        )}
+                        {startDate && (
+                          <p className="text-purple-600">
+                            Conference Date: {format(startDate, 'MMMM d')}
+                            {endDate ? ` - ${format(endDate, 'MMMM d, yyyy')}` : 
+                              `, ${format(startDate, 'yyyy')}`}
+                          </p>
+                        )}
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {conf.tags.map((tag) => (
+                          <span key={tag} className="inline-flex items-center px-2 py-1 rounded-full 
+                            text-xs bg-neutral-100">
+                            <Tag className="h-3 w-3 mr-1" />
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {conf.tags.map((tag) => (
-                        <span key={tag} className="inline-flex items-center px-2 py-1 rounded-full 
-                          text-xs bg-neutral-100">
-                          <Tag className="h-3 w-3 mr-1" />
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
