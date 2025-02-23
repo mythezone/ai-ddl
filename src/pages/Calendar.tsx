@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import conferencesData from "@/data/conferences.yml";
 import { Conference } from "@/types/conference";
@@ -6,26 +5,24 @@ import { Calendar as CalendarIcon, Tag } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { parseISO, format, isValid, isSameMonth, isSameYear, isSameDay } from "date-fns";
 import { Toggle } from "@/components/ui/toggle";
+import Header from "@/components/Header";
 
 const CalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [isYearView, setIsYearView] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   
-  // Helper function to safely parse dates
   const safeParseISO = (dateString: string | undefined | number): Date | null => {
     if (!dateString) return null;
     if (dateString === 'TBD') return null;
     
     try {
-      // If it's a Date object wrapped in a stringified object (from console logs)
       if (typeof dateString === 'object') {
         return null;
       }
       
-      // Convert number to string if needed
       const dateStr = typeof dateString === 'number' ? dateString.toString() : dateString;
       
-      // Add leading zeros to single-digit months and days
       const normalizedDate = dateStr
         .replace(/(\d{4})-(\d{1})-(\d{1,2})/, '$1-0$2-0$3')
         .replace(/(\d{4})-(\d{2})-(\d{1})/, '$1-$2-0$1');
@@ -38,38 +35,41 @@ const CalendarPage = () => {
     }
   };
 
-  // Get events for the current month/year
   const getEvents = (date: Date) => {
-    return conferencesData.filter((conf: Conference) => {
-      const deadlineDate = safeParseISO(conf.deadline);
-      const startDate = safeParseISO(conf.start);
-      const endDate = safeParseISO(conf.end);
+    return conferencesData
+      .filter((conf: Conference) => {
+        const matchesSearch = searchQuery === "" || 
+          conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      const dateMatches = isYearView ? isSameYear : isSameMonth;
+        if (!matchesSearch) return false;
 
-      // Check if deadline is in the selected period
-      const deadlineInPeriod = deadlineDate && dateMatches(deadlineDate, date);
-      
-      // Check if any part of the conference falls in the selected period
-      let conferenceInPeriod = false;
-      if (startDate && endDate) {
-        let currentDate = new Date(startDate);
-        while (currentDate <= endDate) {
-          if (dateMatches(currentDate, date)) {
-            conferenceInPeriod = true;
-            break;
+        const deadlineDate = safeParseISO(conf.deadline);
+        const startDate = safeParseISO(conf.start);
+        const endDate = safeParseISO(conf.end);
+
+        const dateMatches = isYearView ? isSameYear : isSameMonth;
+
+        const deadlineInPeriod = deadlineDate && dateMatches(deadlineDate, date);
+        
+        let conferenceInPeriod = false;
+        if (startDate && endDate) {
+          let currentDate = new Date(startDate);
+          while (currentDate <= endDate) {
+            if (dateMatches(currentDate, date)) {
+              conferenceInPeriod = true;
+              break;
+            }
+            currentDate.setDate(currentDate.getDate() + 1);
           }
-          currentDate.setDate(currentDate.getDate() + 1);
+        } else if (startDate) {
+          conferenceInPeriod = dateMatches(startDate, date);
         }
-      } else if (startDate) {
-        conferenceInPeriod = dateMatches(startDate, date);
-      }
 
-      return deadlineInPeriod || conferenceInPeriod;
-    });
+        return deadlineInPeriod || conferenceInPeriod;
+      });
   };
 
-  // Get all events for day indicators
   const getDayEvents = (date: Date) => {
     return conferencesData.reduce((acc, conf) => {
       const deadlineDate = safeParseISO(conf.deadline);
@@ -94,7 +94,6 @@ const CalendarPage = () => {
 
   const events = selectedDate ? getEvents(selectedDate) : [];
 
-  // Custom day content renderer
   const renderDayContent = (day: Date) => {
     const dayEvents = getDayEvents(day);
     const hasDeadlines = dayEvents.deadlines.length > 0;
@@ -116,120 +115,123 @@ const CalendarPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-light p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex flex-col items-center mb-8">
-          <h1 className="text-3xl font-bold mb-4">Calendar Overview</h1>
-          <div className="flex items-center gap-4">
-            <Toggle 
-              pressed={!isYearView} 
-              onPressedChange={() => setIsYearView(false)}
-              variant="outline"
-            >
-              Month
-            </Toggle>
-            <Toggle 
-              pressed={isYearView} 
-              onPressedChange={() => setIsYearView(true)}
-              variant="outline"
-            >
-              Year
-            </Toggle>
-          </div>
-        </div>
-
-        <div className="flex justify-center gap-6 mb-6">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-1 bg-purple-600" />
-            <span>Conference Dates</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-1 bg-red-500" />
-            <span>Submission Deadlines</span>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 gap-8">
-          <div className="mx-auto w-full max-w-4xl">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={setSelectedDate}
-              numberOfMonths={isYearView ? 12 : 1}
-              className="bg-white rounded-lg p-6 shadow-sm mx-auto w-full"
-              components={{
-                Day: ({ date, ...props }) => (
-                  <button {...props} className="w-full h-full p-2">
-                    {renderDayContent(date)}
-                  </button>
-                ),
-              }}
-              classNames={{
-                months: `grid ${isYearView ? 'grid-cols-3 gap-4' : ''} justify-center`,
-                month: "space-y-4",
-                caption: "flex justify-center pt-1 relative items-center mb-4",
-                caption_label: "text-lg font-semibold",
-                table: "w-full border-collapse space-y-1",
-                head_row: "flex",
-                head_cell: "text-muted-foreground rounded-md w-10 font-normal text-[0.8rem]",
-                row: "flex w-full mt-2",
-                cell: `h-10 w-10 text-center text-sm p-0 relative focus-within:relative focus-within:z-20 
-                      [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md 
-                      last:[&:has([aria-selected])]:rounded-r-md hover:bg-neutral-50`,
-                day: "h-10 w-10 p-0 font-normal hover:bg-neutral-100 rounded-lg transition-colors",
-                day_today: "bg-neutral-100 text-primary font-semibold",
-                nav: "space-x-1 flex items-center",
-                nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
-                nav_button_previous: "absolute left-1",
-                nav_button_next: "absolute right-1",
-              }}
-            />
-          </div>
-
-          {selectedDate && events.length > 0 && (
-            <div className="mx-auto w-full max-w-3xl space-y-4">
-              <h2 className="text-xl font-semibold flex items-center gap-2">
-                <CalendarIcon className="h-5 w-5" />
-                Events in {format(selectedDate, isYearView ? 'yyyy' : 'MMMM yyyy')}
-              </h2>
-              <div className="space-y-4">
-                {events.map((conf: Conference) => {
-                  const deadlineDate = safeParseISO(conf.deadline);
-                  const startDate = safeParseISO(conf.start);
-                  const endDate = safeParseISO(conf.end);
-
-                  return (
-                    <div key={conf.id} className="bg-white p-4 rounded-lg shadow-sm">
-                      <h3 className="font-semibold text-lg">{conf.title}</h3>
-                      <div className="space-y-1">
-                        {deadlineDate && (
-                          <p className="text-red-500">
-                            Submission Deadline: {format(deadlineDate, 'MMMM d, yyyy')}
-                          </p>
-                        )}
-                        {startDate && (
-                          <p className="text-purple-600">
-                            Conference Date: {format(startDate, 'MMMM d')}
-                            {endDate ? ` - ${format(endDate, 'MMMM d, yyyy')}` : 
-                              `, ${format(startDate, 'yyyy')}`}
-                          </p>
-                        )}
-                      </div>
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {conf.tags.map((tag) => (
-                          <span key={tag} className="inline-flex items-center px-2 py-1 rounded-full 
-                            text-xs bg-neutral-100">
-                            <Tag className="h-3 w-3 mr-1" />
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
+    <div className="min-h-screen bg-neutral-light">
+      <Header onSearch={setSearchQuery} />
+      <div className="p-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex flex-col items-center mb-8">
+            <h1 className="text-3xl font-bold mb-4">Calendar Overview</h1>
+            <div className="flex items-center gap-4">
+              <Toggle 
+                pressed={!isYearView} 
+                onPressedChange={() => setIsYearView(false)}
+                variant="outline"
+              >
+                Month
+              </Toggle>
+              <Toggle 
+                pressed={isYearView} 
+                onPressedChange={() => setIsYearView(true)}
+                variant="outline"
+              >
+                Year
+              </Toggle>
             </div>
-          )}
+          </div>
+
+          <div className="flex justify-center gap-6 mb-6">
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-1 bg-purple-600" />
+              <span>Conference Dates</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-1 bg-red-500" />
+              <span>Submission Deadlines</span>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-8">
+            <div className="mx-auto w-full max-w-4xl">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={setSelectedDate}
+                numberOfMonths={isYearView ? 12 : 1}
+                className="bg-white rounded-lg p-6 shadow-sm mx-auto w-full"
+                components={{
+                  Day: ({ date, ...props }) => (
+                    <button {...props} className="w-full h-full p-2">
+                      {renderDayContent(date)}
+                    </button>
+                  ),
+                }}
+                classNames={{
+                  months: `grid ${isYearView ? 'grid-cols-3 gap-4' : ''} justify-center`,
+                  month: "space-y-4",
+                  caption: "flex justify-center pt-1 relative items-center mb-4",
+                  caption_label: "text-lg font-semibold",
+                  table: "w-full border-collapse space-y-1",
+                  head_row: "flex",
+                  head_cell: "text-muted-foreground rounded-md w-10 font-normal text-[0.8rem]",
+                  row: "flex w-full mt-2",
+                  cell: `h-10 w-10 text-center text-sm p-0 relative focus-within:relative focus-within:z-20 
+                        [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md 
+                        last:[&:has([aria-selected])]:rounded-r-md hover:bg-neutral-50`,
+                  day: "h-10 w-10 p-0 font-normal hover:bg-neutral-100 rounded-lg transition-colors",
+                  day_today: "bg-neutral-100 text-primary font-semibold",
+                  nav: "space-x-1 flex items-center",
+                  nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
+                  nav_button_previous: "absolute left-1",
+                  nav_button_next: "absolute right-1",
+                }}
+              />
+            </div>
+
+            {selectedDate && events.length > 0 && (
+              <div className="mx-auto w-full max-w-3xl space-y-4">
+                <h2 className="text-xl font-semibold flex items-center gap-2">
+                  <CalendarIcon className="h-5 w-5" />
+                  Events in {format(selectedDate, isYearView ? 'yyyy' : 'MMMM yyyy')}
+                </h2>
+                <div className="space-y-4">
+                  {events.map((conf: Conference) => {
+                    const deadlineDate = safeParseISO(conf.deadline);
+                    const startDate = safeParseISO(conf.start);
+                    const endDate = safeParseISO(conf.end);
+
+                    return (
+                      <div key={conf.id} className="bg-white p-4 rounded-lg shadow-sm">
+                        <h3 className="font-semibold text-lg">{conf.title}</h3>
+                        <div className="space-y-1">
+                          {deadlineDate && (
+                            <p className="text-red-500">
+                              Submission Deadline: {format(deadlineDate, 'MMMM d, yyyy')}
+                            </p>
+                          )}
+                          {startDate && (
+                            <p className="text-purple-600">
+                              Conference Date: {format(startDate, 'MMMM d')}
+                              {endDate ? ` - ${format(endDate, 'MMMM d, yyyy')}` : 
+                                `, ${format(startDate, 'yyyy')}`}
+                            </p>
+                          )}
+                        </div>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {conf.tags.map((tag) => (
+                            <span key={tag} className="inline-flex items-center px-2 py-1 rounded-full 
+                              text-xs bg-neutral-100">
+                              <Tag className="h-3 w-3 mr-1" />
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
