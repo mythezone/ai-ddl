@@ -9,9 +9,11 @@ pinned: false
 
 # AI Conference Deadlines
 
+A web app to quickly see submission deadlines to top AI conferences, such as NeurIPS and ICLR.
+
 ## Project info
 
-This project is entirely based on the awesome http://aideadlines.org/. It's an up-to-date version along with a new UI.
+This project is entirely based on the awesome https://github.com/paperswithcode/ai-deadlines. As that repository was no longer maintained, we decided to make an up-to-date version along with a new UI.
 
 It was bootstrapped using [Lovable](https://lovable.dev/) and [Cursor](https://www.cursor.com/).
 
