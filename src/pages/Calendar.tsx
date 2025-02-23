@@ -287,15 +287,13 @@ const CalendarPage = () => {
                   head_row: "flex",
                   head_cell: "text-muted-foreground rounded-md w-10 font-normal text-[0.8rem]",
                   row: "flex w-full mt-2",
-                  cell: `h-10 w-10 text-center text-sm p-0 relative focus-within:relative focus-within:z-20 
-                      [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md 
-                      last:[&:has([aria-selected])]:rounded-r-md hover:bg-neutral-50",
+                  cell: "h-10 w-10 text-center text-sm p-0 relative focus-within:relative focus-within:z-20 [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md hover:bg-neutral-50",
                   day: "h-10 w-10 p-0 font-normal hover:bg-neutral-100 rounded-lg transition-colors",
                   day_today: "bg-neutral-100 text-primary font-semibold",
                   nav: "space-x-1 flex items-center",
                   nav_button: "h-7 w-7 bg-transparent p-0 opacity-50 hover:opacity-100",
                   nav_button_previous: "absolute left-1",
-                  nav_button_next: "absolute right-1",
+                  nav_button_next: "absolute right-1"
                 }}
               />
             </div>
