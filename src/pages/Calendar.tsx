@@ -6,7 +6,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { parseISO, format, isValid, isSameMonth, isSameYear, isSameDay, isSameWeek } from "date-fns";
 import { Toggle } from "@/components/ui/toggle";
 import Header from "@/components/Header";
-import FilterBar from "@/components/FilterBar";
 import {
   Dialog,
   DialogContent,
@@ -46,7 +45,6 @@ const CalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [isYearView, setIsYearView] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedTag, setSelectedTag] = useState("All");
   const [selectedDayEvents, setSelectedDayEvents] = useState<{ date: Date | null, events: { deadlines: Conference[], conferences: Conference[] } }>({
     date: null,
     events: { deadlines: [], conferences: [] }
@@ -86,10 +84,7 @@ const CalendarPage = () => {
         conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      const confTags = Array.isArray(conf.tags) ? conf.tags : [];
-      const matchesTag = selectedTag === "All" || confTags.includes(selectedTag);
-
-      if (!matchesSearch || !matchesTag) return false;
+      if (!matchesSearch) return false;
 
       const deadlineDate = safeParseISO(conf.deadline);
       const startDate = safeParseISO(conf.start);
@@ -355,14 +350,7 @@ const CalendarPage = () => {
 
   return (
     <div className="min-h-screen bg-neutral-light">
-      <Header 
-        onSearch={(query) => {
-          setSearchQuery(query);
-          // Reset selected date when searching
-          setSelectedDate(undefined);
-        }} 
-      />
-      <FilterBar selectedTag={selectedTag} onTagSelect={setSelectedTag} />
+      <Header onSearch={setSearchQuery} />
 
       {/* Add a search results section when there's a search query */}
       {searchQuery && (
