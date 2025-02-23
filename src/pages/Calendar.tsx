@@ -188,14 +188,26 @@ const CalendarPage = () => {
           {dayEvents.conferences.map((conf) => {
             const startDate = safeParseISO(conf.start);
             const endDate = safeParseISO(conf.end);
-            const isFirstDay = startDate && isSameDay(startDate, day);
-            const isLastDay = endDate && isSameDay(endDate, day);
+            
+            if (startDate && !isSameDay(startDate, day)) {
+              return null;
+            }
+            
             const categoryColor = conf.tags?.[0] ? categoryColors[conf.tags[0]] || "bg-purple-600" : "bg-purple-600";
+            
+            let width = "w-full";
+            if (startDate && endDate) {
+              const daysBetween = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
+              width = `w-[calc(100%_*_${daysBetween})]`;
+            }
             
             return (
               <div 
                 key={conf.id}
-                className={`h-0.5 w-full ${categoryColor} ${!isFirstDay ? '-ml-[1px]' : ''} ${!isLastDay ? '-mr-[1px]' : ''}`}
+                className={`h-0.5 ${categoryColor} absolute ${width} -mr-[1px]`}
+                style={{ 
+                  width: startDate && endDate ? `calc(100% * ${Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24))})` : '100%'
+                }}
                 title={conf.title}
               />
             );
