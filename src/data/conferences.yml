@@ -5,7 +5,8 @@
   link: https://wacv2025.thecvf.com/
   deadline: '2024-07-14 23:59:59'
   timezone: America/Los_Angeles
-  place: Tucson, Arizona
+  place: Tucson, Arizona, USA
+  venue: JW Marriott Starpass in Tucson, Arizona, USA
   date: Feb 28 – Mar 4, 2025
   start: 2025-2-28
   end: 2025-3-4
@@ -22,6 +23,7 @@
   deadline: '2024-08-14 23:59:00'
   timezone: UTC-12
   place: Hannover, Germany
+  venue: Hannover Congress Center, Hannover, Germany
   date: March 10-14, 2025
   start: 2025-03-10
   end: 2025-03-14
@@ -38,6 +40,7 @@
   abstract_deadline: '2024-08-07 23:59:59'
   timezone: UTC-12
   place: Philadelphia, USA
+  venue: Pennsylvania Convention Center, Philadelphia, USA
   date: February 25 - March 04, 2025
   start: 2025-02-25
   end: 2025-03-04
@@ -53,10 +56,12 @@
 - title: ICASSP
   year: 2025
   id: icassp25
+  full_name: IEEE International Conference on Acoustics, Speech and Signal Processing
   link: https://2025.ieeeicassp.org/
   deadline: '2024-09-09 23:59:59'
   timezone: UTC-12
   place: Hyderabad, India
+  venue: Hyderabad International Convention Center, Hyderabad, India
   date: April 6-11, 2025
   start: 2025-04-06
   end: 2025-04-11
@@ -72,6 +77,7 @@
   abstract_deadline: '2024-09-05 23:59:59'
   timezone: UTC-12
   place: Yokohama, Japan
+  venue: Pacifico Yokohama Conference Center, Yokohama, Japan
   date: April 26 - May 01, 2025
   start: 2025-04-26
   end: 2025-05-01
@@ -79,20 +85,6 @@
   tags:
   - human-computer-interaction
   note: Mandatory abstract deadline on Sep 05, 2024. More info <a href='https://chi2025.acm.org/for-authors/papers/'>here</a>.
-
-- title: ICRA
-  year: 2025
-  id: icra25
-  link: https://2025.ieee-icra.org
-  deadline: '2024-09-15 23:59:59'
-  timezone: America/Los_Angeles
-  place: Atlanta, USA
-  date: May 19 - May 23, 2025
-  start: 2025-05-19
-  end: 2025-05-23
-  hindex: 119
-  tags:
-  - robotics
 
 - title: COLING
   year: 2025
@@ -102,6 +94,7 @@
   deadline: '2024-09-16 23:59:59'
   timezone: UTC-12
   place: Abu Dhabi, UAE
+  venue: Abu Dhabi National Exhibition Centre (ADNEC), Abu Dhabi, UAE
   date: January 19-24, 2025
   start: 2025-01-19
   end: 2025-01-24
@@ -118,6 +111,7 @@
   deadline: '2024-10-01 09:59:59'
   timezone: UTC+0
   place: Milan, Italy
+  venue: Politecnico di Milano, Milan, Italy
   date: February 24-27, 2025
   start: 2025-02-24
   end: 2025-02-27
@@ -132,6 +126,7 @@
   abstract_deadline: '2024-09-27 23:59:59'
   timezone: UTC-12
   place: Singapore
+  venue: Singapore EXPO - 1 Expo Drive, Singapore
   date: Apr 24-28, 2025
   start: 2025-04-24
   end: 2025-04-28
@@ -152,6 +147,7 @@
   abstract_deadline: '2024-10-02 23:59:59'
   timezone: UTC-12
   place: Lucca, Tuscany, Italy
+  venue: IMT School for Advanced Studies Lucca, Lucca, Italy
   date: April 6 - April 10, 2025
   start: 2025-04-06
   end: 2025-04-10
@@ -167,6 +163,7 @@
   abstract_deadline: '2024-10-03 23:59:59'
   timezone: UTC-12
   place: Phuket, Thailand
+  venue: TBA
   date: May 03-05, 2025
   start: 2025-05-03
   end: 2025-05-05
@@ -215,6 +212,7 @@
   abstract_deadline: '2024-11-08 06:59:59'
   timezone: GMT
   place: Nashville, Tennessee, USA
+  venue: Music City Center, Nashville, USA
   date: June 10-17, 2025
   start: 2025-06-10
   end: 2025-06-17
@@ -421,6 +419,7 @@
   deadline: '2025-03-15 23:59:59'
   timezone: AoE
   place: Kaunas, Lithuania
+  venue: Campus of Vytautas Magnus University and Lithuanian University of Health Sciences, Kaunas, Lithuania
   date: Sept 9-12, 2025
   tags:
   - machine-learning
@@ -433,6 +432,7 @@
   deadline: '2025-03-27 23:59:59'
   timezone: AoE
   place: Palais des Congrès Montreal, Canada
+  venue: Palais des Congrès Montreal, Canada
   date: October 7-9, 2025
   start: 2025-10-07
   end: 2025-10-09
@@ -444,10 +444,11 @@
   year: 2025
   id: ecai25
   full_name: European Conference on Artificial Intelligence
-  link: https://ecai2025.org/deadlines/
+  link: https://ecai2025.org/
   deadline: '2025-05-06 23:59:59'
   timezone: UTC-12
   place: Bologna, Italy
+  venue: Bologna Congress Center and The Engineering School (University of Bologna)
   date: October 25-30, 2025
   start: 2025-10-25
   end: 2025-10-30
@@ -463,6 +464,7 @@
   deadline: '2025-05-19 23:59:59'
   timezone: UTC-12
   place: Suzhou, China
+  venue: Suzhou, China
   date: November 5-9, 2025
   start: 2025-11-05
   end: 2025-11-09
@@ -470,13 +472,14 @@
   - natural-language-processing
 
 - title: ICRA
-  year: 2026
-  id: icra26
+  year: 2025
+  id: icra25
   full_name: IEEE International Conference on Robotics and Automation
   link: https://www.ieee-ras.org/conferences-workshops/fully-sponsored/icra
-  deadline: TBD
-  timezone: UTC+1
-  place: Vienna, Austria
+  deadline: '2025-03-06 23:59:59'
+  timezone: GMT-5
+  place: Atlanta, USA
+  venue: Georgia World Congress Center, Atlanta, USA
   date: Jun 1-5, 2026
   start: 2026-06-01
   end: 2026-06-05
@@ -491,9 +494,25 @@
   link: https://neurips.cc/
   deadline: '2025-05-16 23:59:59'
   timezone: UTC-8
-  place: San Diego, US
+  place: San Diego, USA
+  venue: San Diego Convention Center, San Diego, USA
   date: December 9-15, 2025
   start: 2025-12-09
   end: 2025-12-15
   tags:
   - machine-learning
+
+- title: SIGGRAPH
+  year: 2025
+  id: siggraph25
+  full_name: Conference on Computer Graphics and Interactive Techniques
+  link: https://s2025.siggraph.org/
+  deadline: '2025-01-16 23:59:59'
+  timezone: UTC-8
+  place: Vancouver, Canada
+  venue: Convention Centre, Vancouver, Canada
+  date: August 10-14, 2025
+  start: 2025-08-10
+  end: 2025-08-14
+  tags:
+  - computer-graphics
