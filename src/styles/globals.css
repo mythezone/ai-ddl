@@ -1,3 +1,4 @@
+
 /* Add these styles to make the filter tags more interactive */
 .filter-tag {
   @apply transition-all duration-200;
@@ -16,4 +17,4 @@
 
 .filter-tag-active {
   animation: subtle-pulse 2s infinite;
-} 
+}
