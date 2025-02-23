@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import conferencesData from "@/data/conferences.yml";
 import { Conference } from "@/types/conference";
@@ -12,6 +13,7 @@ const CalendarPage = () => {
   const [isYearView, setIsYearView] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   
+  // Helper function to safely parse dates
   const safeParseISO = (dateString: string | undefined | number): Date | null => {
     if (!dateString) return null;
     if (dateString === 'TBD') return null;
@@ -23,9 +25,12 @@ const CalendarPage = () => {
       
       const dateStr = typeof dateString === 'number' ? dateString.toString() : dateString;
       
-      const normalizedDate = dateStr
-        .replace(/(\d{4})-(\d{1})-(\d{1,2})/, '$1-0$2-0$3')
-        .replace(/(\d{4})-(\d{2})-(\d{1})/, '$1-$2-0$1');
+      // Handle both "YYYY-MM-DD" and "YYYY-M-D" formats
+      let normalizedDate = dateStr;
+      const parts = dateStr.split('-');
+      if (parts.length === 3) {
+        normalizedDate = `${parts[0]}-${parts[1].padStart(2, '0')}-${parts[2].padStart(2, '0')}`;
+      }
       
       const parsedDate = parseISO(normalizedDate);
       return isValid(parsedDate) ? parsedDate : null;
@@ -36,42 +41,50 @@ const CalendarPage = () => {
   };
 
   const getEvents = (date: Date) => {
-    return conferencesData
-      .filter((conf: Conference) => {
-        const matchesSearch = searchQuery === "" || 
-          conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-          (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
+    return conferencesData.filter((conf: Conference) => {
+      const matchesSearch = searchQuery === "" || 
+        conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
 
-        if (!matchesSearch) return false;
+      if (!matchesSearch) return false;
 
-        const deadlineDate = safeParseISO(conf.deadline);
-        const startDate = safeParseISO(conf.start);
-        const endDate = safeParseISO(conf.end);
+      const deadlineDate = safeParseISO(conf.deadline);
+      const startDate = safeParseISO(conf.start);
+      const endDate = safeParseISO(conf.end);
 
-        const dateMatches = isYearView ? isSameYear : isSameMonth;
+      const dateMatches = isYearView ? isSameYear : isSameMonth;
 
-        const deadlineInPeriod = deadlineDate && dateMatches(deadlineDate, date);
-        
-        let conferenceInPeriod = false;
-        if (startDate && endDate) {
-          let currentDate = new Date(startDate);
-          while (currentDate <= endDate) {
-            if (dateMatches(currentDate, date)) {
-              conferenceInPeriod = true;
-              break;
-            }
-            currentDate.setDate(currentDate.getDate() + 1);
+      const deadlineInPeriod = deadlineDate && dateMatches(deadlineDate, date);
+      
+      let conferenceInPeriod = false;
+      if (startDate && endDate) {
+        let currentDate = new Date(startDate);
+        while (currentDate <= endDate) {
+          if (dateMatches(currentDate, date)) {
+            conferenceInPeriod = true;
+            break;
           }
-        } else if (startDate) {
-          conferenceInPeriod = dateMatches(startDate, date);
+          currentDate.setDate(currentDate.getDate() + 1);
         }
+      } else if (startDate) {
+        conferenceInPeriod = dateMatches(startDate, date);
+      }
 
-        return deadlineInPeriod || conferenceInPeriod;
-      });
+      return deadlineInPeriod || conferenceInPeriod;
+    });
   };
 
   const getDayEvents = (date: Date) => {
     return conferencesData.reduce((acc, conf) => {
+      // Check if the conference matches the search query
+      const matchesSearch = searchQuery === "" || 
+        conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+      if (!matchesSearch) {
+        return acc;
+      }
+
       const deadlineDate = safeParseISO(conf.deadline);
       const startDate = safeParseISO(conf.start);
       const endDate = safeParseISO(conf.end);
@@ -175,8 +188,8 @@ const CalendarPage = () => {
                   head_cell: "text-muted-foreground rounded-md w-10 font-normal text-[0.8rem]",
                   row: "flex w-full mt-2",
                   cell: `h-10 w-10 text-center text-sm p-0 relative focus-within:relative focus-within:z-20 
-                        [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md 
-                        last:[&:has([aria-selected])]:rounded-r-md hover:bg-neutral-50`,
+                      [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md 
+                      last:[&:has([aria-selected])]:rounded-r-md hover:bg-neutral-50`,
                   day: "h-10 w-10 p-0 font-normal hover:bg-neutral-100 rounded-lg transition-colors",
                   day_today: "bg-neutral-100 text-primary font-semibold",
                   nav: "space-x-1 flex items-center",
