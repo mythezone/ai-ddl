@@ -6,17 +6,11 @@ import { Conference } from "@/types/conference";
 import { useState, useMemo, useEffect } from "react";
 import { Switch } from "@/components/ui/switch"
 import { parseISO, isValid, isPast } from "date-fns";
-import ConferenceCalendar from "@/components/ConferenceCalendar";
 
 const Index = () => {
   const [selectedTag, setSelectedTag] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [showPastConferences, setShowPastConferences] = useState(false);
-
-  // Add debug logging
-  useEffect(() => {
-    console.log("Conferences data:", conferencesData);
-  }, []);
 
   const filteredConferences = useMemo(() => {
     if (!Array.isArray(conferencesData)) {
@@ -46,11 +40,6 @@ const Index = () => {
       });
   }, [selectedTag, searchQuery, showPastConferences]);
 
-  // Add debug logging for filtered conferences
-  useEffect(() => {
-    console.log("Filtered conferences:", filteredConferences);
-  }, [filteredConferences]);
-
   if (!Array.isArray(conferencesData)) {
     return <div>Loading conferences...</div>;
   }
@@ -79,7 +68,6 @@ const Index = () => {
             <ConferenceCard key={conference.id} {...conference} />
           ))}
         </div>
-        <ConferenceCalendar conferences={filteredConferences} />
       </main>
     </div>
   );
