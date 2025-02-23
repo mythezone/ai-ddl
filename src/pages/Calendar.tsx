@@ -356,6 +356,25 @@ const CalendarPage = () => {
   const renderLegend = () => {
     return (
       <div className="flex flex-wrap gap-3 justify-center items-center mb-4">
+        <div className="flex items-center gap-2 bg-white p-1 rounded-lg shadow-sm">
+          <Toggle 
+            pressed={!isYearView} 
+            onPressedChange={() => setIsYearView(false)}
+            variant="outline"
+            className="border-2 data-[state=on]:border-primary"
+          >
+            Month View
+          </Toggle>
+          <Toggle 
+            pressed={isYearView} 
+            onPressedChange={() => setIsYearView(true)}
+            variant="outline"
+            className="border-2 data-[state=on]:bg-primary data-[state=on]:text-white data-[state=on]:border-primary"
+          >
+            Year View
+          </Toggle>
+        </div>
+
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -380,7 +399,7 @@ const CalendarPage = () => {
           </Tooltip>
         </TooltipProvider>
         
-        {Object.entries(categoryColors).map(([tag, color]) => (
+        {categories.map(([tag, color]) => (
           <TooltipProvider key={tag}>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -413,18 +432,18 @@ const CalendarPage = () => {
             </Tooltip>
           </TooltipProvider>
         ))}
-        
-        {(selectedCategories.size < Object.keys(categoryColors).length || !showDeadlines) && (
+
+        {selectedCategories.size > 0 && (
           <button
             onClick={() => {
-              setSelectedCategories(new Set(Object.keys(categoryColors)));
-              setShowDeadlines(true);
+              setSelectedCategories(new Set());
             }}
-            className="text-sm text-neutral-500 hover:text-neutral-700 
-              px-3 py-1.5 rounded-lg border border-neutral-200 
-              hover:bg-neutral-50 transition-colors"
+            className="text-sm text-red-600 bg-red-50 hover:bg-red-100 hover:text-red-700
+              px-3 py-1.5 rounded-lg border border-red-200
+              transition-colors flex items-center gap-2"
           >
-            Reset filters
+            <X className="h-4 w-4" />
+            Deselect All Colors
           </button>
         )}
       </div>
