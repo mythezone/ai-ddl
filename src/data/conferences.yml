@@ -313,6 +313,8 @@
   tags:
   - machine-learning
   abstract_deadline: '2025-01-23 23:59:59'
+  submission_deadline: '2025-01-31 03:59:59'
+  timezone_submission: PST
 
 - title: IJCNN
   year: 2025
@@ -363,8 +365,12 @@
   timezone: UTC-12
   place: Vienna, Austria
   date: July 27 - August 1, 2025
+  start: 2025-07-27
+  end: 2025-08-01
   tags:
   - natural-language-processing
+  commitment_deadline: '2025-04-10 23:59:59'
+  note: 'ARR commitment deadline on April 10th, 2025. More info <a href="https://2025.aclweb.org/">here</a>.'
 
 - title: IROS
   year: 2025
@@ -529,3 +535,15 @@
   end: 2025-08-14
   tags:
   - computer-graphics
+
+- title: KDD
+  year: 2025
+  id: kdd25
+  full_name: ACM SIGKDD Conference on Knowledge Discovery and Data Mining
+  deadline: '2025-02-10 23:59:59'
+  abstract_deadline: '2025-02-03 23:59:59'
+  timezone: AoE
+  tags:
+  - data-mining
+  - machine-learning
+  note: 'Abstract deadline on February 3rd, 2025. Paper submission deadline February 10th, 2025 AoE.'

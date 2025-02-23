@@ -3,6 +3,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { CalendarDays, Globe, Tag, Clock, AlarmClock, CalendarPlus } from "lucide-react";
 import { Conference } from "@/types/conference";
@@ -170,56 +171,65 @@ END:VCALENDAR`;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="dialog-content max-w-md">
+      <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold">
-            {conference.title}
-          </DialogTitle>
-          {conference.full_name && (
-            <p className="text-sm text-neutral-600">{conference.full_name}</p>
-          )}
+          <DialogTitle>{conference.title} {conference.year}</DialogTitle>
+          <DialogDescription>
+            {conference.full_name}
+          </DialogDescription>
         </DialogHeader>
-        
-        <div className="space-y-4 py-4">
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center text-neutral">
-              <CalendarDays className="h-5 w-5 mr-3 flex-shrink-0" />
-              <span>{conference.date}</span>
-            </div>
-            <div className="flex items-center text-neutral">
-              <Globe className="h-5 w-5 mr-3 flex-shrink-0" />
-              <a
-                href={generateGoogleMapsUrl(conference.venue, conference.place)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-primary hover:underline"
-                onClick={(e) => e.stopPropagation()}
-              >
-                {conference.place}
-              </a>
-            </div>
-            <div className="flex items-center text-neutral">
-              <Clock className="h-5 w-5 mr-3 flex-shrink-0" />
-              <div className="flex flex-col">
-                <span>Deadline: {conference.deadline === 'TBD' ? 'TBD' : conference.deadline}</span>
-                {conference.timezone && (
-                  <span className="text-sm text-neutral-500">Timezone: {conference.timezone}</span>
-                )}
-              </div>
-            </div>
-            <div className="flex items-center">
-              <AlarmClock className={`h-5 w-5 mr-3 flex-shrink-0 ${getCountdownColor()}`} />
-              <span className={`font-medium ${getCountdownColor()}`}>
-                {daysLeft}
-              </span>
+
+        <div className="space-y-4">
+          <div className="flex items-start gap-2">
+            <CalendarDays className="h-5 w-5 mt-0.5 text-gray-500" />
+            <div>
+              <p className="font-medium">Conference Dates</p>
+              <p className="text-sm text-gray-500">{conference.date}</p>
             </div>
           </div>
 
-          {conference.abstract_deadline && (
-            <div className="text-sm text-neutral-600">
-              Abstract Deadline: {conference.abstract_deadline}
+          <div className="flex items-start gap-2">
+            <Clock className="h-5 w-5 mt-0.5 text-gray-500" />
+            <div className="space-y-2">
+              <p className="font-medium">Important Deadlines</p>
+              <div className="text-sm text-gray-500 space-y-1">
+                {conference.abstract_deadline && (
+                  <p>Abstract: {conference.abstract_deadline}</p>
+                )}
+                <p>Submission: {conference.deadline}</p>
+                {conference.commitment_deadline && (
+                  <p>Commitment: {conference.commitment_deadline}</p>
+                )}
+                {conference.review_release_date && (
+                  <p>Reviews Released: {conference.review_release_date}</p>
+                )}
+                {(conference.rebuttal_period_start || conference.rebuttal_period_end) && (
+                  <p>Rebuttal Period: {conference.rebuttal_period_start} - {conference.rebuttal_period_end}</p>
+                )}
+                {conference.final_decision_date && (
+                  <p>Final Decision: {conference.final_decision_date}</p>
+                )}
+              </div>
             </div>
-          )}
+          </div>
+
+          <div className="flex items-start gap-2">
+            <Globe className="h-5 w-5 mt-0.5 text-gray-500" />
+            <div>
+              <p className="font-medium">Location</p>
+              <p className="text-sm text-gray-500">{conference.place}</p>
+              {conference.venue && (
+                <p className="text-sm text-gray-500">{conference.venue}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center">
+            <AlarmClock className={`h-5 w-5 mr-3 flex-shrink-0 ${getCountdownColor()}`} />
+            <span className={`font-medium ${getCountdownColor()}`}>
+              {daysLeft}
+            </span>
+          </div>
 
           {Array.isArray(conference.tags) && conference.tags.length > 0 && (
             <div className="flex flex-wrap gap-2">
@@ -259,7 +269,11 @@ END:VCALENDAR`;
             
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="text-sm">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-sm focus-visible:ring-0 focus:outline-none"
+                >
                   <CalendarPlus className="h-4 w-4 mr-2" />
                   Add to Calendar
                 </Button>
