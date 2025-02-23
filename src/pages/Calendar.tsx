@@ -510,15 +510,20 @@ const CalendarPage = () => {
                 showOutsideDays={false}
                 className="bg-white rounded-lg p-6 shadow-sm mx-auto w-full"
                 components={{
-                  Day: ({ date, ...props }) => {
-                    const isOutsideDay = date.getMonth() !== props.displayMonth.getMonth();
+                  Day: ({ date, displayMonth, ...props }) => {
+                    const isOutsideDay = date.getMonth() !== displayMonth.getMonth();
                     if (isOutsideDay) {
                       return null;
                     }
                     return (
-                      <button {...props} className="w-full h-full p-2">
+                      <div 
+                        role="button"
+                        tabIndex={0}
+                        {...props} 
+                        className="w-full h-full p-2 cursor-pointer"
+                      >
                         {renderDayContent(date)}
-                      </button>
+                      </div>
                     );
                   },
                 }}
@@ -549,12 +554,15 @@ const CalendarPage = () => {
         open={selectedDayEvents.date !== null}
         onOpenChange={() => setSelectedDayEvents({ date: null, events: { deadlines: [], conferences: [] } })}
       >
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent 
+          className="max-w-2xl max-h-[80vh] overflow-y-auto"
+          aria-describedby="dialog-description"
+        >
           <DialogHeader>
             <DialogTitle>
               Events for {selectedDayEvents.date ? format(selectedDayEvents.date, 'MMMM d, yyyy') : ''}
             </DialogTitle>
-            <div className="text-sm text-neutral-600">
+            <div id="dialog-description" className="text-sm text-neutral-600">
               View conference details and deadlines for this date.
             </div>
           </DialogHeader>

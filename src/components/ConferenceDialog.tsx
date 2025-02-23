@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/dialog";
 import { CalendarDays, Globe, Tag, Clock, AlarmClock, CalendarPlus } from "lucide-react";
 import { Conference } from "@/types/conference";
-import { formatDistanceToNow, parseISO, isValid, format, parse } from "date-fns";
+import { formatDistanceToNow, parseISO, isValid, format, parse, addDays } from "date-fns";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -58,17 +58,59 @@ const ConferenceDialog = ({ conference, open, onOpenChange }: ConferenceDialogPr
 
   const createCalendarEvent = (type: 'google' | 'apple') => {
     try {
-      let startDate = new Date();
-      let endDate = new Date();
+      let startDate: Date;
+      let endDate: Date;
 
+      // Primary: Use start and end fields
       if (conference.start && conference.end) {
-        startDate = parseISO(conference.start);
-        endDate = parseISO(conference.end);
+        // If the dates are already Date objects, use them directly
+        if (conference.start instanceof Date && conference.end instanceof Date) {
+          startDate = conference.start;
+          endDate = conference.end;
+        } else {
+          // Otherwise, parse the string dates
+          startDate = parseISO(String(conference.start));
+          endDate = parseISO(String(conference.end));
+        }
+
+        // Validate parsed dates
+        if (!isValid(startDate) || !isValid(endDate)) {
+          throw new Error('Invalid conference dates');
+        }
+
+        // Add one day to end date to include the full last day
+        endDate = addDays(endDate, 1);
+      } 
+      // Fallback: Parse from date field
+      else if (conference.date && typeof conference.date === 'string') {
+        const [monthDay, year] = conference.date.split(', ');
+        const [month, days] = monthDay.split(' ');
+        const [startDay, endDay] = days.split(/[-–]/);
+        
+        try {
+          startDate = parse(`${month} ${startDay} ${year}`, 'MMMM d yyyy', new Date()) ||
+                     parse(`${month} ${startDay} ${year}`, 'MMM d yyyy', new Date());
+          
+          if (endDay) {
+            endDate = parse(`${month} ${endDay} ${year}`, 'MMMM d yyyy', new Date()) ||
+                     parse(`${month} ${endDay} ${year}`, 'MMM d yyyy', new Date());
+            // Add one day to end date to include the full last day
+            endDate = addDays(endDate, 1);
+          } else {
+            // For single-day conferences
+            startDate = startDate || new Date();
+            endDate = addDays(startDate, 1);
+          }
+        } catch (parseError) {
+          throw new Error('Invalid date format');
+        }
       } else {
-        startDate = parseDateFromString(conference.date);
-        // Set end date to the same day for single-day conferences or when end date is not clear
-        endDate = new Date(startDate);
-        endDate.setDate(endDate.getDate() + 1); // Add one day for end date
+        throw new Error('No valid date information found');
+      }
+
+      // Validate dates
+      if (!isValid(startDate) || !isValid(endDate)) {
+        throw new Error('Invalid conference dates');
       }
 
       const formatDateForGoogle = (date: Date) => format(date, "yyyyMMdd");
@@ -114,6 +156,7 @@ END:VCALENDAR`;
       }
     } catch (error) {
       console.error("Error creating calendar event:", error);
+      alert("Sorry, there was an error creating the calendar event. Please try again.");
     }
   };
 
