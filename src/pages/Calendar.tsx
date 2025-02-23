@@ -170,73 +170,111 @@ const CalendarPage = () => {
     );
   };
 
-  const renderDayContent = (day: Date) => {
-    const dayEvents = getDayEvents(day);
-    const hasDeadlines = dayEvents.deadlines.length > 0;
-    const hasConferences = dayEvents.conferences.length > 0;
+  // Add these helper functions at the top of the file
+  const isEndOfWeek = (date: Date) => date.getDay() === 6; // Saturday
+  const isStartOfWeek = (date: Date) => date.getDay() === 0; // Sunday
+  const isSameWeek = (date1: Date, date2: Date) => {
+    const diff = Math.abs(date1.getTime() - date2.getTime());
+    const diffDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+    return diffDays <= 6 && 
+           Math.floor(date1.getTime() / (1000 * 60 * 60 * 24 * 7)) === 
+           Math.floor(date2.getTime() / (1000 * 60 * 60 * 24 * 7));
+  };
 
-    const content = (
-      <div className="relative w-full h-full flex flex-col items-center">
-        <span className="mb-1">{format(day, 'd')}</span>
-        <div className="absolute bottom-0 left-0 right-0 flex flex-col gap-0.5 px-1">
-          {hasDeadlines && (
-            <div 
-              className="h-0.5 w-full bg-red-500" 
-              title="Deadline" 
-            />
-          )}
-          {dayEvents.conferences.map((conf) => {
-            const startDate = safeParseISO(conf.start);
-            const endDate = safeParseISO(conf.end);
-            
-            if (!startDate || !endDate) return null;
-            
-            const categoryColor = conf.tags?.[0] ? categoryColors[conf.tags[0]] || "bg-purple-600" : "bg-purple-600";
-            
-            if (day < startDate || day > endDate) return null;
+  // Update the getConferenceLineStyle function
+  const getConferenceLineStyle = (date: Date) => {
+    const styles = [];
+    
+    for (const conf of conferencesData) {
+      const startDate = safeParseISO(conf.start);
+      const endDate = safeParseISO(conf.end);
+      
+      if (startDate && endDate && date >= startDate && date <= endDate) {
+        const isFirst = isSameDay(date, startDate);
+        const isLast = isSameDay(date, endDate);
+        
+        // Check if previous and next days are part of the same conference and week
+        const prevDate = new Date(date);
+        prevDate.setDate(date.getDate() - 1);
+        const nextDate = new Date(date);
+        nextDate.setDate(date.getDate() + 1);
+        
+        const hasPrevDay = prevDate >= startDate && isSameWeek(date, prevDate);
+        const hasNextDay = nextDate <= endDate && isSameWeek(date, nextDate);
+        
+        let lineStyle = "h-1 absolute bottom-0";
+        
+        if (hasPrevDay && hasNextDay) {
+          // Middle of a sequence
+          lineStyle += " w-[calc(100%+1rem)] -left-2";
+        } else if (hasPrevDay) {
+          // End of a sequence
+          lineStyle += " w-[calc(100%+0.5rem)] left-0";
+        } else if (hasNextDay) {
+          // Start of a sequence
+          lineStyle += " w-[calc(100%+0.5rem)] right-0";
+        } else {
+          // Single day
+          lineStyle += " w-full";
+        }
 
-            const isFirstDayOfMonth = day.getDate() === 1;
-            const isStartDate = isSameDay(startDate, day);
-            
-            const lastDayOfMonth = new Date(day.getFullYear(), day.getMonth() + 1, 0);
-            const daysUntilMonthEnd = Math.min(
-              Math.ceil((endDate.getTime() - day.getTime()) / (1000 * 60 * 60 * 24)) + 1,
-              Math.ceil((lastDayOfMonth.getTime() - day.getTime()) / (1000 * 60 * 60 * 24)) + 1
-            );
+        // Get the color based on the first tag or default to purple
+        const color = conf.tags?.[0] ? categoryColors[conf.tags[0]] : "bg-purple-500";
+        
+        styles.push({
+          style: lineStyle,
+          color: color
+        });
+      }
+    }
+    
+    return styles;
+  };
 
-            if (!isStartDate && !isFirstDayOfMonth) return null;
+  // Update the renderDayContent function
+  const renderDayContent = (date: Date) => {
+    const dayEvents = getDayEvents(date);
+    const hasEvents = dayEvents.deadlines.length > 0 || dayEvents.conferences.length > 0;
 
-            return (
-              <div 
-                key={`${conf.id}-${format(day, 'yyyy-MM')}`}
-                className={`h-0.5 ${categoryColor} absolute`}
-                style={{ width: `calc(100% * ${daysUntilMonthEnd})` }}
-                title={conf.title}
-              />
-            );
-          })}
-        </div>
-      </div>
-    );
+    // Get conference line styles first
+    const conferenceStyles = getConferenceLineStyle(date);
 
-    if (!hasDeadlines && !hasConferences) return content;
+    // Get deadline style
+    const hasDeadline = dayEvents.deadlines.length > 0;
+    const deadlineStyle = hasDeadline ? "h-1 w-full bg-red-500" : "";
 
     return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
+      <div className="relative w-full h-full flex flex-col items-center">
+        {/* Day number at the top */}
+        <div className="flex-grow flex items-center justify-center mb-2">
+          <span>{format(date, 'd')}</span>
+        </div>
+
+        {/* Event indicator lines at the bottom */}
+        <div className="absolute bottom-0 w-full flex flex-col gap-[2px]">
+          {/* Conference lines */}
+          {conferenceStyles.map((style, index) => (
             <div 
-              className="w-full h-full cursor-pointer"
-              onClick={() => setSelectedDayEvents({ date: day, events: dayEvents })}
-            >
-              {content}
-            </div>
-          </TooltipTrigger>
-          <TooltipContent>
-            {renderEventPreview(dayEvents)}
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+              key={`conf-${index}`} 
+              className={`${style.style} ${style.color}`} 
+            />
+          ))}
+          {/* Deadline line */}
+          {deadlineStyle && <div className={deadlineStyle} />}
+        </div>
+
+        {/* Tooltip trigger covering the whole cell */}
+        {hasEvents && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger className="absolute inset-0" />
+              <TooltipContent>
+                {renderEventPreview(dayEvents)}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </div>
     );
   };
 
