@@ -49,6 +49,7 @@ const CalendarPage = () => {
     date: null,
     events: { deadlines: [], conferences: [] }
   });
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   
   const safeParseISO = (dateString: string | undefined | number): Date | null => {
     if (!dateString) return null;
@@ -84,7 +85,11 @@ const CalendarPage = () => {
         conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
 
-      if (!matchesSearch) return false;
+      // Add category filter
+      const matchesCategory = selectedCategories.size === 0 || 
+        (Array.isArray(conf.tags) && conf.tags.some(tag => selectedCategories.has(tag)));
+
+      if (!matchesSearch || !matchesCategory) return false;
 
       const deadlineDate = safeParseISO(conf.deadline);
       const startDate = safeParseISO(conf.start);
@@ -115,15 +120,20 @@ const CalendarPage = () => {
   const getDayEvents = (date: Date) => {
     const deadlines = conferencesData.filter(conf => {
       const deadlineDate = safeParseISO(conf.deadline);
-      return deadlineDate && isSameDay(deadlineDate, date);
+      const matchesCategory = selectedCategories.size === 0 || 
+        (Array.isArray(conf.tags) && conf.tags.some(tag => selectedCategories.has(tag)));
+      return deadlineDate && isSameDay(deadlineDate, date) && matchesCategory;
     });
 
     const conferences = conferencesData.filter(conf => {
       const startDate = safeParseISO(conf.start);
       const endDate = safeParseISO(conf.end);
+      const matchesCategory = selectedCategories.size === 0 || 
+        (Array.isArray(conf.tags) && conf.tags.some(tag => selectedCategories.has(tag)));
       return startDate && endDate && 
              date >= startDate && 
-             date <= endDate;
+             date <= endDate && 
+             matchesCategory;
     });
 
     return {
@@ -167,7 +177,9 @@ const CalendarPage = () => {
       .filter(conf => {
         const startDate = safeParseISO(conf.start);
         const endDate = safeParseISO(conf.end);
-        return startDate && endDate && date >= startDate && date <= endDate;
+        const matchesCategory = selectedCategories.size === 0 || 
+          (Array.isArray(conf.tags) && conf.tags.some(tag => selectedCategories.has(tag)));
+        return startDate && endDate && date >= startDate && date <= endDate && matchesCategory;
       })
       .map(conf => {
         const startDate = safeParseISO(conf.start);
@@ -348,6 +360,52 @@ const CalendarPage = () => {
     conferencesData.some(conf => conf.tags?.includes(category))
   );
 
+  const renderLegend = () => {
+    const categories = Object.entries(categoryColors);
+    
+    return (
+      <div className="flex flex-wrap gap-4 items-center mb-6">
+        <div className="flex items-center gap-2">
+          <div className="w-4 h-1 bg-red-500" />
+          <span className="text-sm">Submission Deadlines</span>
+        </div>
+        {categories.map(([category, color]) => {
+          const isSelected = selectedCategories.has(category);
+          return (
+            <button
+              key={category}
+              onClick={() => {
+                const newCategories = new Set(selectedCategories);
+                if (isSelected) {
+                  newCategories.delete(category);
+                } else {
+                  newCategories.add(category);
+                }
+                setSelectedCategories(newCategories);
+              }}
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg transition-colors ${
+                isSelected 
+                  ? 'bg-neutral-100 ring-1 ring-neutral-200' 
+                  : 'hover:bg-neutral-50'
+              }`}
+            >
+              <div className={`w-4 h-1 ${color}`} />
+              <span className="text-sm">{categoryNames[category]}</span>
+            </button>
+          )
+        })}
+        {selectedCategories.size > 0 && (
+          <button
+            onClick={() => setSelectedCategories(new Set())}
+            className="text-sm text-neutral-500 hover:text-neutral-700"
+          >
+            Clear filters
+          </button>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="min-h-screen bg-neutral-light">
       <Header onSearch={setSearchQuery} />
@@ -423,35 +481,23 @@ const CalendarPage = () => {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col items-center mb-8">
             <h1 className="text-3xl font-bold mb-4">Calendar Overview</h1>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 mb-6">
               <Toggle 
                 pressed={!isYearView} 
                 onPressedChange={() => setIsYearView(false)}
                 variant="outline"
               >
-                Month
+                Month View
               </Toggle>
               <Toggle 
                 pressed={isYearView} 
                 onPressedChange={() => setIsYearView(true)}
                 variant="outline"
               >
-                Year
+                Year View
               </Toggle>
             </div>
-          </div>
-
-          <div className="flex justify-center flex-wrap gap-4 mb-6">
-            <div className="flex items-center gap-2">
-              <div className="w-4 h-1 bg-red-500" />
-              <span>Submission Deadlines</span>
-            </div>
-            {categories.map(([category, color]) => (
-              <div key={category} className="flex items-center gap-2">
-                <div className={`w-4 h-1 ${color}`} />
-                <span>{categoryNames[category]}</span>
-              </div>
-            ))}
+            {renderLegend()}
           </div>
 
           <div className="grid grid-cols-1 gap-8">
