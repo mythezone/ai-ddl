@@ -178,16 +178,24 @@ const CalendarPage = () => {
     const content = (
       <div className="relative w-full h-full flex flex-col items-center">
         <span className="mb-1">{format(day, 'd')}</span>
-        <div className="absolute bottom-0 left-0 right-0 flex gap-0.5 px-1">
+        <div className="absolute bottom-0 left-0 right-0 flex flex-col gap-0.5 px-1">
           {hasDeadlines && (
-            <div className="h-0.5 flex-1 bg-red-500" title="Deadline" />
+            <div 
+              className="h-0.5 w-full bg-red-500" 
+              title="Deadline" 
+            />
           )}
-          {hasConferences && dayEvents.conferences.map((conf) => {
+          {dayEvents.conferences.map((conf) => {
+            const startDate = safeParseISO(conf.start);
+            const endDate = safeParseISO(conf.end);
+            const isFirstDay = startDate && isSameDay(startDate, day);
+            const isLastDay = endDate && isSameDay(endDate, day);
             const categoryColor = conf.tags?.[0] ? categoryColors[conf.tags[0]] || "bg-purple-600" : "bg-purple-600";
+            
             return (
               <div 
                 key={conf.id}
-                className={`h-0.5 flex-1 ${categoryColor}`} 
+                className={`h-0.5 w-full ${categoryColor} ${!isFirstDay && !isLastDay ? '-ml-1 -mr-1' : ''} ${!isFirstDay ? '-ml-1' : ''} ${!isLastDay ? '-mr-1' : ''}`}
                 title={conf.title}
               />
             );
