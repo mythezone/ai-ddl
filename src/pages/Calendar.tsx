@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import conferencesData from "@/data/conferences.yml";
 import { Conference } from "@/types/conference";
@@ -7,13 +6,28 @@ import { Calendar } from "@/components/ui/calendar";
 import { parseISO, format, isValid, isSameMonth, isSameYear, isSameDay } from "date-fns";
 import { Toggle } from "@/components/ui/toggle";
 import Header from "@/components/Header";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const CalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [isYearView, setIsYearView] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [selectedDayEvents, setSelectedDayEvents] = useState<{ date: Date | null, events: { deadlines: Conference[], conferences: Conference[] } }>({
+    date: null,
+    events: { deadlines: [], conferences: [] }
+  });
   
-  // Helper function to safely parse dates
   const safeParseISO = (dateString: string | undefined | number): Date | null => {
     if (!dateString) return null;
     if (dateString === 'TBD') return null;
@@ -25,7 +39,6 @@ const CalendarPage = () => {
       
       const dateStr = typeof dateString === 'number' ? dateString.toString() : dateString;
       
-      // Handle both "YYYY-MM-DD" and "YYYY-M-D" formats
       let normalizedDate = dateStr;
       const parts = dateStr.split('-');
       if (parts.length === 3) {
@@ -76,7 +89,6 @@ const CalendarPage = () => {
 
   const getDayEvents = (date: Date) => {
     return conferencesData.reduce((acc, conf) => {
-      // Check if the conference matches the search query
       const matchesSearch = searchQuery === "" || 
         conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -105,14 +117,37 @@ const CalendarPage = () => {
     }, { deadlines: [], conferences: [] } as { deadlines: Conference[], conferences: Conference[] });
   };
 
-  const events = selectedDate ? getEvents(selectedDate) : [];
+  const renderEventPreview = (events: { deadlines: Conference[], conferences: Conference[] }) => {
+    if (events.deadlines.length === 0 && events.conferences.length === 0) return null;
+    
+    return (
+      <div className="p-2 max-w-[200px]">
+        {events.deadlines.length > 0 && (
+          <div className="mb-2">
+            <p className="font-semibold text-red-500">Deadlines:</p>
+            {events.deadlines.map(conf => (
+              <div key={conf.id} className="text-sm">{conf.title}</div>
+            ))}
+          </div>
+        )}
+        {events.conferences.length > 0 && (
+          <div>
+            <p className="font-semibold text-purple-600">Conferences:</p>
+            {events.conferences.map(conf => (
+              <div key={conf.id} className="text-sm">{conf.title}</div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
 
   const renderDayContent = (day: Date) => {
     const dayEvents = getDayEvents(day);
     const hasDeadlines = dayEvents.deadlines.length > 0;
     const hasConferences = dayEvents.conferences.length > 0;
 
-    return (
+    const content = (
       <div className="relative w-full h-full flex flex-col items-center">
         <span className="mb-1">{format(day, 'd')}</span>
         <div className="absolute bottom-0 left-0 right-0 flex gap-0.5 px-1">
@@ -122,6 +157,64 @@ const CalendarPage = () => {
           {hasConferences && (
             <div className="h-0.5 flex-1 bg-purple-600" title="Conference" />
           )}
+        </div>
+      </div>
+    );
+
+    if (!hasDeadlines && !hasConferences) return content;
+
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <div 
+              className="w-full h-full cursor-pointer"
+              onClick={() => setSelectedDayEvents({ date: day, events: dayEvents })}
+            >
+              {content}
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>
+            {renderEventPreview(dayEvents)}
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  };
+
+  const renderEventDetails = (conf: Conference) => {
+    const deadlineDate = safeParseISO(conf.deadline);
+    const startDate = safeParseISO(conf.start);
+    const endDate = safeParseISO(conf.end);
+
+    return (
+      <div className="border-b last:border-b-0 pb-4 last:pb-0 mb-4 last:mb-0">
+        <h3 className="font-semibold text-lg">{conf.title}</h3>
+        {conf.full_name && (
+          <p className="text-sm text-neutral-600 mb-2">{conf.full_name}</p>
+        )}
+        <div className="space-y-1">
+          {deadlineDate && (
+            <p className="text-red-500 text-sm">
+              Submission Deadline: {format(deadlineDate, 'MMMM d, yyyy')}
+            </p>
+          )}
+          {startDate && (
+            <p className="text-purple-600 text-sm">
+              Conference Date: {format(startDate, 'MMMM d')}
+              {endDate ? ` - ${format(endDate, 'MMMM d, yyyy')}` : 
+                `, ${format(startDate, 'yyyy')}`}
+            </p>
+          )}
+        </div>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {Array.isArray(conf.tags) && conf.tags.map((tag) => (
+            <span key={tag} className="inline-flex items-center px-2 py-1 rounded-full 
+              text-xs bg-neutral-100">
+              <Tag className="h-3 w-3 mr-1" />
+              {tag}
+            </span>
+          ))}
         </div>
       </div>
     );
@@ -199,54 +292,40 @@ const CalendarPage = () => {
                 }}
               />
             </div>
+          </div>
+        </div>
+      </div>
 
-            {selectedDate && events.length > 0 && (
-              <div className="mx-auto w-full max-w-3xl space-y-4">
-                <h2 className="text-xl font-semibold flex items-center gap-2">
-                  <CalendarIcon className="h-5 w-5" />
-                  Events in {format(selectedDate, isYearView ? 'yyyy' : 'MMMM yyyy')}
-                </h2>
+      <Dialog 
+        open={selectedDayEvents.date !== null}
+        onOpenChange={() => setSelectedDayEvents({ date: null, events: { deadlines: [], conferences: [] } })}
+      >
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              Events for {selectedDayEvents.date ? format(selectedDayEvents.date, 'MMMM d, yyyy') : ''}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            {selectedDayEvents.events.deadlines.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold text-red-500 mb-3">Submission Deadlines</h3>
                 <div className="space-y-4">
-                  {events.map((conf: Conference) => {
-                    const deadlineDate = safeParseISO(conf.deadline);
-                    const startDate = safeParseISO(conf.start);
-                    const endDate = safeParseISO(conf.end);
-
-                    return (
-                      <div key={conf.id} className="bg-white p-4 rounded-lg shadow-sm">
-                        <h3 className="font-semibold text-lg">{conf.title}</h3>
-                        <div className="space-y-1">
-                          {deadlineDate && (
-                            <p className="text-red-500">
-                              Submission Deadline: {format(deadlineDate, 'MMMM d, yyyy')}
-                            </p>
-                          )}
-                          {startDate && (
-                            <p className="text-purple-600">
-                              Conference Date: {format(startDate, 'MMMM d')}
-                              {endDate ? ` - ${format(endDate, 'MMMM d, yyyy')}` : 
-                                `, ${format(startDate, 'yyyy')}`}
-                            </p>
-                          )}
-                        </div>
-                        <div className="mt-2 flex flex-wrap gap-2">
-                          {Array.isArray(conf.tags) && conf.tags.map((tag) => (
-                            <span key={tag} className="inline-flex items-center px-2 py-1 rounded-full 
-                              text-xs bg-neutral-100">
-                              <Tag className="h-3 w-3 mr-1" />
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
+                  {selectedDayEvents.events.deadlines.map(conf => renderEventDetails(conf))}
+                </div>
+              </div>
+            )}
+            {selectedDayEvents.events.conferences.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold text-purple-600 mb-3">Conferences</h3>
+                <div className="space-y-4">
+                  {selectedDayEvents.events.conferences.map(conf => renderEventDetails(conf))}
                 </div>
               </div>
             )}
           </div>
-        </div>
-      </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
