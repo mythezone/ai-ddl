@@ -360,7 +360,8 @@
   timezone: UTC-12
   place: Vienna, Austria
   date: July 27 - August 1, 2025
-  tags: AI
+  tags:
+  - natural-language-processing
 
 - title: IROS
   year: 2025
@@ -371,7 +372,8 @@
   timezone: UTC-8
   place: Hangzhou, China
   date: October 19-25, 2025
-  tags: AI
+  tags:
+  - robotics
 
 - title: KSEM
   year: 2025
@@ -382,7 +384,8 @@
   timezone: UTC+0
   place: Macao SAR, China
   date: August 4-6, 2025
-  tags: AI
+  tags:
+  - machine-learning
 
 - title: ICDAR
   year: 2025
@@ -393,7 +396,8 @@
   timezone: UTC+0
   place: Wuhan, China
   date: September 17-21, 2025
-  tags: AI
+  tags:
+  - computer-vision
   abstract_deadline: '2025-02-28 23:59:59'
 
 - title: ICCV
