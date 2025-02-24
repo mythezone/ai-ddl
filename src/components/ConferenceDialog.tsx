@@ -15,6 +15,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useState, useEffect } from "react";
 
 interface ConferenceDialogProps {
   conference: Conference;
@@ -24,7 +25,40 @@ interface ConferenceDialogProps {
 
 const ConferenceDialog = ({ conference, open, onOpenChange }: ConferenceDialogProps) => {
   const deadlineDate = conference.deadline && conference.deadline !== 'TBD' ? parseISO(conference.deadline) : null;
-  const daysLeft = deadlineDate && isValid(deadlineDate) ? formatDistanceToNow(deadlineDate, { addSuffix: true }) : 'TBD';
+  const [countdown, setCountdown] = useState<string>('');
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      if (!deadlineDate || !isValid(deadlineDate)) {
+        setCountdown('TBD');
+        return;
+      }
+
+      const now = new Date().getTime();
+      const difference = deadlineDate.getTime() - now;
+
+      if (difference <= 0) {
+        setCountdown('Deadline passed');
+        return;
+      }
+
+      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+      setCountdown(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+    };
+
+    // Calculate immediately
+    calculateTimeLeft();
+
+    // Update every second
+    const timer = setInterval(calculateTimeLeft, 1000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(timer);
+  }, [deadlineDate]);
 
   const getCountdownColor = () => {
     if (!deadlineDate || !isValid(deadlineDate)) return "text-neutral-600";
@@ -59,82 +93,36 @@ const ConferenceDialog = ({ conference, open, onOpenChange }: ConferenceDialogPr
 
   const createCalendarEvent = (type: 'google' | 'apple') => {
     try {
-      let startDate: Date;
-      let endDate: Date;
-
-      // Primary: Use start and end fields
-      if (conference.start && conference.end) {
-        // Check if the dates are Date objects using a type guard
-        const isDate = (value: any): value is Date => {
-          return value && Object.prototype.toString.call(value) === '[object Date]';
-        };
-
-        if (isDate(conference.start) && isDate(conference.end)) {
-          startDate = conference.start;
-          endDate = conference.end;
-        } else {
-          // Otherwise, parse the string dates
-          startDate = parseISO(String(conference.start));
-          endDate = parseISO(String(conference.end));
-        }
-
-        // Validate parsed dates
-        if (!isValid(startDate) || !isValid(endDate)) {
-          throw new Error('Invalid conference dates');
-        }
-
-        // Add one day to end date to include the full last day
-        endDate = addDays(endDate, 1);
-      } 
-      // Fallback: Parse from date field
-      else if (conference.date && typeof conference.date === 'string') {
-        const [monthDay, year] = conference.date.split(', ');
-        const [month, days] = monthDay.split(' ');
-        const [startDay, endDay] = days.split(/[-–]/);
-        
-        try {
-          startDate = parse(`${month} ${startDay} ${year}`, 'MMMM d yyyy', new Date()) ||
-                     parse(`${month} ${startDay} ${year}`, 'MMM d yyyy', new Date());
-          
-          if (endDay) {
-            endDate = parse(`${month} ${endDay} ${year}`, 'MMMM d yyyy', new Date()) ||
-                     parse(`${month} ${endDay} ${year}`, 'MMM d yyyy', new Date());
-            // Add one day to end date to include the full last day
-            endDate = addDays(endDate, 1);
-          } else {
-            // For single-day conferences
-            startDate = startDate || new Date();
-            endDate = addDays(startDate, 1);
-          }
-        } catch (parseError) {
-          throw new Error('Invalid date format');
-        }
-      } else {
-        throw new Error('No valid date information found');
+      if (!conference.deadline || conference.deadline === 'TBD') {
+        throw new Error('No valid deadline found');
       }
 
-      // Validate dates
-      if (!isValid(startDate) || !isValid(endDate)) {
-        throw new Error('Invalid conference dates');
+      // Parse the deadline date
+      const deadlineDate = parseISO(conference.deadline);
+      if (!isValid(deadlineDate)) {
+        throw new Error('Invalid deadline date');
       }
 
-      const formatDateForGoogle = (date: Date) => format(date, "yyyyMMdd");
-      const formatDateForApple = (date: Date) => format(date, "yyyyMMdd'T'HHmmss");
+      // Create an end date 1 hour after the deadline
+      const endDate = new Date(deadlineDate.getTime() + (60 * 60 * 1000));
 
-      const title = encodeURIComponent(conference.title);
+      const formatDateForGoogle = (date: Date) => format(date, "yyyyMMdd'T'HHmmss'Z'");
+      const formatDateForApple = (date: Date) => format(date, "yyyyMMdd'T'HHmmss'Z'");
+
+      const title = encodeURIComponent(`${conference.title} deadline`);
       const location = encodeURIComponent(conference.place);
       const description = encodeURIComponent(
-        `Conference: ${conference.full_name || conference.title}\n` +
-        `Location: ${conference.place}\n` +
-        `Deadline: ${conference.deadline}\n` +
+        `Paper Submission Deadline for ${conference.full_name || conference.title}\n` +
         (conference.abstract_deadline ? `Abstract Deadline: ${conference.abstract_deadline}\n` : '') +
+        `Conference Dates: ${conference.date}\n` +
+        `Location: ${conference.place}\n` +
         (conference.link ? `Website: ${conference.link}` : '')
       );
 
       if (type === 'google') {
         const url = `https://calendar.google.com/calendar/render?action=TEMPLATE` +
           `&text=${title}` +
-          `&dates=${formatDateForGoogle(startDate)}/${formatDateForGoogle(endDate)}` +
+          `&dates=${formatDateForGoogle(deadlineDate)}/${formatDateForGoogle(endDate)}` +
           `&details=${description}` +
           `&location=${location}` +
           `&sprop=website:${encodeURIComponent(conference.link || '')}`;
@@ -144,7 +132,7 @@ const ConferenceDialog = ({ conference, open, onOpenChange }: ConferenceDialogPr
 VERSION:2.0
 BEGIN:VEVENT
 URL:${conference.link || ''}
-DTSTART:${formatDateForApple(startDate)}
+DTSTART:${formatDateForApple(deadlineDate)}
 DTEND:${formatDateForApple(endDate)}
 SUMMARY:${title}
 DESCRIPTION:${description}
@@ -154,7 +142,7 @@ END:VCALENDAR`;
         
         const link = document.createElement('a');
         link.href = url;
-        link.download = `${conference.title.toLowerCase().replace(/\s+/g, '-')}.ics`;
+        link.download = `${conference.title.toLowerCase().replace(/\s+/g, '-')}-deadline.ics`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
@@ -226,9 +214,16 @@ END:VCALENDAR`;
 
           <div className="flex items-center">
             <AlarmClock className={`h-5 w-5 mr-3 flex-shrink-0 ${getCountdownColor()}`} />
-            <span className={`font-medium ${getCountdownColor()}`}>
-              {daysLeft}
-            </span>
+            <div>
+              <span className={`font-medium ${getCountdownColor()}`}>
+                {countdown}
+              </span>
+              {deadlineDate && isValid(deadlineDate) && (
+                <div className="text-sm text-neutral-500">
+                  {format(deadlineDate, "MMMM d, yyyy 'at' HH:mm:ss")} {conference.timezone}
+                </div>
+              )}
+            </div>
           </div>
 
           {Array.isArray(conference.tags) && conference.tags.length > 0 && (
