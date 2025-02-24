@@ -114,7 +114,7 @@ const ConferenceDialog = ({ conference, open, onOpenChange }: ConferenceDialogPr
       const description = encodeURIComponent(
         `Paper Submission Deadline for ${conference.full_name || conference.title}\n` +
         (conference.abstract_deadline ? `Abstract Deadline: ${conference.abstract_deadline}\n` : '') +
-        `Conference Dates: ${conference.date}\n` +
+        `Dates: ${conference.date}\n` +
         `Location: ${conference.place}\n` +
         (conference.link ? `Website: ${conference.link}` : '')
       );
@@ -171,31 +171,63 @@ END:VCALENDAR`;
           <div className="flex items-start gap-2">
             <CalendarDays className="h-5 w-5 mt-0.5 text-gray-500" />
             <div>
-              <p className="font-medium">Conference Dates</p>
+              <p className="font-medium">Dates</p>
               <p className="text-sm text-gray-500">{conference.date}</p>
             </div>
           </div>
 
           <div className="flex items-start gap-2">
             <Clock className="h-5 w-5 mt-0.5 text-gray-500" />
-            <div className="space-y-2">
+            <div className="space-y-2 flex-1">
               <p className="font-medium">Important Deadlines</p>
-              <div className="text-sm text-gray-500 space-y-1">
+              <div className="text-sm text-gray-500 space-y-2">
                 {conference.abstract_deadline && (
-                  <p>Abstract: {conference.abstract_deadline}</p>
+                  <div className="bg-gray-100 rounded-md p-2">
+                    <p>Abstract: {parseISO(conference.abstract_deadline) && isValid(parseISO(conference.abstract_deadline)) 
+                      ? format(parseISO(conference.abstract_deadline), "MMMM d, yyyy")
+                      : conference.abstract_deadline}
+                    </p>
+                  </div>
                 )}
-                <p>Submission: {conference.deadline}</p>
+                <div className="bg-gray-100 rounded-md p-2">
+                  <p>Submission: {conference.deadline && conference.deadline !== 'TBD' && isValid(parseISO(conference.deadline))
+                    ? format(parseISO(conference.deadline), "MMMM d, yyyy")
+                    : conference.deadline}
+                  </p>
+                </div>
                 {conference.commitment_deadline && (
-                  <p>Commitment: {conference.commitment_deadline}</p>
+                  <div className="bg-gray-100 rounded-md p-2">
+                    <p>Commitment: {isValid(parseISO(conference.commitment_deadline))
+                      ? format(parseISO(conference.commitment_deadline), "MMMM d, yyyy")
+                      : conference.commitment_deadline}
+                    </p>
+                  </div>
                 )}
                 {conference.review_release_date && (
-                  <p>Reviews Released: {conference.review_release_date}</p>
+                  <div className="bg-gray-100 rounded-md p-2">
+                    <p>Reviews Released: {isValid(parseISO(conference.review_release_date))
+                      ? format(parseISO(conference.review_release_date), "MMMM d, yyyy")
+                      : conference.review_release_date}
+                    </p>
+                  </div>
                 )}
                 {(conference.rebuttal_period_start || conference.rebuttal_period_end) && (
-                  <p>Rebuttal Period: {conference.rebuttal_period_start} - {conference.rebuttal_period_end}</p>
+                  <div className="bg-gray-100 rounded-md p-2">
+                    <p>Rebuttal Period: {conference.rebuttal_period_start && isValid(parseISO(conference.rebuttal_period_start))
+                      ? format(parseISO(conference.rebuttal_period_start), "MMMM d, yyyy")
+                      : conference.rebuttal_period_start} - {conference.rebuttal_period_end && isValid(parseISO(conference.rebuttal_period_end))
+                      ? format(parseISO(conference.rebuttal_period_end), "MMMM d, yyyy")
+                      : conference.rebuttal_period_end}
+                    </p>
+                  </div>
                 )}
                 {conference.final_decision_date && (
-                  <p>Final Decision: {conference.final_decision_date}</p>
+                  <div className="bg-gray-100 rounded-md p-2">
+                    <p>Final Decision: {isValid(parseISO(conference.final_decision_date))
+                      ? format(parseISO(conference.final_decision_date), "MMMM d, yyyy")
+                      : conference.final_decision_date}
+                    </p>
+                  </div>
                 )}
               </div>
             </div>

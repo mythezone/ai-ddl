@@ -371,6 +371,7 @@
   - natural-language-processing
   commitment_deadline: '2025-04-10 23:59:59'
   note: 'ARR commitment deadline on April 10th, 2025. More info <a href="https://2025.aclweb.org/">here</a>.'
+  final_decision_date: '2025-05-15 23:59:59'
 
 - title: IROS
   year: 2025
@@ -415,7 +416,6 @@
   full_name: IEEE International Conference on Computer Vision
   link: https://iccv.thecvf.com/Conferences/2025
   deadline: '2025-03-07 23:59:59'
-  abstract_deadline: '2025-03-03 23:59:59'
   timezone: HST
   place: Honolulu, Hawaii
   date: October 19-25, 2025
@@ -424,11 +424,11 @@
   tags:
   - machine-learning
   - computer-vision
+  abstract_deadline: '2025-03-03 23:59:59'
   review_release_date: '2025-05-09'
   rebuttal_period_start: '2025-05-10'
   rebuttal_period_end: '2025-05-16'
   final_decision_date: '2025-06-20'
-  note: 'Paper registration deadline on March 3rd, 2025. Reviews released on May 9th, rebuttal period May 10-16, and final decisions on June 20th.'
 
 - title: ICANN
   year: 2025

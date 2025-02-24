@@ -20,25 +20,47 @@ import {
 } from "@/components/ui/tooltip";
 
 const categoryColors: Record<string, string> = {
-  "computer-vision": "bg-orange-500",
   "machine-learning": "bg-purple-500",
+  "computer-vision": "bg-orange-500",
   "natural-language-processing": "bg-blue-500",
   "robotics": "bg-green-500",
-  "data-mining": "bg-pink-500",
   "signal-processing": "bg-cyan-500",
-  "human-computer-interaction": "bg-indigo-500",
-  "web-search": "bg-yellow-500",
+  "data-mining": "bg-pink-500",
+  "automated-planning": "bg-yellow-500",
+  "other": "bg-gray-500"
 };
 
 const categoryNames: Record<string, string> = {
-  "computer-vision": "Computer Vision",
   "machine-learning": "Machine Learning",
+  "computer-vision": "Computer Vision",
   "natural-language-processing": "NLP",
   "robotics": "Robotics",
+  "signal-processing": "Speech/Signal Processing",
   "data-mining": "Data Mining",
-  "signal-processing": "Signal Processing",
-  "human-computer-interaction": "HCI",
-  "web-search": "Web Search",
+  "automated-planning": "Automated Planning",
+  "other": "Other"
+};
+
+// Add this array to maintain the exact order we want
+const orderedCategories = [
+  "machine-learning",
+  "computer-vision",
+  "natural-language-processing",
+  "robotics",
+  "signal-processing",
+  "data-mining",
+  "automated-planning",
+  "other"
+] as const;
+
+const mapLegacyTag = (tag: string): string => {
+  const legacyTagMapping: Record<string, string> = {
+    "web-search": "other",
+    "human-computer-interaction": "other",
+    "computer-graphics": "other",
+    // Add any other legacy mappings here
+  };
+  return legacyTagMapping[tag] || tag;
 };
 
 const CalendarPage = () => {
@@ -51,7 +73,7 @@ const CalendarPage = () => {
     events: { deadlines: [], conferences: [] }
   });
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
-    new Set(Object.keys(categoryColors))
+    new Set(orderedCategories)
   );
   const [showDeadlines, setShowDeadlines] = useState(true);
   const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
@@ -89,9 +111,15 @@ const CalendarPage = () => {
 
   const getEvents = (date: Date) => {
     return conferencesData.filter((conf: Conference) => {
+      // Map the conference tags to our new category system
+      const mappedTags = conf.tags?.map(mapLegacyTag) || [];
+      
       const matchesSearch = searchQuery === "" || 
         conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
+
+      // Use mapped tags for category matching
+      const matchesCategory = mappedTags.some(tag => selectedCategories.has(tag));
 
       const deadlineDate = safeParseISO(conf.deadline);
       const startDate = safeParseISO(conf.start);
@@ -106,10 +134,6 @@ const CalendarPage = () => {
       if (showDeadlines && selectedCategories.size === 0) {
         return deadlineDate && isInCurrentYear(deadlineDate) && matchesSearch;
       }
-
-      // Check for category matches
-      const matchesCategory = Array.isArray(conf.tags) && 
-        conf.tags.some(tag => selectedCategories.has(tag));
 
       if (!matchesSearch || (!matchesCategory && selectedCategories.size > 0)) return false;
 
@@ -375,9 +399,11 @@ const CalendarPage = () => {
     );
   };
 
-  const categories = Object.entries(categoryColors).filter(([category]) => 
-    conferencesData.some(conf => conf.tags?.includes(category))
-  );
+  const categories = orderedCategories
+    .filter(category => 
+      conferencesData.some(conf => conf.tags?.includes(category))
+    )
+    .map(category => [category, categoryColors[category]]);
 
   const renderLegend = () => {
     return (
@@ -447,7 +473,7 @@ const CalendarPage = () => {
         {selectedCategories.size < Object.keys(categoryColors).length && (
           <button
             onClick={() => {
-              setSelectedCategories(new Set(Object.keys(categoryColors)));
+              setSelectedCategories(new Set(orderedCategories));
               setShowDeadlines(true);
             }}
             className="text-sm text-green-600 bg-green-50 hover:bg-green-100 hover:text-green-700
