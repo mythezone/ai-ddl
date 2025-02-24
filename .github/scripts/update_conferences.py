@@ -136,13 +136,13 @@ def transform_conference_data(conferences: List[Dict[str, Any]]) -> List[Dict[st
         except Exception as e:
             print(f"Warning: Could not parse date for {transformed_conf['title']}: {e}")
             
-        # Add rankings as note
+        # Add rankings as separate field
         if 'rank' in conf:
             rankings = []
             for rank_type, rank_value in conf['rank'].items():
                 rankings.append(f"{rank_type.upper()}: {rank_value}")
             if rankings:
-                transformed_conf['note'] = f"Rankings: {', '.join(rankings)}"
+                transformed_conf['rankings'] = ', '.join(rankings)
             
         transformed.append(transformed_conf)
     
@@ -182,7 +182,7 @@ def main():
                     'timezone_submission', 'rebuttal_period_start',
                     'rebuttal_period_end', 'final_decision_date',
                     'review_release_date', 'commitment_deadline',
-                    'start', 'end'
+                    'start', 'end', 'note'  # Added note to preserved fields
                 ]
                 for field in preserved_fields:
                     if field in curr_conf:
@@ -194,11 +194,9 @@ def main():
                 if 'end' not in curr_conf and 'end' in new_conf:
                     new_conf['end'] = new_conf['end']
                 
-                # Preserve existing note if it contains more than just rankings
-                if 'note' in curr_conf and (
-                    'note' not in new_conf or 
-                    not curr_conf['note'].startswith('Rankings:')):
-                    new_conf['note'] = curr_conf['note']
+                # Preserve existing rankings if available
+                if 'rankings' in curr_conf:
+                    new_conf['rankings'] = curr_conf['rankings']
                 
                 # Update the conference in the dictionary
                 current_conf_dict[new_conf['id']] = new_conf

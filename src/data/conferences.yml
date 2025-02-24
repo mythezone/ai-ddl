@@ -12,7 +12,7 @@
   - robotics
   start: '2026-06-01'
   end: '2026-06-05'
-  note: 'Rankings: CCF: B, CORE: A*, THCPL: A'
+  rankings: 'CCF: B, CORE: A*, THCPL: A'
   venue: Georgia World Congress Center, Atlanta, USA
 
 - title: WACV
@@ -27,7 +27,7 @@
   tags:
   - machine-learning
   - computer-vision
-  note: 'Rankings: CCF: N, CORE: A, THCPL: N'
+  rankings: 'CCF: N, CORE: A, THCPL: N'
   venue: JW Marriott Starpass in Tucson, Arizona, USA
 
 - title: WSDM
@@ -62,9 +62,10 @@
   - natural-language-processing
   - computer-vision
   abstract_deadline: '2024-08-07 23:59:59'
-  note: Mandatory abstract deadline on Aug 07, 2024, and supplementary material deadline on Aug 19, 2024. More info <a href='https://aaai.org/conference/aaai/aaai-25/'>here</a>.
+  rankings: 'CCF: A, CORE: A*, THCPL: A'
   venue: Pennsylvania Convention Center, Philadelphia, USA
   hindex: 212
+  note: Mandatory abstract deadline on Aug 07, 2024, and supplementary material deadline on Aug 19, 2024. More info <a href='https://aaai.org/conference/aaai/aaai-25/'>here</a>.
 
 - title: ICASSP
   year: 2025
@@ -112,9 +113,10 @@
   - natural-language-processing
   start: '2025-01-19'
   end: '2025-01-24'
-  note: More info can be found <a href="https://coling2025.org/calls/main_conference_papers/#important-dates">here</a>.
+  rankings: 'CCF: B, CORE: B, THCPL: B'
   venue: Abu Dhabi National Exhibition Centre (ADNEC), Abu Dhabi, UAE
   hindex: 73
+  note: More info can be found <a href="https://coling2025.org/calls/main_conference_papers/#important-dates">here</a>.
 
 - title: ALT
   year: 2025
@@ -127,7 +129,7 @@
   date: February 24-27, 2025
   tags:
   - machine-learning
-  note: 'Rankings: CCF: C, CORE: B, THCPL: B'
+  rankings: 'CCF: C, CORE: B, THCPL: B'
   venue: Politecnico di Milano, Milan, Italy
 
 - title: ICLR
@@ -145,9 +147,23 @@
   - natural-language-processing
   - signal-processing
   abstract_deadline: '2024-09-27 23:59:59'
-  note: Mandatory abstract deadline on September 27, 2024. More info <a href='https://iclr.cc/Conferences/2025/CallForPapers'>here</a>.
+  rankings: 'CCF: N, CORE: A*, THCPL: A'
   venue: Singapore EXPO - 1 Expo Drive, Singapore
   hindex: 304
+  note: Mandatory abstract deadline on September 27, 2024. More info <a href='https://iclr.cc/Conferences/2025/CallForPapers'>here</a>.
+
+- title: Eurographics
+  year: 2025
+  id: eurographics25
+  full_name: The 46th Annual Conference of the European Association for Computer Graphics
+  link: https://www.eg.org/wp/event/eurographics-2025/
+  deadline: '2024-10-03 23:59:59'
+  timezone: UTC+1
+  place: London, UK
+  date: May 12 - 16, 2025
+  tags:
+  - computer-graphics
+  venue: London
 
 - title: ECIR
   year: 2025
@@ -180,9 +196,10 @@
   abstract_deadline: '2024-10-03 23:59:59'
   start: '2025-05-03'
   end: '2025-05-05'
-  note: Abstract deadline on October 3, 2024. More info <a href='https://aistats.org/aistats2025/call-for-papers.html'>here</a>
+  rankings: 'CCF: C, CORE: A, THCPL: B'
   venue: TBA
   hindex: 100
+  note: Abstract deadline on October 3, 2024. More info <a href='https://aistats.org/aistats2025/call-for-papers.html'>here</a>
 
 - title: NAACL
   year: 2025
@@ -195,8 +212,9 @@
   date: April 29-May 4, 2025
   tags:
   - natural-language-processing
-  note: All submissions must be done through ARR. More info <a href='https://2025.naacl.org/calls/papers/'>here</a>.
+  rankings: 'CCF: B, CORE: A, THCPL: B'
   hindex: 132
+  note: All submissions must be done through ARR. More info <a href='https://2025.naacl.org/calls/papers/'>here</a>.
 
 - title: AAMAS
   year: 2025
@@ -213,6 +231,7 @@
   abstract_deadline: '2024-10-09 23:59:59'
   start: '2025-05-19'
   end: '2025-05-23'
+  rankings: 'CCF: B, CORE: A*, THCPL: B'
   note: Mandatory abstract deadline on Oct 09, 2024. More info <a href='https://aamas2025.org/'>here</a>.
 
 - title: CVPR
@@ -227,12 +246,13 @@
   tags:
   - computer-vision
   abstract_deadline: '2024-11-07 23:59:00'
-  note: OpenReview account creation deadline on Nov 1st, paper registration deadline on Nov 8th, supplementary materials deadline on Nov 22nd. Reviews released on Jan 23rd, rebuttal period ends Jan 31st, and final decisions on Feb 26th.
+  rankings: 'CCF: A, CORE: A*, THCPL: A'
   venue: Music City Center, Nashville, USA
   hindex: 389
   rebuttal_period_end: '2025-01-31 07:59:59'
   final_decision_date: '2025-02-26 07:59:59'
   review_release_date: '2025-01-23 07:59:59'
+  note: OpenReview account creation deadline on Nov 1st, paper registration deadline on Nov 8th, supplementary materials deadline on Nov 22nd. Reviews released on Jan 23rd, rebuttal period ends Jan 31st, and final decisions on Feb 26th.
 
 - title: ESANN
   year: 2025
@@ -245,7 +265,7 @@
   date: April 23 - April 25, 2025
   tags: []
   abstract_deadline: '2024-11-20 00:00:00'
-  note: 'Rankings: CCF: N, CORE: B, THCPL: N'
+  rankings: 'CCF: N, CORE: B, THCPL: N'
 
 - title: CPAL
   year: 2025
@@ -258,7 +278,7 @@
   date: March 24-27, 2025
   tags:
   - machine-learning
-  note: 'Rankings: CCF: N, CORE: N, THCPL: N'
+  rankings: 'CCF: N, CORE: N, THCPL: N'
 
 - title: CEC
   year: 2025
@@ -271,7 +291,7 @@
   date: June 8-12, 2025
   tags:
   - machine-learning
-  note: 'Rankings: CCF: N, CORE: B, THCPL: N'
+  rankings: 'CCF: N, CORE: B, THCPL: N'
 
 - title: SIGGRAPH
   year: 2025
@@ -300,7 +320,7 @@
   tags:
   - machine-learning
   abstract_deadline: '2025-01-16 23:59:59'
-  note: 'Rankings: CCF: A, CORE: A*, THCPL: B'
+  rankings: 'CCF: A, CORE: A*, THCPL: B'
 
 - title: RSS
   year: 2025
@@ -314,7 +334,7 @@
   tags:
   - machine-learning
   abstract_deadline: '2025-01-17 23:59:00'
-  note: 'Rankings: CCF: N, CORE: A*, THCPL: A'
+  rankings: 'CCF: N, CORE: A*, THCPL: A'
 
 - title: ICML
   year: 2025
@@ -328,7 +348,7 @@
   tags:
   - machine-learning
   abstract_deadline: '2025-01-23 23:59:59'
-  note: 'Rankings: CCF: A, CORE: A*, THCPL: A'
+  rankings: 'CCF: A, CORE: A*, THCPL: A'
   submission_deadline: '2025-01-31 03:59:59'
   timezone_submission: PST
 
@@ -343,7 +363,7 @@
   date: June 30 - July 5, 2025
   tags:
   - machine-learning
-  note: 'Rankings: CCF: C, CORE: B, THCPL: B'
+  rankings: 'CCF: C, CORE: B, THCPL: B'
 
 - title: COLT
   year: 2025
@@ -356,7 +376,7 @@
   date: June 30 - July 4, 2025
   tags:
   - machine-learning
-  note: 'Rankings: CCF: B, CORE: A*, THCPL: A'
+  rankings: 'CCF: B, CORE: A*, THCPL: A'
 
 - title: UAI
   year: 2025
@@ -369,7 +389,7 @@
   date: July 21-25, 2025
   tags:
   - machine-learning
-  note: 'Rankings: CCF: B, CORE: A, THCPL: B'
+  rankings: 'CCF: B, CORE: A, THCPL: B'
 
 - title: KDD
   year: 2025
@@ -399,9 +419,10 @@
   date: July 27 - August 1, 2025
   tags:
   - natural-language-processing
-  note: ARR commitment deadline on April 10th, 2025. More info <a href="https://2025.aclweb.org/">here</a>.
+  rankings: 'CCF: A, CORE: A*, THCPL: A'
   final_decision_date: '2025-05-15 23:59:59'
   commitment_deadline: '2025-04-10 23:59:59'
+  note: ARR commitment deadline on April 10th, 2025.
 
 - title: IROS
   year: 2025
@@ -414,7 +435,7 @@
   date: October 19-25, 2025
   tags:
   - robotics
-  note: 'Rankings: CCF: C, CORE: A, THCPL: B'
+  rankings: 'CCF: C, CORE: A, THCPL: B'
 
 - title: KSEM
   year: 2025
@@ -427,7 +448,7 @@
   date: August 4-6, 2025
   tags:
   - machine-learning
-  note: 'Rankings: CCF: C, CORE: C, THCPL: N'
+  rankings: 'CCF: C, CORE: C, THCPL: N'
 
 - title: ICDAR
   year: 2025
@@ -441,7 +462,7 @@
   tags:
   - computer-vision
   abstract_deadline: '2025-02-28 23:59:59'
-  note: 'Rankings: CCF: C, CORE: A, THCPL: B'
+  rankings: 'CCF: C, CORE: A, THCPL: B'
 
 - title: ICCV
   year: 2025
@@ -455,7 +476,7 @@
   tags:
   - machine-learning
   - computer-vision
-  note: 'Rankings: CCF: A, CORE: A*, THCPL: A'
+  rankings: 'CCF: A, CORE: A*, THCPL: A'
   rebuttal_period_start: '2025-05-10'
   rebuttal_period_end: '2025-05-16'
   final_decision_date: '2025-06-20'
@@ -472,7 +493,7 @@
   date: Sept 9-12, 2025
   tags:
   - machine-learning
-  note: 'Rankings: CCF: C, CORE: C, THCPL: N'
+  rankings: 'CCF: C, CORE: C, THCPL: N'
   venue: Campus of Vytautas Magnus University and Lithuanian University of Health Sciences, Kaunas, Lithuania
 
 - title: COLM
@@ -487,7 +508,7 @@
   tags:
   - natural-language-processing
   abstract_deadline: '2025-03-20 23:59:59'
-  note: 'Rankings: CCF: N, CORE: N, THCPL: N'
+  rankings: 'CCF: N, CORE: N, THCPL: N'
   venue: Palais des Congrès Montreal, Canada
 
 - title: ECAI
@@ -502,7 +523,7 @@
   tags:
   - machine-learning
   abstract_deadline: '2025-04-29 23:59:59'
-  note: 'Rankings: CCF: B, CORE: A, THCPL: N'
+  rankings: 'CCF: B, CORE: A, THCPL: N'
   venue: Bologna Congress Center and The Engineering School (University of Bologna)
 
 - title: NeurIPS
@@ -531,5 +552,5 @@
   date: November 5 - 9, 2025
   tags:
   - natural-language-processing
-  note: 'Rankings: CCF: B, CORE: A*, THCPL: A'
+  rankings: 'CCF: B, CORE: A*, THCPL: A'
   venue: Suzhou, China
