@@ -484,17 +484,21 @@
 
 - title: ICANN
   year: 2025
-  id: icann2025
+  id: icann25
   full_name: International Conference on Artificial Neural Networks
   link: https://e-nns.org/icann2025/
-  deadline: '2025-03-15 23:59:59'
-  timezone: AoE
+  deadline: 2025-03-15 23:59
+  abstract_deadline: 2025-03-15 23:59
+  timezone: UTC-12
   place: Kaunas, Lithuania
-  date: Sept 9-12, 2025
+  date: September, 9-12, 2025
+  start: 2025-09-09
+  end: 2025-09-12
+  paperslink: https://link.springer.com/conference/icann
+  hindex: 32.0
   tags:
   - machine-learning
-  rankings: 'CCF: C, CORE: C, THCPL: N'
-  venue: Campus of Vytautas Magnus University and Lithuanian University of Health Sciences, Kaunas, Lithuania
+  note: Deadline for full paper submission at 15 March 2025. More info <a href='https://e-nns.org/icann2025'>here</a>.
 
 - title: COLM
   year: 2025
@@ -554,3 +558,23 @@
   - natural-language-processing
   rankings: 'CCF: B, CORE: A*, THCPL: A'
   venue: Suzhou, China
+
+- title: MathAI 2025
+  year: 2025
+  id: MathAI2025
+  full_name: The International Conference dedicated to mathematics in artificial intelligence
+  link: https://mathai.club
+  deadline: '2025-02-20 23:59'
+  abstract_deadline: '2025-02-01 23:59'
+  timezone: Russia/Moscow
+  place: Sirius, Sochi, Russia
+  date: March, 24-28, 2025
+  start: 2025-03-24
+  end: 2025-03-28
+  paperslink: https://openreview.net/group?id=mathai.club/MathAI/2025/Conference
+  pwclink: https://openreview.net/group?id=mathai.club/MathAI/2025/Conference
+  hindex: 100.0
+  tags:
+  - machine-learning
+  - mathematics
+  note: Abstract deadline on February 1, 2025. More info <a href='https://mathai.club/call-for-papers'>here</a>
