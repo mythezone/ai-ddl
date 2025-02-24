@@ -30,7 +30,7 @@ To keep things minimal, we mainly focus on top-tier conferences in AI.
 To add or update a deadline:
 - Fork the repository
 - Update [src/data/conferences.yml](src/data/conferences.yml)
-- Make sure it has the `title`, `year`, `id`, `link`, `deadline`, `timezone`, `date`, `place`, `sub` attributes
+- Make sure it has the `title`, `year`, `id`, `link`, `deadline`, `timezone`, `date`, `place`, `tags` attributes
     + See available timezone strings [here](https://momentjs.com/timezone/).
 - Optionally add a `note` and `abstract_deadline` in case the conference has a separate mandatory abstract deadline
 - Optionally add `hindex` (refers to h5-index from [here](https://scholar.google.com/citations?view_op=top_venues&vq=eng))
@@ -51,7 +51,8 @@ To add or update a deadline:
       paperslink: link-to-full-paper-list.com
       pwclink: link-to-papers-with-code.com
       hindex: 100.0
-      sub: SP
+      tags:
+      - machine learning
       note: Important
     ```
 - Send a pull request to update [src/data/conferences.yml](src/data/conferences.yml).
