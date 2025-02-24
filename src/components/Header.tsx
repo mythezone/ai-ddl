@@ -59,16 +59,51 @@ const Header = ({ onSearch }: HeaderProps) => {
               pull request
             </a>.
             <br />
-            P.S. feel free to submit your paper at{' '}
+            P.S. feel free to{' '}
             <a
               href="https://hf.co/papers/submit"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary hover:underline"
             >
+              submit
+            </a>
+            {' '}your paper to{' '}
+            <a
+              href="https://hf.co/papers"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
               hf.co/papers
             </a>
-            {' '}and upload your artifacts such as models, datasets and demos
+            {' '}and upload your artifacts such as{' '}
+            <a
+              href="https://huggingface.co/docs/hub/en/models-uploading"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              models
+            </a>
+            {', '}
+            <a
+              href="https://huggingface.co/docs/datasets/loading"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              datasets
+            </a>
+            {' '}and{' '}
+            <a
+              href="https://huggingface.co/docs/hub/en/spaces-sdks-gradio"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              demos
+            </a>
           </p>
         </div>
       </div>
