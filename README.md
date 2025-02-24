@@ -21,9 +21,9 @@ It was bootstrapped using [Lovable](https://lovable.dev/) and [Cursor](https://w
 
 **URL**: https://huggingface.co/spaces/huggingface/ai-deadlines
 
-## Add conference data
+## How to contribute
 
-Simply open a pull request to update src/data/conferences.yml.
+One can simply open a pull request to update [src/data/conferences.yml](src/data/conferences.yml).
 
 ## How to run locally
 
