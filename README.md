@@ -11,13 +11,19 @@ pinned: false
 
 A web app to quickly see submission deadlines to top AI conferences, such as NeurIPS and ICLR.
 
+This helps researchers in quickly seeing when to submit their paper.
+
+Note: papers can be submitted at any time to [hf.co/papers](https://hf.co/papers) at [hf.co/papers/submit](https://hf.co/papers/submit), assuming the paper is available on [Arxiv](https://arxiv.org/).
+
+The benefit of hf.co/papers is that it allows people to quickly find related artifacts, such as models, datasets and demos. See [this paper page](https://huggingface.co/papers/2502.04328) as a nice example - it has 3 models, 1 dataset and 1 demo linked.
+
 ## Project info
 
-This project is entirely based on the awesome https://github.com/paperswithcode/ai-deadlines. As that repository is no longer maintained, we decided to make an up-to-date version along with a new UI.
+This project is entirely based on the awesome https://github.com/paperswithcode/ai-deadlines. As that repository is no longer maintained, we decided to make an up-to-date version along with a new UI. It was bootstrapped using [Lovable](https://lovable.dev/) and [Cursor](https://www.cursor.com/).
 
-New data is fetched from https://github.com/ccfddl/ccf-deadlines/tree/main/conference/AI thanks to [this comment](https://github.com/paperswithcode/ai-deadlines/issues/723#issuecomment-2603420945). A CRON job (set up as a Github action) automatically updates the data present at src/data/conferences.yml.
+New data is fetched from https://github.com/ccfddl/ccf-deadlines/tree/main/conference/AI thanks to [this comment](https://github.com/paperswithcode/ai-deadlines/issues/723#issuecomment-2603420945). 
 
-It was bootstrapped using [Lovable](https://lovable.dev/) and [Cursor](https://www.cursor.com/).
+A CRON job (set up as a [Github action](.github/workflows/update-conferences.yml)) automatically updates the data present at src/data/conferences.yml.
 
 **URL**: https://huggingface.co/spaces/huggingface/ai-deadlines
 
