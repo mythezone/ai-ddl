@@ -9,7 +9,7 @@ interface HeaderProps {
 
 const Header = ({ onSearch }: HeaderProps) => {
   return (
-    <header className="bg-white border-b">
+    <header className="bg-white border-b border-neutral-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-8">
@@ -51,13 +51,24 @@ const Header = ({ onSearch }: HeaderProps) => {
           <p className="text-sm text-neutral-600 py-4">
             Countdowns to top CV/NLP/ML/Robotics/AI conference deadlines. To add/edit a conference, send in a{' '}
             <a 
-              href="https://github.com/NielsRogge/ai-deadlines-hub"
+              href="https://github.com/huggingface/ai-deadlines"
               target="_blank"
               rel="noopener noreferrer"
               className="text-primary hover:underline"
             >
               pull request
             </a>.
+            <br />
+            P.S. feel free to submit your paper at{' '}
+            <a
+              href="https://hf.co/papers/submit"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              hf.co/papers
+            </a>
+            {' '}and upload your artifacts such as models, datasets and demos
           </p>
         </div>
       </div>
