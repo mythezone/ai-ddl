@@ -20,8 +20,8 @@ const Header = ({ onSearch, showEmptyMessage = false }: HeaderProps) => {
                 alt="fiBID Lab Logo"
                 className="h-16 w-auto"
               />
-              <span className="text-2xl font-bold text-primary">
-
+              <span className="text-2xl font-bold text-primary hidden lg:inline">
+                Conference Deadlines
               </span>
             </Link>
             <nav className="hidden md:flex space-x-4">
