@@ -64,7 +64,7 @@
 如有疑问可在 Issue 区提问，或直接联系维护者。
 
 ## 致谢 & 版权信息
-	•	本项目基于 paperswithcode/ai-deadlines 进行二次开发和维护，并感谢 ccfddl/ccf-deadlines 提供数据支持。
+	•	本项目基于 huggingface/ai-deadlines 进行二次开发和维护。
 	•	新前端 UI 参考 Hugging Face 及 Lovable、Cursor 等现代工具。
 
 ## License
