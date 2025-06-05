@@ -1,6 +1,6 @@
 # AI Conference Deadlines
 
-本仓库用于追踪实验室关注的人工智能领域顶级会议投稿截止日期，帮助团队成员快速了解各大 AI 会议（如 AAAI、ICLR、NeurIPS 等）的最新征稿时间，便于论文和项目规划。
+本仓库用于追踪fiBID实验室关注的人工智能领域顶级会议投稿截止日期，帮助实验室成员快速了解各大 AI 会议（如 AAAI、ICLR、NeurIPS 等）的最新征稿时间，便于论文和项目规划。
 
 ## 如何增补/修改会议
 
@@ -63,10 +63,10 @@
 
 如有疑问可在 Issue 区提问，或直接联系维护者。
 
-### 致谢 & 版权信息
+## 致谢 & 版权信息
 	•	本项目基于 paperswithcode/ai-deadlines 进行二次开发和维护，并感谢 ccfddl/ccf-deadlines 提供数据支持。
 	•	新前端 UI 参考 Hugging Face 及 Lovable、Cursor 等现代工具。
 
-### License
+## License
 
 本项目遵循 MIT License。
