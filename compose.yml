@@ -1,0 +1,9 @@
+services:
+  ai-deadlines:
+    image: 10.16.12.105:5001/gitlab/ai-deadlines:20260605
+    container_name: ai-deadlines
+    ports:
+      - 7860:7860 # Passive Mode 端口范围
+    volumes:
+      - ./src/data/conferences.yml:/app/src/data/conferences.yml
+    restart: always

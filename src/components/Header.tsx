@@ -15,14 +15,13 @@ const Header = ({ onSearch, showEmptyMessage = false }: HeaderProps) => {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between md:h-16 py-4 md:py-0 gap-4 md:gap-0">
           <div className="flex items-center justify-center md:justify-start w-full md:w-auto gap-8">
             <Link to="/" className="flex items-center gap-2">
-              <img 
-                src="https://huggingface.co/front/assets/huggingface_logo.svg" 
-                alt="Hugging Face Logo" 
-                className="h-8 w-8"
+              <img
+                src="/fibid.png"
+                alt="fiBID Lab Logo"
+                className="h-16 w-auto"
               />
               <span className="text-2xl font-bold text-primary">
-                <span className="hidden md:inline">AI Conference Deadlines</span>
-                <span className="md:hidden">AI Deadlines</span>
+
               </span>
             </Link>
             <nav className="hidden md:flex space-x-4">
@@ -56,7 +55,7 @@ const Header = ({ onSearch, showEmptyMessage = false }: HeaderProps) => {
             </p>
           </div>
         )}
-        <div className="max-w-4xl mx-auto text-center">
+        {/* <div className="max-w-4xl mx-auto text-center">
           <p className="text-sm text-neutral-600 py-4">
             Countdowns to top CV/NLP/ML/Robotics/AI conference deadlines. To add/edit a conference, send in a{' '}
             <a 
@@ -114,7 +113,7 @@ const Header = ({ onSearch, showEmptyMessage = false }: HeaderProps) => {
               demos
             </a>
           </p>
-        </div>
+        </div> */}
       </div>
     </header>
   );

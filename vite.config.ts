@@ -8,8 +8,8 @@ import yaml from "@modyfi/vite-plugin-yaml";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
-    host: "::",
-    port: 8080,
+    host: "0.0.0.0",
+    port: 7860,
   },
   plugins: [
     react(),
