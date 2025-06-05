@@ -1,10 +1,3 @@
----
-title: AI Deadlines
-emoji: ⚡
-colorFrom: gray
-colorTo: blue
----
-
 # AI Conference Deadlines
 
 本仓库用于追踪实验室关注的人工智能领域顶级会议投稿截止日期，帮助团队成员快速了解各大 AI 会议（如 AAAI、ICLR、NeurIPS 等）的最新征稿时间，便于论文和项目规划。
