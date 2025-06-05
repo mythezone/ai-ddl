@@ -22,18 +22,25 @@ const Index = () => {
   const [showPastConferences, setShowPastConferences] = useState(false);
 
   // Category buttons configuration
+  const allTags = useMemo(() => {
+    const tagsSet = new Set<string>();
+    if (Array.isArray(conferencesData)) {
+      conferencesData.forEach((conf: Conference) => {
+        if (Array.isArray(conf.tags)) {
+          conf.tags.forEach(tag => tagsSet.add(tag));
+        }
+      });
+    }
+    return Array.from(tagsSet).sort();
+  }, []);
+
   const categoryButtons = [
     { id: "machine-learning", label: "Machine Learning" },
-    { id: "lifelong-learning", label: "Lifelong Learning" },
-    { id: "robotics", label: "Robotics" },
     { id: "computer-vision", label: "Computer Vision" },
-    { id: "web-search", label: "Web Search" },
-    { id: "data-mining", label: "Data Mining" },
     { id: "natural-language-processing", label: "Natural Language Processing" },
     { id: "signal-processing", label: "Signal Processing" },
     { id: "human-computer-interaction", label: "Human Computer Interaction" },
     { id: "computer-graphics", label: "Computer Graphics" },
-    { id: "mathematics", label: "Mathematics" },
     { id: "reinforcement-learning", label: "Reinforcement Learning" },
   ];
 
@@ -51,33 +58,33 @@ const Index = () => {
         if (!showPastConferences && !isUpcoming) return false;
 
         // Filter by tags
-        const matchesTags = selectedTags.size === 0 || 
+        const matchesTags = selectedTags.size === 0 ||
           (Array.isArray(conf.tags) && conf.tags.some(tag => selectedTags.has(tag)));
-        
+
         // Filter by countries
-        const matchesCountry = selectedCountries.size === 0 || 
+        const matchesCountry = selectedCountries.size === 0 ||
           (conf.country && selectedCountries.has(conf.country));
-        
+
         // Filter by search query
-        const matchesSearch = searchQuery === "" || 
+        const matchesSearch = searchQuery === "" ||
           conf.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
           (conf.full_name && conf.full_name.toLowerCase().includes(searchQuery.toLowerCase()));
-        
+
         return matchesTags && matchesCountry && matchesSearch;
       })
       .sort((a: Conference, b: Conference) => {
         const aDeadline = getDeadlineInLocalTime(a.deadline, a.timezone);
         const bDeadline = getDeadlineInLocalTime(b.deadline, b.timezone);
-        
+
         if (aDeadline && bDeadline) {
           return aDeadline.getTime() - bDeadline.getTime();
         }
-        
+
         // Handle cases where one or both deadlines are invalid
         if (!aDeadline && !bDeadline) return 0;
         if (!aDeadline) return 1;
         if (!bDeadline) return -1;
-        
+
         return 0;
       });
   }, [selectedTags, selectedCountries, searchQuery, showPastConferences]);
@@ -121,12 +128,12 @@ const Index = () => {
     const searchParams = new URLSearchParams(window.location.search);
     const tagsParam = searchParams.get('tags');
     const countriesParam = searchParams.get('countries');
-    
+
     if (tagsParam) {
       const tags = tagsParam.split(',');
       setSelectedTags(new Set(tags));
     }
-    
+
     if (countriesParam) {
       const countries = countriesParam.split(',');
       setSelectedCountries(new Set(countries));
@@ -139,23 +146,22 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-neutral-light">
-      <Header 
-        onSearch={setSearchQuery} 
+      <Header
+        onSearch={setSearchQuery}
         showEmptyMessage={false}
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="space-y-4 py-4">
           {/* Category filter buttons */}
           <div className="bg-white shadow rounded-lg p-4">
-            <div className="flex flex-wrap gap-2">
+            {/* <div className="flex flex-wrap gap-2">
               {categoryButtons.map(category => (
                 <button
                   key={category.id}
-                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                    selectedTags.has(category.id) 
-                      ? 'bg-blue-100 text-blue-800 hover:bg-blue-200' 
-                      : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
-                  }`}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${selectedTags.has(category.id)
+                    ? 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                    : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                    }`}
                   onClick={() => {
                     const newTags = new Set(selectedTags);
                     if (newTags.has(category.id)) {
@@ -169,9 +175,31 @@ const Index = () => {
                   {category.label}
                 </button>
               ))}
+            </div> */}
+            <div className="flex flex-wrap gap-2">
+              {allTags.map(tag => (
+                <button
+                  key={tag}
+                  className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${selectedTags.has(tag)
+                    ? 'bg-blue-100 text-blue-800 hover:bg-blue-200'
+                    : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                    }`}
+                  onClick={() => {
+                    const newTags = new Set(selectedTags);
+                    if (newTags.has(tag)) {
+                      newTags.delete(tag);
+                    } else {
+                      newTags.add(tag);
+                    }
+                    handleTagsChange(newTags);
+                  }}
+                >
+                  {tag}
+                </button>
+              ))}
             </div>
           </div>
-          
+
           {/* Controls row with past conferences toggle and country filter */}
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-2 bg-white p-2 rounded-md shadow-sm">
@@ -184,7 +212,7 @@ const Index = () => {
                 onCheckedChange={setShowPastConferences}
               />
             </div>
-            
+
             <div className="flex items-center gap-2 bg-white p-2 rounded-md shadow-sm">
               <Popover>
                 <PopoverTrigger asChild>
@@ -199,13 +227,13 @@ const Index = () => {
                       <div className="mb-4">
                         <h4 className="text-sm font-medium text-gray-800">Country</h4>
                       </div>
-                      <div 
-                        className="max-h-60 overflow-y-auto space-y-2 bg-white overscroll-contain touch-pan-y" 
+                      <div
+                        className="max-h-60 overflow-y-auto space-y-2 bg-white overscroll-contain touch-pan-y"
                         style={{ WebkitOverflowScrolling: "touch" }}
                       >
                         {getAllCountries(conferencesData as Conference[]).map(country => (
                           <div key={country} className="flex items-center space-x-2 hover:bg-gray-50 p-1 rounded">
-                            <Checkbox 
+                            <Checkbox
                               id={`country-${country}`}
                               checked={selectedCountries.has(country)}
                               onCheckedChange={() => {
@@ -218,7 +246,7 @@ const Index = () => {
                                 handleCountriesChange(newCountries);
                               }}
                             />
-                            <label 
+                            <label
                               htmlFor={`country-${country}`}
                               className="text-sm font-medium text-gray-700 cursor-pointer w-full py-1"
                             >
@@ -231,7 +259,7 @@ const Index = () => {
                   </div>
                 </PopoverContent>
               </Popover>
-              
+
               {/* Display selected countries */}
               {Array.from(selectedCountries).map(country => (
                 <button
@@ -247,12 +275,12 @@ const Index = () => {
                   <X className="ml-1 h-3 w-3" />
                 </button>
               ))}
-              
+
               {/* Clear all filters button */}
               {(selectedTags.size > 0 || selectedCountries.size > 0) && (
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
+                <Button
+                  variant="ghost"
+                  size="sm"
                   onClick={() => {
                     handleTagsChange(new Set());
                     handleCountriesChange(new Set());
@@ -274,7 +302,7 @@ const Index = () => {
             </p>
           </div>
         )}
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredConferences.map((conference: Conference) => (
             <ConferenceCard key={conference.id} {...conference} />

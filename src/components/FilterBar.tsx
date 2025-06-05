@@ -18,8 +18,8 @@ interface FilterBarProps {
   onCountrySelect: (countries: Set<string>) => void;
 }
 
-const FilterBar = ({ 
-  selectedTags = new Set(), 
+const FilterBar = ({
+  selectedTags = new Set(),
   selectedCountries = new Set(),
   onTagSelect,
   onCountrySelect
@@ -35,7 +35,7 @@ const FilterBar = ({
     }
     return Array.from(tags).map(tag => ({
       id: tag,
-      label: tag.split("-").map(word => 
+      label: tag.split("-").map(word =>
         word.charAt(0).toUpperCase() + word.slice(1)
       ).join(" "),
       description: `${tag} Conferences`
@@ -82,12 +82,12 @@ const FilterBar = ({
                   <div className="max-h-60 overflow-y-auto space-y-2">
                     {uniqueTags.map(tag => (
                       <div key={tag.id} className="flex items-center space-x-2 hover:bg-gray-50 p-1 rounded">
-                        <Checkbox 
+                        <Checkbox
                           id={`tag-${tag.id}`}
                           checked={isTagSelected(tag.id)}
                           onCheckedChange={() => handleTagChange(tag.id)}
                         />
-                        <label 
+                        <label
                           htmlFor={`tag-${tag.id}`}
                           className="text-sm font-medium text-gray-700 cursor-pointer w-full py-1"
                         >
@@ -103,16 +103,16 @@ const FilterBar = ({
 
           {/* Clear all filters button */}
           {(selectedTags.size > 0 || selectedCountries.size > 0) && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={clearAllFilters}
               className="text-neutral-500 hover:text-neutral-700"
             >
               Clear all
             </Button>
           )}
-          
+
           {/* Display selected tags */}
           {Array.from(selectedTags).map(tag => (
             <button
@@ -120,7 +120,7 @@ const FilterBar = ({
               className="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800 hover:bg-blue-200 font-medium"
               onClick={() => handleTagChange(tag)}
             >
-              {tag.split("-").map(word => 
+              {tag.split("-").map(word =>
                 word.charAt(0).toUpperCase() + word.slice(1)
               ).join(" ")}
               <X className="ml-1 h-3 w-3" />

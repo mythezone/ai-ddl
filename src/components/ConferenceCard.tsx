@@ -19,21 +19,23 @@ const ConferenceCard = ({
   city,
   country,
   venue,
+  rankings,
+  hindex,
   ...conferenceProps
 }: Conference) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const deadlineDate = getDeadlineInLocalTime(deadline, timezone);
-  
+
   // Add validation before using formatDistanceToNow
   const getTimeRemaining = () => {
     if (!deadlineDate || !isValid(deadlineDate)) {
       return 'TBD';
     }
-    
+
     if (isPast(deadlineDate)) {
       return 'Deadline passed';
     }
-    
+
     try {
       return formatDistanceToNow(deadlineDate, { addSuffix: true });
     } catch (error) {
@@ -62,8 +64,8 @@ const ConferenceCard = ({
   };
 
   const handleCardClick = (e: React.MouseEvent) => {
-    if (!(e.target as HTMLElement).closest('a') && 
-        !(e.target as HTMLElement).closest('.tag-button')) {
+    if (!(e.target as HTMLElement).closest('a') &&
+      !(e.target as HTMLElement).closest('.tag-button')) {
       setDialogOpen(true);
     }
   };
@@ -72,20 +74,20 @@ const ConferenceCard = ({
     e.stopPropagation();
     const searchParams = new URLSearchParams(window.location.search);
     const currentTags = searchParams.get('tags')?.split(',') || [];
-    
+
     let newTags;
     if (currentTags.includes(tag)) {
       newTags = currentTags.filter(t => t !== tag);
     } else {
       newTags = [...currentTags, tag];
     }
-    
+
     if (newTags.length > 0) {
       searchParams.set('tags', newTags.join(','));
     } else {
       searchParams.delete('tags');
     }
-    
+
     const newUrl = `${window.location.pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
     window.history.pushState({}, '', newUrl);
     window.dispatchEvent(new CustomEvent('urlchange', { detail: { tag } }));
@@ -93,7 +95,7 @@ const ConferenceCard = ({
 
   return (
     <>
-      <div 
+      <div
         className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col cursor-pointer"
         onClick={handleCardClick}
       >
@@ -102,10 +104,10 @@ const ConferenceCard = ({
             {title} {year}
           </h3>
           {link && (
-            <a 
+            <a
               href={link}
               target="_blank"
-              rel="noopener noreferrer" 
+              rel="noopener noreferrer"
               className="hover:underline"
               onClick={(e) => e.stopPropagation()}
             >
@@ -113,7 +115,7 @@ const ConferenceCard = ({
             </a>
           )}
         </div>
-        
+
         <div className="flex flex-col gap-2 mb-3">
           <div className="flex items-center text-neutral">
             <CalendarDays className="h-4 w-4 mr-2 flex-shrink-0" />
@@ -123,6 +125,21 @@ const ConferenceCard = ({
             <div className="flex items-center text-neutral">
               <Globe className="h-4 w-4 mr-2 flex-shrink-0" />
               <span className="text-sm truncate">{location}</span>
+            </div>
+          )}
+          {/* rankings 显示在这里 */}
+          {rankings && (
+            <div className="flex items-center text-neutral">
+              <span className="text-xs bg-red-50 text-red-700 font-semibold px-2 py-0.5 rounded">
+                {rankings}
+              </span>
+            </div>
+          )}
+          {typeof hindex !== "undefined" && (
+            <div className="flex items-center text-neutral">
+              <span className="text-xs bg-yellow-50 text-yellow-700 font-semibold px-2 py-0.5 rounded">
+                h-index: {hindex}
+              </span>
             </div>
           )}
           <div className="flex items-center text-neutral">
